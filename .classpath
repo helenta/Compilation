@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="PA2/lib/jflex-1.6.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="PA2/lib/java-cup-11b-runtime.jar"/>
+	<classpathentry exported="true" kind="lib" path="PA2/lib/java-cup-11b.jar"/>
+	<classpathentry kind="output" path="PA2/build"/>
+</classpath>

@@ -1,0 +1,523 @@
+package IC.Parser;
+
+import java.util.*;
+import java.io.IOException;
+
+import IC.AST.*;
+import java_cup.runtime.*;
+import IC.DataTypes;
+import IC.LiteralTypes;
+import IC.UnaryOps;
+import IC.BinaryOps;
+
+
+parser code  {:
+
+	public boolean printTokens;
+	
+	private Scanner lexer;
+	private ArrayList<Token> all_tokens;
+	private int curr_token_index = -1;
+	
+	private Token currentToken;
+
+	public Parser(Scanner lexer) {
+		super(lexer);
+		this.lexer = lexer;
+		printTokens=true;
+		this.all_tokens = new ArrayList<Token>();
+	}
+	
+	public Token next_token() throws IOException{
+	    curr_token_index++;
+		currentToken = lexer.next_token();
+		all_tokens.add(currentToken);
+		return currentToken;
+	}
+	
+	public int getLine() {
+		return lexer.getLineNumber();
+	}
+	
+	public void report_fatal_error(String message, Object info)
+    {
+      done_parsing();
+      System.exit(1);
+    }
+
+    public void report_error(String message, Object info)
+    {
+    	System.out.println(message); 
+    }
+	
+	public void syntax_error(Symbol s) 
+	{
+		Token tok = (Token)s;
+	
+		List<Integer> ids = this.expected_token_ids();
+		StringBuffer expectedTokens = new StringBuffer();
+		for (Integer id : ids)
+		{
+			expectedTokens.append('\'');
+   			expectedTokens.append(sym.terminalNames[id]);
+   			expectedTokens.append('\'');
+   			expectedTokens.append(" or ");
+		}
+		
+		int length = expectedTokens.length();
+		if (length > 0)
+		{
+			expectedTokens.delete(length-4, length);
+		}
+	
+		String userMessage = tok.getRow() + ":" + tok.getColumn() + " : " +
+							 "syntax error; expected " + expectedTokens.toString() + 
+							 ", but found \'" + tok.getTag() + "\'";
+							 
+		System.out.println(userMessage);
+	}
+:}
+
+// Symbol list (terminals and non-terminals)
+
+  terminal BOOLEAN;
+  terminal BREAK;
+  terminal CLASS;
+  terminal CONTINUE;
+  terminal ELSE;
+  terminal EXTENDS;
+  terminal INT;
+  terminal NEW;
+  terminal IF;
+  terminal RETURN;
+  terminal VOID;
+  terminal STATIC;
+  terminal WHILE;
+  terminal THIS;
+  terminal LENGTH;
+  terminal TYPE_STRING;
+  
+  //BOOLEAN LITERALS
+  terminal TRUE;
+  terminal FALSE;
+  terminal NULL;
+  
+  //SEPARATORS
+  terminal LP;  // '('
+  terminal RP;  // ')'
+  terminal RCP; // '}'
+  terminal LCP; // '{'
+  terminal LSP; // '['
+  terminal RSP; // ']'
+  terminal SEMI_COLONS; // ';'
+  terminal COMMA; // ','
+  terminal DOT; // '.'
+  
+  //OPERATORS  
+  terminal ASSIGN; // '='
+  terminal BT; // '>' Bigger Than
+  terminal ST; // '<' Smaller Than
+  terminal NOT; // '!' NOT
+  terminal EQUALS; // '==' Bigger Than
+  terminal BTE; // '>=' Bigger Than Equal
+  terminal STE; // '<=' Smaller Than Equal
+  terminal NE; // '!=' Not Equal
+  terminal AND; // '&&'
+  terminal OR; // '||'
+  terminal PLUS; // '+' 
+  terminal MINUS; // '-'
+  terminal MULT; // '*'
+  terminal DIV; // '/'
+  terminal MOD; // '%'
+  
+  terminal INTEGER;
+  terminal ID;
+  terminal CLASS_ID;
+  terminal STRING;
+  
+  terminal LOCATION_PRECEDENCE; 
+  terminal CALL_PRECEDENCE; 
+
+nonterminal Program program; 
+nonterminal List<ICClass> multiClassDecl; 
+nonterminal ICClass classDecl;
+nonterminal List<ASTNode> fieldAndMethodList;
+nonterminal List<Field> fieldList;
+nonterminal List<String> idList;
+nonterminal Method method;
+nonterminal Type type;
+nonterminal List<Formal> formalList;
+nonterminal Formal formal;
+nonterminal StatementsBlock stmtList;
+nonterminal Statement stmt;
+nonterminal Statement stmtOpt;
+nonterminal Expression exp;
+nonterminal Call call;
+nonterminal Location location;
+nonterminal VirtualCall virtualCall;
+nonterminal StaticCall staticCall;
+nonterminal List<Expression> argumentList;
+nonterminal Expression andExp;
+nonterminal Expression eqExp;
+nonterminal Expression binExp;
+nonterminal BinaryOps relBinOp;
+nonterminal Expression mathExp;
+nonterminal Expression mathTerm;
+nonterminal BinaryOps binOp;
+nonterminal Expression unTerm;
+nonterminal Expression literalExp;
+nonterminal Literal literal;
+nonterminal Type typeRegular;
+nonterminal Type typeDimensions;
+
+// Precedence declarations
+
+precedence nonassoc IF;
+precedence nonassoc ELSE;
+
+precedence left ID, CLASS_ID;
+
+precedence right ASSIGN;
+precedence left OR;
+precedence left AND;
+precedence left EQUALS, NE;
+precedence left BT, ST, BTE, STE;
+precedence left PLUS, MINUS;
+precedence left DIV, MULT, MOD;
+precedence right MINUS, NOT;
+precedence left DOT, LSP, RSP, LOCATION_PRECEDENCE;
+precedence left CALL_PRECEDENCE;
+
+// The grammar
+
+program ::= multiClassDecl:ml 
+		{: RESULT = new Program((List<ICClass>)ml); :}
+;
+
+multiClassDecl ::= classDecl:cd 
+		{: 
+ 			List<ICClass> cdList = new ArrayList<ICClass>();
+			cdList.add((ICClass)cd);
+			RESULT = cdList;
+		:}
+		| multiClassDecl:cdList classDecl:cd
+		{:
+			((List<ICClass>)cdList).add((ICClass)cd);
+			RESULT = cdList;
+		:}
+;
+
+classDecl ::= CLASS:tok CLASS_ID:cid EXTENDS CLASS_ID:sid LCP fieldAndMethodList:fm RCP
+	{:  
+	List<Method> ml = new ArrayList<Method>();
+		List<Field> fl = new ArrayList<Field>();
+		for ( ASTNode node : fm ) {
+			if ( node instanceof Method )
+				ml.add((Method) node);
+			else if ( node instanceof Field )
+				fl.add((Field) node);
+		}
+	    RESULT = new ICClass(tokleft, cid.toString(), sid.toString(), fl, ml ); 
+	:}
+	| CLASS:tok CLASS_ID:cid LCP fieldAndMethodList:fm RCP
+	{:  
+		List<Method> ml = new ArrayList<Method>();
+		List<Field> fl = new ArrayList<Field>();
+		for ( ASTNode node : fm ) {
+			if ( node instanceof Method )
+				ml.add((Method) node);
+			else if ( node instanceof Field )
+				fl.add((Field) node);
+		}
+	    RESULT = new ICClass(tokleft, cid.toString(), fl, ml ); 
+	:}
+	| CLASS:tok CLASS_ID:cid LCP RCP
+	{:  
+	    RESULT = new ICClass(tokleft, cid.toString(), new ArrayList<Field>(), new ArrayList<Method>() ); 
+	:}
+;
+
+fieldAndMethodList ::= fieldAndMethodList:fml fieldList:fl
+	{: 
+		for ( Field f : fl )
+			fml.add(f); 
+		RESULT = fml; 
+	:}
+	| fieldAndMethodList:fml method:m
+	{:
+		fml.add(m); 
+		RESULT = fml; 
+	:}
+	| method:m
+	{: 
+		ArrayList<ASTNode> arr = new ArrayList<ASTNode>();
+		arr.add(m);
+		RESULT = arr;
+	:}
+	| fieldList:fl
+	{: 
+		ArrayList<ASTNode> arr = new ArrayList<ASTNode>();
+		for ( Field f : fl )
+			arr.add(f); 
+		RESULT = arr; 
+	:}
+;
+
+fieldList ::= type:t idList:idl SEMI_COLONS
+	{: 
+		List<Field> fl = new ArrayList<Field>();
+		for ( String id : idl )
+			fl.add(new Field(t, id) );
+		RESULT = fl; 
+	:}
+;
+	
+idList ::= ID:id
+	{: List<String> idl = new ArrayList<String>();
+		idl.add(id.toString());
+		RESULT = idl; :}
+	| idList:idl COMMA ID:id
+	{: idl.add(id.toString()); RESULT = idl; :}
+;
+
+method ::= STATIC:tok type:t ID:id LP formalList:fl RP LCP stmtList:st RCP
+	{: RESULT = new StaticMethod(t, id.toString(), fl, st.getStatements()); :}
+	| type:t ID:id LP formalList:fl RP LCP stmtList:st RCP
+	{: RESULT = new VirtualMethod(t, id.toString(), fl, st.getStatements()); :}
+	| STATIC:tok VOID ID:id LP formalList:fl RP LCP stmtList:st RCP
+	{: RESULT = new StaticMethod(new PrimitiveType(tokleft, DataTypes.VOID), id.toString(), fl, st.getStatements()); :}
+	| VOID:tok ID:id LP formalList:fl RP LCP stmtList:st RCP
+	{: RESULT = new VirtualMethod(new PrimitiveType(tokleft, DataTypes.VOID), id.toString(), fl, st.getStatements()); :}
+;
+
+formalList ::= formal:f
+	{: 
+		List<Formal> fl = new ArrayList<Formal>();
+	   	fl.add(f); 
+	   	RESULT = fl; 
+	:}
+	| formalList:fl COMMA formal:f
+	{: 
+		fl.add(f);
+		RESULT = fl;
+	:}
+	|
+	{: RESULT = new ArrayList<Formal>(); :}
+;
+
+formal ::= type:t ID:id
+	{: RESULT = new Formal( t, id.toString() ); :}
+;
+
+stmtList ::= stmtList:sl stmt:s
+	{: 
+		sl.getStatements().add(s); 
+		RESULT = sl; 
+	:}
+	| 
+	{: RESULT = new StatementsBlock(getLine(),new ArrayList<Statement>()); :}
+;
+
+stmt ::= stmtOpt:is
+	{: RESULT = is; :}
+	| type:t ID:id SEMI_COLONS
+	{: RESULT = new LocalVariable(t, id.toString()); :}
+;
+
+stmtOpt ::= 
+	location:l ASSIGN exp:e SEMI_COLONS
+	{: RESULT = new Assignment(l, e); :}
+	| call:c SEMI_COLONS
+	{: RESULT = new CallStatement(c); :}	
+	| RETURN:tok exp:e SEMI_COLONS
+	{: RESULT = new Return(tokleft, e); :}
+	| RETURN:tok SEMI_COLONS
+	{: RESULT = new Return(tokleft); :}
+	| IF LP exp:e RP stmtOpt:s
+	{: RESULT = new If(e,s); :} %prec IF
+	| IF LP exp:e RP stmtOpt:s1 ELSE stmtOpt:s2
+	{: RESULT = new If(e,s1,s2); :} %prec ELSE
+	| WHILE LP exp:e RP stmtOpt:s
+	{: RESULT = new While(e,s); :}
+	| BREAK:b SEMI_COLONS
+	{: RESULT = new Break(bleft); :}
+	| CONTINUE:c SEMI_COLONS
+	{: RESULT = new Continue(cleft); :}
+	| LCP stmtList:sl RCP
+	{: RESULT = sl; :}
+	| type:t ID:id ASSIGN exp:e SEMI_COLONS
+	{: RESULT = new LocalVariable(t, id.toString(), e); :}
+;
+
+exp ::= exp:e OR andExp:ae
+	{: RESULT = new LogicalBinaryOp(e, BinaryOps.LOR, ae ); :}
+	| andExp:ae
+	{: RESULT = ae; :}
+;
+
+andExp ::= andExp:ae AND eqExp:ee
+	{: RESULT = new LogicalBinaryOp(ae, BinaryOps.LAND, ee ); :}
+	| eqExp:ee
+	{: RESULT = ee; :}
+;
+
+eqExp ::= eqExp:ee EQUALS binExp:be
+	{: RESULT = new LogicalBinaryOp( ee, BinaryOps.EQUAL, be ); :}
+	| eqExp:ee NE binExp:be
+	{: RESULT = new LogicalBinaryOp( ee, BinaryOps.NEQUAL, be ); :}
+	| binExp:be
+	{: RESULT = be; :}
+;
+
+binExp ::= mathExp:me1 relBinOp:op mathExp:me2
+	{: RESULT = new LogicalBinaryOp(me1, op, me2); :}
+	| mathExp:me
+	{: RESULT = me; :}
+;
+
+relBinOp ::= ST
+	{: RESULT = BinaryOps.LT; :}
+	| STE
+	{: RESULT = BinaryOps.LTE; :}
+	| BT
+	{: RESULT = BinaryOps.GT; :}
+	| BTE
+	{: RESULT = BinaryOps.GTE; :}
+;
+
+mathExp ::= mathExp:me PLUS mathTerm:mt
+	{: RESULT = new MathBinaryOp(me, BinaryOps.PLUS, mt); :}
+	| mathExp:me MINUS mathTerm:mt
+	{: RESULT = new MathBinaryOp(me, BinaryOps.MINUS, mt); :}
+	| mathTerm:mt
+	{: RESULT = mt; :}
+;
+
+mathTerm ::= mathTerm:mt binOp:op unTerm:ut
+	{: RESULT = new MathBinaryOp(mt, op, ut); :}
+	| unTerm:ut
+	{: RESULT = ut; :}
+;
+
+binOp ::= MULT
+	{: RESULT = BinaryOps.MULTIPLY; :}
+	| DIV
+	{: RESULT = BinaryOps.DIVIDE; :}
+	| MOD
+	{: RESULT = BinaryOps.MOD; :}
+;	
+
+unTerm ::= MINUS unTerm:ut
+	{: RESULT = new MathUnaryOp( UnaryOps.UMINUS, ut ); :} %prec MINUS
+	| NOT unTerm:ut
+	{: RESULT = new LogicalUnaryOp( UnaryOps.LNEG, ut ); :}
+	| literalExp:le
+	{: RESULT = le; :}
+;
+
+literalExp ::= LP exp:e RP
+	{: RESULT = new ExpressionBlock(e); :}
+	| literal:l
+	{: RESULT = l; :}
+	| literalExp:le DOT LENGTH
+	{: RESULT = new Length(le); :}
+	| NEW typeRegular:t LSP exp:e RSP
+	{: RESULT = new NewArray(t, e); :}
+	| NEW:tok CLASS_ID:id LP RP
+	{: RESULT = new NewClass(tokleft, id.toString() ); :}
+	| THIS:t
+	{: RESULT = new This(tleft); :}
+	| call:c
+	{: RESULT = c; :} 
+	| location:l
+	{: RESULT = l; :} 
+;
+
+call ::= staticCall:sc
+	{: RESULT = sc; :}
+	| virtualCall:vc
+	{: RESULT = vc; :}
+;
+
+location ::= ID:id
+	{: RESULT = new VariableLocation(idleft, id.toString()); :} %prec LOCATION_PRECEDENCE
+	| literalExp:le DOT ID:id
+	{: RESULT = new VariableLocation(le.getLine(), le, id.toString()); :} %prec LOCATION_PRECEDENCE
+	| literalExp:le LSP exp:e RSP
+	{: RESULT = new ArrayLocation(le, e); :} %prec LOCATION_PRECEDENCE
+;
+
+staticCall ::= CLASS_ID:cid DOT ID:id LP argumentList:al RP
+	{: RESULT = new StaticCall(cidleft, cid.toString(), id.toString(), al ); :}
+;
+
+virtualCall ::= ID:id LP argumentList:al RP
+	{: RESULT = new VirtualCall(idleft, id.toString(), al ); :} %prec CALL_PRECEDENCE
+	| literalExp:le DOT ID:id LP argumentList:al RP
+	{: RESULT = new VirtualCall(le.getLine(), le, id.toString(), al ); :} %prec CALL_PRECEDENCE
+;
+
+argumentList ::= 
+	{: RESULT = new ArrayList<Expression>(); :}
+	| argumentList:al COMMA exp:e
+	{: 
+		al.add(e); 
+		RESULT = al; 
+	:}
+	| exp:e
+	{: 
+	List<Expression> al = new ArrayList<Expression>();
+		al.add(e); 
+		RESULT = al; 
+	:}
+;
+
+literal ::= TRUE:t 
+	{: RESULT = new Literal(tleft, LiteralTypes.TRUE); :}
+	| FALSE:f
+	{: RESULT = new Literal(fleft, LiteralTypes.FALSE); :}
+	| NULL:n
+	{: RESULT = new Literal(nleft, LiteralTypes.NULL); :}
+	| STRING:s
+	{: RESULT = new Literal(sleft, LiteralTypes.STRING, s); :}
+	| INTEGER:i
+		{: 
+			long l = Long.parseLong(i.toString());
+			if (l>(long)Integer.MAX_VALUE){
+				report_fatal_error("Integer is bigger than max int",i);
+			}
+				
+			RESULT = new Literal(ileft, LiteralTypes.INTEGER, i); 
+		:}
+;
+
+
+
+type ::= typeRegular:t 
+		 {: RESULT = t; :}
+		 | typeDimensions:t
+		 {: RESULT = t; :}
+;
+
+typeDimensions ::= typeRegular:t LSP RSP
+	{:
+		((Type)t).incrementDimension();
+		RESULT = t;
+	:}
+	| typeDimensions:t LSP RSP
+	{:
+		((Type)t).incrementDimension();
+		RESULT = t;
+	:}
+;
+
+typeRegular ::= INT:tok
+	{: RESULT = new PrimitiveType(tokleft, DataTypes.INT); :}
+	| BOOLEAN:tok
+	{: RESULT = new PrimitiveType(tokleft, DataTypes.BOOLEAN); :}
+	| TYPE_STRING:tok
+	{: RESULT = new PrimitiveType(tokleft, DataTypes.STRING); :}
+	| CLASS_ID:tok
+	{: RESULT = new Type(tokleft, tok.toString()); :}
+;
+
