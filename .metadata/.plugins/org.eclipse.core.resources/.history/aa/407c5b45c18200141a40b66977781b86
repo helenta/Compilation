@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  =======================================================================
+    Compiler build file
+  =======================================================================
+-->
+<project name="IC Compiler" default="build" basedir=".">
+    <!-- Set global properties for this 
+    build -->
+    <property name="src" value="src"/>
+	<property name="lib" value="lib"/>
+	<property name="bin" value="bin"/>
+    <property name="javadocs" value="javadocs"/>
+	
+	<!-- Class Path -->
+	
+	<path id="classpath">
+	    <fileset dir="${lib}">
+	        <include name="*.jar" />
+	    </fileset>
+	</path>
+	
+	<!-- -->
+
+    <!--
+       ===================================================================
+         Sets up internal values
+       ===================================================================
+  -->
+    <target name="init" description="-> sets up internal values">
+        <!-- Create the classes directory structure used by compile -->
+        <mkdir dir="${classes}"/>
+    </target>
+
+    <!--
+       ===================================================================
+         Generates the Library parser
+       ===================================================================
+  -->
+    <target name="libparser" depends="init" description="-> generates the Library parser">
+       <java classname="java_cup.Main">
+       <arg value="-parser"/>
+       <arg value="LibParser"/>
+       <arg value="-dump"/>
+       <arg value="${src}/IC/Parser/Library.cup"/>
+    </java>	
+    
+    <!--<replace file="LibParser.java" token="public Parser(Lexer lexer) {" value="public LibParser(Lexer lexer) {" />-->
+    <move file="LibParser.java" todir="${src}/IC/Parser" overwrite="true"/>
+    <move file="sym.java" todir="${src}/IC/Parser" overwrite="true"/>
+    </target>
+
+    <!--
+       ===================================================================
+         Generates the IC parser
+       ===================================================================
+  -->
+   <target name="parser" depends="init" description="-> generates the IC parser">
+      <java classname="java_cup.Main">
+       <arg value="-parser"/>
+       <arg value="Parser"/>
+       <arg value="-dump"/>
+       <arg value="${src}/IC/Parser/IC.cup"/>
+      <!--<arg value="-nonterms"/> -->
+    </java>
+    
+    <!--<replace file="sym.java" token="public class sym {" value="public class sym2 {" />-->
+      
+    <move file="Parser.java" todir="${src}/IC/Parser" overwrite="true"/>
+    <move file="sym.java" todir="${src}/IC/Parser" overwrite="true"/>
+    </target>
+
+    <!--
+       ===================================================================
+         Generates the IC scanner
+       ===================================================================
+  -->
+    <target name="scanner" depends="init" description="-> generates the IC scanner">
+    <java classname="jflex.Main">
+       <arg value="-d"/>
+       <arg value="${src}/IC/Parser"/>
+       <arg value="${src}/IC/Parser/IC.lex"/>
+    </java>
+    <!--<replace file="${src}/lex/Lexer.java" value='class Lexer'>
+	 <replacetoken>class Lexer</replacetoken>
+    </replace>-->		
+    </target>
+
+    <!--
+       ===================================================================
+         Compiles the sources
+       ===================================================================
+  -->
+    <target name="classes" depends="init" description="-> compiles the source code to create the tree of classes">
+        <!-- Compile the java code from ${src} into ${classes} -->
+        <echo message="Compiling sources..."/>
+        <javac srcdir="${src}"
+           destdir="${classes}"
+           source="1.5"
+           debug="${debug}"
+           deprecation="${deprecation}"
+           optimize="${optimize}"/>
+    </target>
+
+    <!--
+       ===================================================================
+         Cleans and the builds
+       ===================================================================
+  -->
+    <!--<target name="rebuild" depends="clean, build" description="-> first cleans and then build everything">
+    </target>-->
+
+    <!--
+       ===================================================================
+         Builds everything
+       ===================================================================
+  -->
+    <target name="build" depends="init,classes" description="-> compiles and creates yala.jar">
+    </target>
+
+    <!--
+       ===================================================================
+         Deletes the build and dist directory trees
+       ===================================================================
+  -->
+    <target name="clean" description="-> cleans up build and dist directories">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+        <delete file="Manifest.MF"/>
+        <delete file="${lib}/${name}.jar"/>
+        <delete file="${name}-${version}.jar"/>
+        <delete file="${name}-${version}.tar"/>
+        <delete file="${name}-${version}.tar.gz"/>
+	<delete dir="./classes"/>
+    </target>
+
+
+    <!--
+       ===================================================================
+         Creates the source documentation
+       ===================================================================
+	-->
+    <target name="javadocs" depends="init" description="-> creates the source documentation">
+        <mkdir dir="${javadocs}"/>
+        <javadoc source="1.5"
+                packagenames="IC.*"
+                sourcepath="${src}"
+                destdir="${javadocs}"
+                author="true"
+                version="true"
+                Header="IC Compiler Reference"
+                windowtitle="IC Compiler Reference"
+                doctitle="IC Compiler Reference">
+        </javadoc>
+
+    </target>
+	
+	<target name="compile">
+	        <mkdir dir="build/classes"/>
+	        <javac srcdir="src" destdir="build/classes"/>
+	    </target>
+
+	    <target name="jar">
+	        <mkdir dir="build/jar"/>
+	        <jar destfile="build/jar/yalla.jar" basedir="build/classes">
+	            <manifest>
+	                <attribute name="Main-Class" value="Main"/>
+	            </manifest>
+	        </jar>
+	    	<copy todir="build/jar">
+	    	    <fileset dir="lib"/>
+	    	 </copy>
+	    </target>
+</project>
