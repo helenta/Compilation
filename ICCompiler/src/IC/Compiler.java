@@ -6,6 +6,7 @@ import java.util.List;
 import java_cup.runtime.Symbol;
 import IC.AST.*;
 import IC.Parser.*;
+import IC.Semantic.*;
 
 public class Compiler{
 	
@@ -19,41 +20,36 @@ public class Compiler{
     	FileReader txtFile;
     	Scanner lex;
     	Symbol symbol;
-    	String libFileName = null, icFileName = args[0];
-    	Program program = null, programLib = null;
-    	PrettyPrinter printer, printerLib;
-    	Object output, outputLib;
+    	String icFileName = args[0];
+    	Program program = null;
+    	PrettyPrinter printer;
+    	Object output;
     	
-    	if (args.length == 2 && args[1].startsWith("-L")) 
+    	if (args.length == 2) 
     	{
-    		libFileName = args[1].substring(2);
-	    	txtFile = new FileReader(libFileName);
+    		icFileName = args[0];
+    		txtFile = new FileReader(icFileName);
 			lex = new Scanner(txtFile);
-			LibParser libParser = new LibParser(lex);
-			symbol = libParser.parse();
-			programLib = new Program((List<ICClass>)symbol.value);
+			Parser parser = new Parser(lex);
+			symbol = parser.parse();
+			program = (Program)symbol.value;
 			txtFile.close();
     	}
     	
-    	txtFile = new FileReader(icFileName);
-		lex = new Scanner(txtFile);
-		Parser parser = new Parser(lex);
-		symbol = parser.parse();
-		program = (Program)symbol.value;
-		txtFile.close();
-		
-		if (libFileName != null) 
-		{
-			printerLib = new PrettyPrinter(libFileName);
-			outputLib = printerLib.visit(programLib);
-			
-			System.out.println(outputLib);
-		}
-		
-		printer = new PrettyPrinter(icFileName);
-		output = printer.visit(program);
-		
-	    System.out.println(output);	    
-	}
+    	if (args[1].equals("-print-ast"))
+    	{
+    		printer = new PrettyPrinter(icFileName);
+    		output = printer.visit(program);
+    	    System.out.println(output);	    
+    	}
 
+    	if (args[1].equals("-dump-symtab")) 
+    	{
+			SymbolTable table = (SymbolTable) new SymbolTableBuilder().visit(program);
+			System.out.println(table);
+			TypeChecker checker = new TypeChecker(table);
+			//checker.visit(program); 
+    	}
+	}
+    
 }

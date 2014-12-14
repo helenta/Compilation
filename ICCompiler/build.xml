@@ -97,7 +97,7 @@
         <echo message="Compiling sources..."/>
         <javac srcdir="${src}"
            destdir="${classes}"
-           source="1.5"
+           source="1.7"
            debug="${debug}"
            deprecation="${deprecation}"
            optimize="${optimize}"/>
@@ -163,7 +163,7 @@
 
 	    <target name="jar">
 	        <mkdir dir="build/jar"/>
-	        <jar destfile="build/jar/yalla.jar" basedir="build/classes">
+	        <jar destfile="build/jar/yalla.jar" basedir="build/jar">
 	            <manifest>
 	                <attribute name="Main-Class" value="Main"/>
 	            </manifest>

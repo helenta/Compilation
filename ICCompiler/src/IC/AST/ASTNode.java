@@ -1,5 +1,7 @@
 package IC.AST;
 
+import IC.Semantic.Scope;
+
 /**
  * Abstract AST node base class.
  * 
@@ -8,6 +10,9 @@ package IC.AST;
 public abstract class ASTNode {
 
 	private int line;
+	
+	public Scope scope;
+	public Type semType;
 
 	/**
 	 * Double dispatch method, to allow a visitor to visit a specific subclass.
