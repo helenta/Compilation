@@ -90,6 +90,7 @@ public class Compiler{
 			
 			if (isLibary){
 				LibParser parser = new LibParser(lex);
+				parser.printTokens = false;
 				Symbol symbol = parser.parse();
 				return symbol.value;
 			}
