@@ -64,6 +64,14 @@ public class Compiler{
 	    	{
 				SymbolTable table = (SymbolTable) new SymbolTableBuilder().visit(program);
 				System.out.println(table);
+				
+				if (libaryClass != null && libaryClass.size() > 0)
+				{
+					Program libaryProgram = new Program(libaryClass);
+					SymbolTable libTable = (SymbolTable)new SymbolTableBuilder().visit(libaryProgram);
+					table.addLibTable(libTable);
+				}
+				
 				TypeChecker checker = new TypeChecker(table);
 				checker.visit(program); 
 	    	}

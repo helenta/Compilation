@@ -13,14 +13,14 @@
 //}
 
 class Quicksort {
-    int[][] a;
+    int[] a;
     //int b = 5;
     int partition(int low, int high) {
     int c = 7;
     int pivot = a[low];
     int i = low;
     int j = high;
-    int[] tmp;
+    int tmp;
 
     while (true) {
     	int b = 5;

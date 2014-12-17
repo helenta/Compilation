@@ -23,11 +23,10 @@ public class SymbolTable {
 		}
 		Scope derScope = this.root.getSymbol(derName);
 		// todo: remove
-		if (derScope == null)
+		if (derScope == null) // promitive type
 		{
-			int t = 0;
-			t = 1;
-			derScope = this.root.getSymbol(derName);
+			return false;
+			//derScope = this.root.getSymbol(derName);
 		}
 		Scope parentScope = derScope.getParent();
 		if (parentScope instanceof GlobalScope){

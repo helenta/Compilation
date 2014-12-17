@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<section name="conditionHistory">
+	</section>
 	<section name="org.eclipse.jdt.debug.ui.MAIN_METHOD_SELECTION_DIALOG">
 		<item value="true" key="ShowStatusLine"/>
 		<item value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#x0D;&#x0A;&lt;History&gt;&#x0D;&#x0A;&lt;historyRootNode&gt;&#x0D;&#x0A;&lt;infoNode&gt;=Interpreter/src&amp;lt;{Main.java[Main&lt;/infoNode&gt;&#x0D;&#x0A;&lt;infoNode&gt;=ICCompiler/src&amp;lt;IC{Compiler.java[Compiler&lt;/infoNode&gt;&#x0D;&#x0A;&lt;/historyRootNode&gt;&#x0D;&#x0A;&lt;/History&gt;" key="History"/>
@@ -10,5 +12,15 @@
 			<item value="100" key="DIALOG_X_ORIGIN"/>
 			<item value="0" key="DIALOG_Y_ORIGIN"/>
 		</section>
+	</section>
+	<section name="org.eclipse.jdt.internal.debug.ui.ExpressionInformationControlCreator$ExpressionInformationControl">
+		<item value="500" key="SashWeightTree"/>
+		<item value="500" key="SashWeightDetails"/>
+		<item value="614" key="WIDTH"/>
+		<item value="194" key="HEIGHT"/>
+	</section>
+	<section name="AddExceptionDialog">
+		<item value="true" key="caughtChecked"/>
+		<item value="true" key="uncaughtChecked"/>
 	</section>
 </section>

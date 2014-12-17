@@ -101,16 +101,25 @@ public class TypeChecker implements Visitor {
 		return type.getName();
 	}
 	private boolean isSameType(Type a, Type b) {
+		//todo: remove
 		if (b == null){
-			return true;
+			if (a == null){
+				return true;
+			}
+			else if (!a.IsPimitive() || a.IsIntegerOrBoolean() || ((PrimitiveType)a).getType() != DataTypes.VOID){
+				return true;
+			}
+			else{
+				return false;
+			}
 		}
-		if (b instanceof PrimitiveType){
+		if (b.IsPimitive()){
 			if (((PrimitiveType)b).getName() == null){
 				return true;
 			}
-		}
-		if (a.getName().equals(b.getName()) && a.getDimension() == b.getDimension()){
-			return true;
+		}	
+		if (a.getName().equals(b.getName())){
+			return a.getDimension() == b.getDimension();
 		}
 		if (!(a instanceof Type) || !(b instanceof Type)){
 			return false;
