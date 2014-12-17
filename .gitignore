@@ -21,8 +21,9 @@ tmp/**/*
 *.bak
 *.swp
 *~.nib
+*plugins/*
 local.properties
 
 # Git files
-.metadata*
-.recommenders*
+.metadata/*
+.recommenders/*
