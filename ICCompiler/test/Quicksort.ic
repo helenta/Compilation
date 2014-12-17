@@ -20,7 +20,7 @@ class Quicksort {
     int pivot = a[low];
     int i = low;
     int j = high;
-    int tmp;
+    int[] tmp;
 
     while (true) {
     	int b = 5;

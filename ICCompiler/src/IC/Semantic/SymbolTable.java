@@ -15,7 +15,20 @@ public class SymbolTable {
 	}
 	
 	public boolean isDerived(String derName, String supName){
+		// todo: remove
+		if (this.root == null)
+		{
+			int t = 0;
+			t = 1;
+		}
 		Scope derScope = this.root.getSymbol(derName);
+		// todo: remove
+		if (derScope == null)
+		{
+			int t = 0;
+			t = 1;
+			derScope = this.root.getSymbol(derName);
+		}
 		Scope parentScope = derScope.getParent();
 		if (parentScope instanceof GlobalScope){
 			return false;

@@ -80,6 +80,14 @@ public class TypeChecker implements Visitor {
 		assignment.getAssignment().scope = assignment.scope;
 		Type refType = (Type) assignment.getVariable().accept(this);
 		Type exprType = (Type) assignment.getAssignment().accept(this);
+		// todo: remove
+		if (!isSameType(refType, exprType))
+		{
+			int t = 0;
+			t = 1;
+			refType = (Type) assignment.getVariable().accept(this);
+			exprType = (Type) assignment.getAssignment().accept(this);
+		}
 		if (!isSameType(refType, exprType)){
 			throw new SemanticException(assignment.getLine() + ": semantic error; Invalid assignment of type " + printType(exprType) +  " to variable of type " + printType(refType));
 		}
@@ -129,12 +137,17 @@ public class TypeChecker implements Visitor {
 			}
 			return null;
 		}
+		
 		returnStatement.getValue().scope = returnStatement.scope;
 		Type expType = (Type) returnStatement.getValue().accept(this);
-		if (expType == null){
+		if (expType == null && !retType.IsIntegerOrBoolean()){
 			return null;
 		}
-		if (method.getRetType() instanceof Type && expType instanceof Type){
+		else if (expType == null && retType.IsIntegerOrBoolean()){
+			throw new SemanticException(returnStatement.getLine() + ": semantic error; Return statement is not of type " + printType(retType));
+		}
+		
+		if (!method.getRetType().IsPimitive() && !expType.IsPimitive()){
 			if (!(table.isDerived(expType.getName(), retValueTypeName))){
 				throw new SemanticException(returnStatement.getLine() + ": semantic error; Return statement is not of type " + printType(retType));
 
@@ -164,6 +177,13 @@ public class TypeChecker implements Visitor {
 	public Object visit(While whileStatement) {
 		whileStatement.getCondition().scope = whileStatement.scope;
 		Type cond = (Type) whileStatement.getCondition().accept(this);
+		// todo: remove
+		if (cond == null)
+		{
+			int t = 0;
+			t = 1;
+			cond = (Type) whileStatement.getCondition().accept(this);
+		}
 		if (!cond.getName().equals("boolean")){
 			throw new SemanticException(whileStatement.getLine() + ": semantic error; Non boolean condition for while statement");
 		}
@@ -539,7 +559,7 @@ public class TypeChecker implements Visitor {
 	@Override
 	public Object visit(LogicalBinaryOp binaryOp) {
 		// TODO Auto-generated method stub
-		return null;
+		return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
 	}
 
 	@Override

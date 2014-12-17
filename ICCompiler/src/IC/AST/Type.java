@@ -1,5 +1,7 @@
 package IC.AST;
 
+import IC.DataTypes;
+
 /**
  * Abstract base class for data type AST nodes.
  * 
@@ -46,5 +48,12 @@ public class Type extends ASTNode {
 	public void incrementDimension() {
 		++dimension;
 	}
+	
+	public boolean IsPimitive(){
+		return false;
+	}
 
+	public boolean IsIntegerOrBoolean(){
+		return false;
+	}
 }

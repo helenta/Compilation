@@ -35,4 +35,13 @@ public class PrimitiveType extends Type {
 	public DataTypes getType() {
 		return type;
 	}
+	
+	public boolean IsPimitive(){
+		return true;
+	}
+	
+	public boolean IsIntegerOrBoolean(){
+		return type == DataTypes.BOOLEAN ||
+			   type == DataTypes.INT;
+	}
 }
