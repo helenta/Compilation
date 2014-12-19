@@ -4,4 +4,5 @@
 <fullyQualifiedTypeName name="java.lang.NullPointerException"/>
 <fullyQualifiedTypeName name="IC.DataTypes"/>
 <fullyQualifiedTypeName name="IC.Parser.LibParser"/>
+<fullyQualifiedTypeName name="IC.AST.PrimitiveType"/>
 </qualifiedTypeNameHistroy>
