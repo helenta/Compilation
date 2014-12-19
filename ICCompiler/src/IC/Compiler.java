@@ -73,7 +73,11 @@ public class Compiler{
 				}
 				
 				TypeChecker checker = new TypeChecker(table);
-				checker.visit(program); 
+				checker.visit(program);
+				
+				ScopeChecker scopeCh = new ScopeChecker(new MainClassScopeChecker());
+				if (!(boolean)scopeCh.visit(table.root))
+					throw new Exception("Incorrect main method");
 	    	}
 		}
 		// todo: remove
