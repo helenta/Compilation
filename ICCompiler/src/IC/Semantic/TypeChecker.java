@@ -221,7 +221,8 @@ public class TypeChecker implements Visitor {
 		if (varScope == null){
 			throw new SemanticException(location.getLine() + ": semantic error; " + location.getName() + " not found in symbol table");
 		}
-		if (inStatic && varScope instanceof FieldScope){
+
+		if (!location.isExternal() && inStatic && varScope instanceof FieldScope){
 			throw new SemanticException(location.getLine() + ": semantic error; Use of field inside static method is not allowed");
 		}
 		return location.semType = ((PrimitiveScope)varScope).getType();

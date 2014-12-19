@@ -1,6 +1,6 @@
 package IC.AST;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Abstract base class for method AST nodes.
@@ -36,6 +36,8 @@ public abstract class Method extends ASTNode {
 		this.name = name;
 		this.formals = formals;
 		this.statements = statements;
+		
+		Collections.reverse(this.formals);
 	}
 
 	public Type getType() {
