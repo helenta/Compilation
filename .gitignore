@@ -27,3 +27,7 @@ local.properties
 # Git files
 .metadata/*
 .recommenders/*
+.plugins/*
+.mylyn/*
+*.lock*
+*.log*
