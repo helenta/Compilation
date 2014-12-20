@@ -53,31 +53,28 @@ public class Compiler{
     {
     	try
 		{
+			SymbolTable table = (SymbolTable) new SymbolTableBuilder().visit(program);
+			
+			if (libaryClass != null && libaryClass.size() > 0)
+			{
+				Program libaryProgram = new Program(libaryClass);
+				SymbolTable libTable = (SymbolTable)new SymbolTableBuilder().visit(libaryProgram);
+				table.addLibTable(libTable);
+			}
+			
 	    	if (arg.equals("-print-ast"))
 	    	{
-	    		PrettyPrinter printer = new PrettyPrinter(icFileName);
+	    		PrettyPrinter printer = new PrettyPrinter(icFileName,table);
 	    		Object output = printer.visit(program);
 	    	    System.out.println(output);	    
 	    	}
 	
 	    	if (arg.equals("-dump-symtab")) 
 	    	{
-				SymbolTable table = (SymbolTable) new SymbolTableBuilder().visit(program);
 				System.out.println(table);
-				
-				if (libaryClass != null && libaryClass.size() > 0)
-				{
-					Program libaryProgram = new Program(libaryClass);
-					SymbolTable libTable = (SymbolTable)new SymbolTableBuilder().visit(libaryProgram);
-					table.addLibTable(libTable);
-				}
-				
+
 				TypeChecker checker = new TypeChecker(table);
-				checker.visit(program);
-				
-				ScopeChecker scopeCh = new ScopeChecker(new MainClassScopeChecker());
-				if (!(boolean)scopeCh.visit(table.root))
-					throw new Exception("Incorrect main method");
+				checker.visit(program); 
 	    	}
 		}
 		// todo: remove
