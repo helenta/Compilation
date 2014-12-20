@@ -165,7 +165,7 @@ public class SymbolTableBuilder implements Visitor {
 	}
 
 	public Object visit(StatementsBlock statementsBlock) {
-		BlockScope blkScope = new BlockScope(statementsBlock.getLine());
+		BlockScope blkScope = new BlockScope(statementsBlock.getLine(), statementsBlock);
 		for (Statement stmt : statementsBlock.getStatements()){
 			if (stmt instanceof LocalVariable){
 				LocalScope local = (LocalScope) stmt.accept(this);
