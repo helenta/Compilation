@@ -14,6 +14,10 @@ hs_err_pid*
 # eclipse specific git ignore
 *.pydevproject
 *.metadata*
+.recommenders/*
+.metadata/.mylyn/.tasks.xml.zip
+.metadata/.mylyn/tasks.xml.zip
+.metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi
 bin/**
 tmp/**
 tmp/**/*
@@ -22,6 +26,7 @@ tmp/**/*
 *.swp
 *~.nib
 *plugins/*
+.mylyn/*
 local.properties
 
 # Git files
