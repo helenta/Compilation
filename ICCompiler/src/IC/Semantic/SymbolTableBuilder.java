@@ -56,7 +56,6 @@ public class SymbolTableBuilder implements Visitor {
 	public Object visit(Field field) {
 		FieldScope fieldScope = new FieldScope(field.getName(), field.getType(), field.getLine());
 		return fieldScope;
-		
 	}
 
 	public Object visit(VirtualMethod method) {
@@ -74,7 +73,9 @@ public class SymbolTableBuilder implements Visitor {
 			methodScope.addSymbol(formal, methodScope.params);
 			form.scope = methodScope;
 		}
-		for (Statement stmt : method.getStatements()){
+		for (Statement stmt : method.getStatements())
+		{
+			stmt.scope = methodScope;
 			if (stmt instanceof LocalVariable){
 				LocalScope local = (LocalScope) stmt.accept(this);
 				methodScope.addSymbol(local, methodScope.locals);
@@ -107,7 +108,6 @@ public class SymbolTableBuilder implements Visitor {
 			else{
 				stmt.accept(this);
 			}
-			stmt.scope = methodScope;
 		}
 		return methodScope;
 	}
@@ -120,7 +120,6 @@ public class SymbolTableBuilder implements Visitor {
 		return new FormalScope(formal.getName(), formal.getType(), formal.getLine());
 	}
 
-	@SuppressWarnings("unchecked")
 	public Object visit(If ifStatement) {
 		List<Scope> blocks = new ArrayList<Scope>();
 		if (ifStatement.getOperation() instanceof If){
@@ -130,6 +129,7 @@ public class SymbolTableBuilder implements Visitor {
 			blocks.add((Scope) ifStatement.getOperation().accept(this));
 		}
 		if (ifStatement.hasElse()){
+			ifStatement.getElseOperation().scope = ifStatement.scope;
 			if (ifStatement.getElseOperation() instanceof If){
 				blocks.addAll((Collection<? extends Scope>) ifStatement.getElseOperation().accept(this));
 			}
@@ -137,6 +137,8 @@ public class SymbolTableBuilder implements Visitor {
 				blocks.add((Scope) ifStatement.getElseOperation().accept(this));
 			}
 		}	
+		ifStatement.getOperation().scope = ifStatement.scope;
+		ifStatement.getCondition().scope = ifStatement.scope;
 		return blocks;
 	}
 
@@ -144,6 +146,7 @@ public class SymbolTableBuilder implements Visitor {
 		boolean outer = inWhile;
 		inWhile = true;
 		Scope whScope = (Scope) whileStatement.getOperation().accept(this);
+		whileStatement.getOperation().scope = whileStatement.scope;
 		if (!outer){
 			inWhile = false;
 		}
@@ -253,7 +256,11 @@ public class SymbolTableBuilder implements Visitor {
 	}
 
 	public Object visit(VariableLocation location) {
-		// TODO Auto-generated method stub
+		
+		String name = location.getName();
+		
+		//location.semType = 
+				
 		return null;
 	}
 
@@ -321,5 +328,6 @@ public class SymbolTableBuilder implements Visitor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }
 

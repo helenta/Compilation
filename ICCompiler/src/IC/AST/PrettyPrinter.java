@@ -260,6 +260,7 @@ public class PrettyPrinter implements Visitor {
 
 		indent(output, statementsBlock);
 		output.append("Block of statements");
+		output.append(", Symbol table: " + statementsBlock.scope.getName());
 		depth += 4;
 		for (Statement statement : statementsBlock.getStatements())
 			output.append(statement.accept(this));
@@ -292,6 +293,8 @@ public class PrettyPrinter implements Visitor {
 
 		indent(output, location);
 		output.append("Reference to variable: " + location.getName());
+		output.append(", Type: " + location.semType.getName());
+		output.append(", Symbol table: " + location.scope.getName());
 		if (location.isExternal())
 			output.append(", in external scope");
 		if (location.isExternal()) {
