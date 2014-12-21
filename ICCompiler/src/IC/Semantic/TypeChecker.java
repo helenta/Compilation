@@ -80,14 +80,7 @@ public class TypeChecker implements Visitor {
 		assignment.getAssignment().scope = assignment.scope;
 		Type refType = (Type) assignment.getVariable().accept(this);
 		Type exprType = (Type) assignment.getAssignment().accept(this);
-		// todo: remove
-		if (!isSameType(refType, exprType))
-		{
-			int t = 0;
-			t = 1;
-			refType = (Type) assignment.getVariable().accept(this);
-			exprType = (Type) assignment.getAssignment().accept(this);
-		}
+		
 		if (!isSameType(refType, exprType)){
 			throw new SemanticException(assignment.getLine() + ": semantic error; Invalid assignment of type " + printType(exprType) +  " to variable of type " + printType(refType));
 		}
@@ -100,8 +93,8 @@ public class TypeChecker implements Visitor {
 		}
 		return type.getName();
 	}
+	
 	private boolean isSameType(Type a, Type b) {
-		//todo: remove
 		if (b == null){
 			if (a == null){
 				return true;
@@ -201,7 +194,8 @@ public class TypeChecker implements Visitor {
 		return null;
 	}
 
-	public Object visit(StatementsBlock statementsBlock) {
+	public Object visit(StatementsBlock statementsBlock) 
+	{
 		for (Statement stmt : statementsBlock.getStatements()){
 			stmt.accept(this);
 		}

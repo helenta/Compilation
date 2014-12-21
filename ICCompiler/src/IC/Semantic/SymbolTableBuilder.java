@@ -68,7 +68,7 @@ public class SymbolTableBuilder implements Visitor {
 	}
 
 	private Object makeMethodScope(Method method){
-		MethodScope methodScope = new MethodScope(method.getName(), method.getType(), method.getLine(), false);
+		MethodScope methodScope = new MethodScope(method.getName(), method.getType(), method.getLine(), false, method);
 		for (Formal form : method.getFormals()){
 			FormalScope formal = (FormalScope) form.accept(this);
 			methodScope.addSymbol(formal, methodScope.params);
@@ -170,6 +170,10 @@ public class SymbolTableBuilder implements Visitor {
 			if (stmt instanceof LocalVariable){
 				LocalScope local = (LocalScope) stmt.accept(this);
 				blkScope.addSymbol(local, blkScope.locals);
+				
+				LocalVariable localVarible = (LocalVariable)stmt;
+				localVarible.getType().scope = blkScope;
+				localVarible.getInitValue().scope = blkScope;
 			}
 			else if (stmt instanceof StatementsBlock){
 				BlockScope subBlkScope = (BlockScope) stmt.accept(this);
@@ -183,6 +187,9 @@ public class SymbolTableBuilder implements Visitor {
 				if (wh instanceof BlockScope){
 					blkScope.addAnonymousScope((BlockScope) wh, blkScope.blocks);
 				}
+				
+				((While)stmt).getCondition().scope = blkScope;
+				((While)stmt).getOperation().scope = blkScope;
 			}
 			else if (stmt instanceof If){
 				@SuppressWarnings("unchecked")
@@ -195,6 +202,13 @@ public class SymbolTableBuilder implements Visitor {
 						blkScope.addAnonymousScope((BlockScope) scope, blkScope.blocks);
 					}
 				}
+				
+				((If)stmt).getCondition().scope = blkScope;
+				((If)stmt).getOperation().scope = blkScope;
+				
+				if (((If)stmt).getElseOperation() != null){
+					((If)stmt).getElseOperation().scope = blkScope;
+				}
 			}
 			else{
 				stmt.accept(this);
@@ -204,12 +218,16 @@ public class SymbolTableBuilder implements Visitor {
 		return blkScope;
 	}
 
-	public Object visit(LocalVariable localVariable) {
-		return new LocalScope(localVariable.getName(), localVariable.getType(), localVariable.getLine());
+	public Object visit(LocalVariable localVariable) 
+	{
+		LocalScope localScope = new LocalScope(localVariable.getName(), localVariable.getType(), localVariable.getLine());
+		localVariable.scope = localScope;
+		return localScope;
 	}
 
-	public Object visit(PrimitiveType type) {
-		// TODO Auto-generated method stub
+	public Object visit(PrimitiveType type) 
+	{
+		//type.scope = type.p
 		return null;
 	}
 
@@ -218,8 +236,9 @@ public class SymbolTableBuilder implements Visitor {
 		return null;
 	}
 
-	public Object visit(Assignment assignment) {
-		// TODO Auto-generated method stub
+	public Object visit(Assignment assignment) 
+	{
+		//LocalScope local = new LocalScope(assignment.)
 		return null;
 	}
 
