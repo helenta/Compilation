@@ -1,6 +1,6 @@
 package IC.Semantic;
 
-import IC.AST.Type;
+import IC.AST.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,22 +13,16 @@ public class MethodScope extends Scope {
 	protected Type retType;
 	protected boolean virtual;
 	
-	MethodScope(Scope parent, String name, Type retType, int line, boolean virtual) {
-		super(parent, name, line);
-		this.retType = retType;
-		locals = new ArrayList<Scope>();
-		blocks = new ArrayList<Scope>();
-		params = new ArrayList<Scope>();
-		this.virtual = virtual;
-	}
+	public Method method;
 	
-	public MethodScope(String name, Type retType, int line, boolean virtual) {
+	public MethodScope(String name, Type retType, int line, boolean virtual, Method method) {
 		super(name, line);
 		this.retType = retType;
 		locals = new ArrayList<Scope>();
 		blocks = new ArrayList<Scope>();
 		params = new ArrayList<Scope>();
 		this.virtual = virtual;
+		this.method = method;
 	}
 
 	public Type getRetType() {

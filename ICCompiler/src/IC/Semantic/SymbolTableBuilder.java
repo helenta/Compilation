@@ -56,7 +56,6 @@ public class SymbolTableBuilder implements Visitor {
 	public Object visit(Field field) {
 		FieldScope fieldScope = new FieldScope(field.getName(), field.getType(), field.getLine());
 		return fieldScope;
-		
 	}
 
 	public Object visit(VirtualMethod method) {
@@ -68,13 +67,15 @@ public class SymbolTableBuilder implements Visitor {
 	}
 
 	private Object makeMethodScope(Method method){
-		MethodScope methodScope = new MethodScope(method.getName(), method.getType(), method.getLine(), false);
+		MethodScope methodScope = new MethodScope(method.getName(), method.getType(), method.getLine(), false, method);
 		for (Formal form : method.getFormals()){
 			FormalScope formal = (FormalScope) form.accept(this);
 			methodScope.addSymbol(formal, methodScope.params);
 			form.scope = methodScope;
 		}
-		for (Statement stmt : method.getStatements()){
+		for (Statement stmt : method.getStatements())
+		{
+			stmt.scope = methodScope;
 			if (stmt instanceof LocalVariable){
 				LocalScope local = (LocalScope) stmt.accept(this);
 				methodScope.addSymbol(local, methodScope.locals);
@@ -107,7 +108,6 @@ public class SymbolTableBuilder implements Visitor {
 			else{
 				stmt.accept(this);
 			}
-			stmt.scope = methodScope;
 		}
 		return methodScope;
 	}
@@ -120,7 +120,6 @@ public class SymbolTableBuilder implements Visitor {
 		return new FormalScope(formal.getName(), formal.getType(), formal.getLine());
 	}
 
-	@SuppressWarnings("unchecked")
 	public Object visit(If ifStatement) {
 		List<Scope> blocks = new ArrayList<Scope>();
 		if (ifStatement.getOperation() instanceof If){
@@ -130,6 +129,7 @@ public class SymbolTableBuilder implements Visitor {
 			blocks.add((Scope) ifStatement.getOperation().accept(this));
 		}
 		if (ifStatement.hasElse()){
+			ifStatement.getElseOperation().scope = ifStatement.scope;
 			if (ifStatement.getElseOperation() instanceof If){
 				blocks.addAll((Collection<? extends Scope>) ifStatement.getElseOperation().accept(this));
 			}
@@ -137,6 +137,8 @@ public class SymbolTableBuilder implements Visitor {
 				blocks.add((Scope) ifStatement.getElseOperation().accept(this));
 			}
 		}	
+		ifStatement.getOperation().scope = ifStatement.scope;
+		ifStatement.getCondition().scope = ifStatement.scope;
 		return blocks;
 	}
 
@@ -144,6 +146,7 @@ public class SymbolTableBuilder implements Visitor {
 		boolean outer = inWhile;
 		inWhile = true;
 		Scope whScope = (Scope) whileStatement.getOperation().accept(this);
+		whileStatement.getOperation().scope = whileStatement.scope;
 		if (!outer){
 			inWhile = false;
 		}
@@ -165,11 +168,15 @@ public class SymbolTableBuilder implements Visitor {
 	}
 
 	public Object visit(StatementsBlock statementsBlock) {
-		BlockScope blkScope = new BlockScope(statementsBlock.getLine());
+		BlockScope blkScope = new BlockScope(statementsBlock.getLine(), statementsBlock);
 		for (Statement stmt : statementsBlock.getStatements()){
 			if (stmt instanceof LocalVariable){
 				LocalScope local = (LocalScope) stmt.accept(this);
 				blkScope.addSymbol(local, blkScope.locals);
+				
+				LocalVariable localVarible = (LocalVariable)stmt;
+				localVarible.getType().scope = blkScope;
+				localVarible.getInitValue().scope = blkScope;
 			}
 			else if (stmt instanceof StatementsBlock){
 				BlockScope subBlkScope = (BlockScope) stmt.accept(this);
@@ -183,6 +190,9 @@ public class SymbolTableBuilder implements Visitor {
 				if (wh instanceof BlockScope){
 					blkScope.addAnonymousScope((BlockScope) wh, blkScope.blocks);
 				}
+				
+				((While)stmt).getCondition().scope = blkScope;
+				((While)stmt).getOperation().scope = blkScope;
 			}
 			else if (stmt instanceof If){
 				@SuppressWarnings("unchecked")
@@ -195,6 +205,13 @@ public class SymbolTableBuilder implements Visitor {
 						blkScope.addAnonymousScope((BlockScope) scope, blkScope.blocks);
 					}
 				}
+				
+				((If)stmt).getCondition().scope = blkScope;
+				((If)stmt).getOperation().scope = blkScope;
+				
+				if (((If)stmt).getElseOperation() != null){
+					((If)stmt).getElseOperation().scope = blkScope;
+				}
 			}
 			else{
 				stmt.accept(this);
@@ -204,12 +221,16 @@ public class SymbolTableBuilder implements Visitor {
 		return blkScope;
 	}
 
-	public Object visit(LocalVariable localVariable) {
-		return new LocalScope(localVariable.getName(), localVariable.getType(), localVariable.getLine());
+	public Object visit(LocalVariable localVariable) 
+	{
+		LocalScope localScope = new LocalScope(localVariable.getName(), localVariable.getType(), localVariable.getLine());
+		localVariable.scope = localScope;
+		return localScope;
 	}
 
-	public Object visit(PrimitiveType type) {
-		// TODO Auto-generated method stub
+	public Object visit(PrimitiveType type) 
+	{
+		//type.scope = type.p
 		return null;
 	}
 
@@ -218,8 +239,9 @@ public class SymbolTableBuilder implements Visitor {
 		return null;
 	}
 
-	public Object visit(Assignment assignment) {
-		// TODO Auto-generated method stub
+	public Object visit(Assignment assignment) 
+	{
+		//LocalScope local = new LocalScope(assignment.)
 		return null;
 	}
 
@@ -234,7 +256,11 @@ public class SymbolTableBuilder implements Visitor {
 	}
 
 	public Object visit(VariableLocation location) {
-		// TODO Auto-generated method stub
+		
+		String name = location.getName();
+		
+		//location.semType = 
+				
 		return null;
 	}
 
@@ -302,5 +328,6 @@ public class SymbolTableBuilder implements Visitor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }
 
