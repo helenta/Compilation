@@ -39,7 +39,7 @@ public class ClassScope extends Scope {
 				if (sym instanceof FieldScope){
 					throw new SemanticException(method.getLine() + ": semantic error; Method " + sym.getName() + " is shadowing a field with the same name");
 				}
-				if (sym instanceof MethodScope && !((MethodScope) sym).signature().equals(((MethodScope) method).signature())){
+				if (sym instanceof MethodScope && !((MethodScope) sym).signature(false).equals(((MethodScope) method).signature(false))){
 					throw new SemanticException(method.getLine() + ": semantic error; method '" + sym.getName() + "' overloads a different method with the same name");
 				}
 			}
