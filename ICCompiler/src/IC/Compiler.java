@@ -58,6 +58,8 @@ public class Compiler{
     	try
 		{
 			SymbolTable table = (SymbolTable) new SymbolTableBuilder().visit(program);
+			TypeChecker checker = new TypeChecker(table);
+			checker.visit(program); 
 			
 			if (libaryClass != null && libaryClass.size() > 0)
 			{
@@ -74,12 +76,7 @@ public class Compiler{
 	    	}
 	
 	    	if (arg.equals("-dump-symtab")) 
-	    	{
 				System.out.println(table);
-
-				TypeChecker checker = new TypeChecker(table);
-				checker.visit(program); 
-	    	}
 		}
 		// todo: remove
 		catch (NullPointerException ex)
