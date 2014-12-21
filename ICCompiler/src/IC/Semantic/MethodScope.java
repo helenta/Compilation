@@ -50,7 +50,7 @@ public class MethodScope extends Scope {
 
 	public String signature(){
 		StringBuffer output = new StringBuffer();
-		output.append(this.name + " : ");
+		output.append(this.name + " {");
 		if (this.params.size() == 0){
 			//output.append("void");
 		}
@@ -63,6 +63,7 @@ public class MethodScope extends Scope {
 		for (int i=0;i<retType.getDimension();i++){
 			output.append("[]");
 		}
+		output.append("}");
 		return output.toString();
 	}
 }

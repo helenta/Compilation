@@ -44,9 +44,13 @@ public class Compiler{
 		List<ICClass> libaryClass = null;
 		if (libaryFileName != null)
 			libaryClass = (List<ICClass>)CreateICTree(libaryFileName, true);
+			System.out.println("Parsed " + libaryFileName + " successfully!");
     	
-		if (printOption != null)
+		if (printOption != null) {
+			System.out.println("Parsed " + icFileName + " successfully!");
 			ProcessArgument(printOption, icFileName, program, libaryClass);
+		}
+
 	}
     
     private static void ProcessArgument(String arg, String icFileName, Program program, List<ICClass> libaryClass)

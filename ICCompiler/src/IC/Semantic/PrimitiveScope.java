@@ -30,7 +30,7 @@ public abstract class PrimitiveScope extends Scope {
 	}
 	
 	public String toString(){
-		return this.getDisplayName() + ": " + this.getName() + " : " + this.getTypeName();
+		return this.getDisplayName() + ": " + this.getTypeName() + " " + this.getName();
 	}
 	
 	public abstract String getDisplayName();
