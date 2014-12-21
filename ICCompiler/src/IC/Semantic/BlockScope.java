@@ -68,9 +68,19 @@ public class BlockScope extends Scope {
 	
 	@Override
 	public String getName(){
-		if (parent instanceof BlockScope){
-			return parent.getName();
+		if (parent.getParent().getParent() instanceof BlockScope)
+		{
+			return "statement block in statement block in statement block in " + parent.getName();
 		}
-		return "@" + parent.getName();
+		if (parent.getParent() instanceof BlockScope)
+		{
+			return "statement block in statement block in " + parent.getName();
+		}
+		if ((parent instanceof BlockScope) ||
+			(parent instanceof MethodScope))
+		{
+			return "statement block in " + parent.getName();
+		}
+		return parent.getName();
 	}
 }
