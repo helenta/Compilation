@@ -3,23 +3,29 @@ package IC.Semantic;
 import java.util.ArrayList;
 import java.util.List;
 
+import IC.AST.*;
+
 public class ClassScope extends Scope {
 	public List<Scope> methods;
 	public List<Scope> fields;
 	public List<Scope> derived;
 	
-	public ClassScope(Scope parent, String name, int line) {
+	public ICClass icClass;
+	
+	public ClassScope(Scope parent, String name, int line, ICClass icClass) {
 		super(parent, name, line);
 		methods = new ArrayList<Scope>();
 		fields = new ArrayList<Scope>();
 		derived = new ArrayList<Scope>();
+		this.icClass = icClass;
 	}
 	
-	public ClassScope(String name, int line){
+	public ClassScope(String name, int line, ICClass icClass){
 		super(name, line);
 		methods = new ArrayList<Scope>();
 		fields = new ArrayList<Scope>();
 		derived = new ArrayList<Scope>();
+		this.icClass = icClass;
 	}
 	
 	@Override

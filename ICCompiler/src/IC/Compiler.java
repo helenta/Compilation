@@ -31,10 +31,11 @@ public class Compiler{
 			return;
 		
 		String libaryFileName = null, printOption = null;
-		if (args[1].startsWith("-L") && args.length > 2)
+		if (args[1].startsWith("-L"))
 		{
 			libaryFileName = args[1].substring(2, args[1].length());
-			printOption = args[2];
+			if (args.length > 2)
+				printOption = args[2];
 		}
 		else
 		{
@@ -60,8 +61,6 @@ public class Compiler{
     	try
 		{
 			SymbolTable table = (SymbolTable) new SymbolTableBuilder().visit(program);
-			TypeChecker checker = new TypeChecker(table);
-			checker.visit(program); 
 			
 			if (libaryClass != null && libaryClass.size() > 0)
 			{
@@ -70,6 +69,9 @@ public class Compiler{
 				table.addLibTable(libTable);
 			}
 			
+			TypeChecker checker = new TypeChecker(table);
+			checker.visit(program); 
+			
 	    	if (arg.equals("-print-ast"))
 	    	{
 	    		PrettyPrinter printer = new PrettyPrinter(icFileName,table);
@@ -77,17 +79,20 @@ public class Compiler{
 	    	    System.out.println(output);	    
 	    	}
 	
-	    	if (arg.equals("-dump-symtab")) {
+	    	if (arg.equals("-dump-symtab")) 
+	    	{
 				System.out.println(table);
 				
 				System.out.println("Type Table");
 				Map<String, Integer> map = SymbolTablePrettyPrint.typeTable;
 				Map<Integer, String> typeTable = new TreeMap<Integer,String>();
 				int i = 0;
+				
 				for (String name : map.keySet())
 					typeTable.put(map.get(name), name);
 				
-				for (Integer id : typeTable.keySet()){
+				for (Integer id : typeTable.keySet())
+				{
 		            String value = typeTable.get(id).toString();  
 		            System.out.println("    " + (++i) + ": " + value);  
 				} 
@@ -112,13 +117,15 @@ public class Compiler{
 			txtFile = new FileReader(fileName);
 			Scanner lex = new Scanner(txtFile);
 			
-			if (isLibary){
+			if (isLibary)
+			{
 				LibParser parser = new LibParser(lex);
 				parser.printTokens = false;
 				Symbol symbol = parser.parse();
 				return symbol.value;
 			}
-			else{
+			else
+			{
 				Parser parser = new Parser(lex);
 				Symbol symbol = parser.parse();
 				return symbol.value;

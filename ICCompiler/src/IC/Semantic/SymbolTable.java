@@ -64,12 +64,17 @@ public class SymbolTable {
 			int y = 0;
 			y++;
 		}
-		if (scope.hasSymbol(name)){
+		
+		if (scope.hasSymbol(name))
+		{
 			return scope.getSymbol(name);
 		}
-		if (scope.getParent() == null){
+		
+		if (scope.getParent() == null)
+		{
 			return null;
 		}
+		
 		return getSymbol(scope.getParent(), name);
 	}
 	

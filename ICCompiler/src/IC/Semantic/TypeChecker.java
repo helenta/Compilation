@@ -5,83 +5,91 @@ import java.util.List;
 import IC.AST.*;
 import IC.*;
 
-public class TypeChecker implements Visitor {
+public class TypeChecker implements Visitor
+{
 	
 	private SymbolTable table;
-	private boolean mainDeclared;
 	private boolean inStatic = false;
 	
-	public TypeChecker(SymbolTable table) {
+	public TypeChecker(SymbolTable table) 
+	{
 		this.table = table;
-		this.mainDeclared = false;
 	}
 	
-	public Object visit(Program program) {
-		for (ICClass cls : program.getClasses()){
+	public Object visit(Program program)
+	{
+		for (ICClass cls : program.getClasses())
+		{
 			cls.accept(this);
 		}
+		
 		return null;
 	}
 
-	public Object visit(ICClass icClass) {
-		for (Method method : icClass.getMethods()){
+	public Object visit(ICClass icClass) 
+	{
+		for (Field field : icClass.getFields())
+		{
+			field.accept(this);
+			field.semType = field.getType();
+		}
+		
+		for (Method method : icClass.getMethods())
+		{
 			method.accept(this);
 		}
+		
 		return null;
 	}
 
-	public Object visit(VirtualMethod method) {
-		for (Statement stmt : method.getStatements()){
+	public Object visit(VirtualMethod method) 
+	{
+		for (Formal formal : method.getFormals())
+		{
+			formal.accept(this);
+			formal.semType = formal.getType();
+		}
+		
+		for (Statement stmt : method.getStatements())
+		{
 			stmt.accept(this);
 		}
+		
 		return null;
 	}
 
-	public Object visit(StaticMethod method) {
-		if (isMain(method)){
-			if (mainDeclared){
-				throw new SemanticException(method.getLine() + ": semantic error; Found more than one main in the file");
-			}
-			mainDeclared = true;
-		}
+	public Object visit(StaticMethod method) 
+	{
 		inStatic = true;
-		for (Statement stmt : method.getStatements()){
+		
+		for (Formal formal : method.getFormals())
+		{
+			formal.accept(this);
+			formal.semType = formal.getType();
+		}
+		
+		for (Statement stmt : method.getStatements())
+		{
 			stmt.accept(this);
 		}
+		
 		inStatic = false;
+		
 		return null;
 	}
 
-	private boolean isMain(StaticMethod method) {
-		if (method.getName().equals("main")){
-			if (!(method.getType().getName().equals("void"))){
-				throw new SemanticException(method.getLine() + ": semantic error; Main method should have 'void' return type");
-			}
-			if (method.getFormals().size() == 1){
-				Formal param = method.getFormals().get(0);
-				String name = param.getName();
-				int dim = param.getType().getDimension();
-				String typeName = param.getType().getName();
-				if (name.equals("args") && dim == 1 &&  typeName.equals("string")){
-					return true;
-				}
-			throw new SemanticException(method.getLine() + ": semantic error; Argument for main method should be 'string[] args'");	
-			}
-		}
-		return false;
-	}
-
-	public Object visit(PrimitiveType type) {
+	public Object visit(PrimitiveType type) 
+	{
 		return type.semType = type;
 	}
 
-	public Object visit(Assignment assignment) {
-		assignment.getVariable().scope = assignment.scope;
-		assignment.getAssignment().scope = assignment.scope;
+	public Object visit(Assignment assignment) 
+	{
 		Type refType = (Type) assignment.getVariable().accept(this);
 		Type exprType = (Type) assignment.getAssignment().accept(this);
 		
-		if (!isSameType(refType, exprType)){
+		if (!isSameType(refType, exprType))
+		{
 			throw new SemanticException(assignment.getLine() + ": semantic error; Invalid assignment of type " + printType(exprType) +  " to variable of type " + printType(refType));
 		}
 		
@@ -92,45 +100,65 @@ public class TypeChecker implements Visitor {
 		return refType;
 	}
 	
-	String printType(Type type){
-		if (type.getName().equals("int")){
+	String printType(Type type)
+	{
+		if (type.getName().equals("int"))
+		{
 			return "integer";
 		}
+		
 		return type.getName();
 	}
 	
-	private boolean isSameType(Type a, Type b) {
-		if (b == null){
-			if (a == null){
+	private boolean isSameType(Type a, Type b) 
+	{
+		if (b == null)
+		{
+			if (a == null)
+			{
 				return true;
 			}
-			else if (!a.IsPimitive() || a.IsIntegerOrBoolean() || ((PrimitiveType)a).getType() != DataTypes.VOID){
+			else if (!a.IsPimitive() || a.IsIntegerOrBoolean() || ((PrimitiveType)a).getType() != DataTypes.VOID)
+			{
 				return true;
 			}
-			else{
+			else
+			{
 				return false;
 			}
 		}
-		if (b.IsPimitive()){
-			if (((PrimitiveType)b).getName() == null){
+		if (b.IsPimitive())
+		{
+			if (((PrimitiveType)b).getName() == null)
+			{
 				return true;
 			}
 		}	
-		if (a.getName().equals(b.getName())){
+		if (a.getName().equals(b.getName()))
+		{
 			return a.getDimension() == b.getDimension();
 		}
-		if (!(a instanceof Type) || !(b instanceof Type)){
+		if (!(a instanceof Type) || !(b instanceof Type))
+		{
 			return false;
 		}
-		if (a.getDimension() == b.getDimension() && table.isDerived(b.getName(), a.getName())){
+		if (a.getDimension() == b.getDimension() && table.isDerived(b.getName(), a.getName()))
+		{
 			return true;
 		}
 		return false;
 	}
 
-	public Object visit(Call callStatement) {
-		callStatement.accept(this);
-		// TODO: finish this.
+	public Object visit(Call callStatement) 
+	{
+		if (callStatement.getArguments() == null)
+			return null;
+		
+		for (Expression arg : callStatement.getArguments())
+		{
+			arg.accept(this);
+		}
+		
 		return null;
 	}
 
@@ -138,9 +166,12 @@ public class TypeChecker implements Visitor {
 	{
 		MethodScope method = table.getEnclosingMethod(returnStatement.scope);
 		Type retType = method.getRetType();
-		String retValueTypeName = retType.getName(); 
-		if (!returnStatement.hasValue()){
-			if (!retValueTypeName.equals("void")){
+		String retValueTypeName = retType.getName();
+		
+		if (!returnStatement.hasValue())
+		{
+			if (!retValueTypeName.equals("void"))
+			{
 				throw new SemanticException(returnStatement.getLine() + ": semantic error; Return statement is not of type " + printType(retType));
 			}
 			return null;
@@ -148,41 +179,52 @@ public class TypeChecker implements Visitor {
 		
 		returnStatement.getValue().scope = returnStatement.scope;
 		Type expType = (Type) returnStatement.getValue().accept(this);
-		if (expType == null && !retType.IsIntegerOrBoolean()){
+		
+		if (expType == null && !retType.IsIntegerOrBoolean())
+		{
 			return null;
 		}
-		else if (expType == null && retType.IsIntegerOrBoolean()){
+		
+		else if (expType == null && retType.IsIntegerOrBoolean())
+		{
 			throw new SemanticException(returnStatement.getLine() + ": semantic error; Return statement is not of type " + printType(retType));
 		}
 		
-		if (!method.getRetType().IsPimitive() && !expType.IsPimitive()){
-			if (!(table.isDerived(expType.getName(), retValueTypeName))){
+		if (!method.getRetType().IsPimitive() && !expType.IsPimitive())
+		{
+			if (!(table.isDerived(expType.getName(), retValueTypeName)))
+			{
 				throw new SemanticException(returnStatement.getLine() + ": semantic error; Return statement is not of type " + printType(retType));
-
 			}
 		}
-		if (!retValueTypeName.equals(expType.getName())){
+		
+		if (!retValueTypeName.equals(expType.getName()))
+		{
 			throw new SemanticException(returnStatement.getLine() + ": semantic error; Return statement is not of type " + printType(retType));
 		}
 		
 		returnStatement.getValue().semType = retType;
 		
-		return null;
+		return retType;
 	}
 
 	public Object visit(If ifStatement) 
 	{
-		ifStatement.getCondition().scope = ifStatement.scope;
 		Type cond = (Type) ifStatement.getCondition().accept(this);
-		if (!cond.getName().equals("boolean")){
+		
+		if (!cond.IsBoolean())
+		{
 			throw new SemanticException(ifStatement.getLine() + ": semantic error; Non boolean condition for if statement");
 		}
-		ifStatement.getOperation().scope = ifStatement.scope;
+		
+		ifStatement.getCondition().semType = cond;
 		ifStatement.getOperation().accept(this);
-		if (ifStatement.hasElse()){
-			ifStatement.getElseOperation().scope = ifStatement.scope;
+		
+		if (ifStatement.hasElse())
+		{
 			ifStatement.getElseOperation().accept(this);
 		}
+		
 		return null;
 	}
 
@@ -190,7 +232,8 @@ public class TypeChecker implements Visitor {
 	{
 		Type cond = (Type) whileStatement.getCondition().accept(this);
 	
-		if (!cond.getName().equals("boolean")){
+		if (!cond.getName().equals("boolean"))
+		{
 			throw new SemanticException(whileStatement.getLine() + ": semantic error; Non boolean condition for while statement");
 		}
 		
@@ -203,35 +246,43 @@ public class TypeChecker implements Visitor {
 
 	public Object visit(StatementsBlock statementsBlock) 
 	{
-		for (Statement stmt : statementsBlock.getStatements()){
+		for (Statement stmt : statementsBlock.getStatements())
+		{
 			stmt.accept(this);
 		}
+		
 		return null;
 	}
 
-	public Object visit(LocalVariable localVariable) {
-		//if (localVariable.isInitialized()){
-		//	localVariable.getInitialValue().scope = localVariable.scope;
-		//	localVariable.getInitialValue().accept(this);
-		//}
+	public Object visit(LocalVariable localVariable) 
+	{
 		localVariable.getType().semType = localVariable.getType();
 		
 		if (localVariable.hasInitValue())
 		{
-			localVariable.getInitValue().semType = (Type)localVariable.getInitValue().accept(this);
+			Type initType = (Type)localVariable.getInitValue().accept(this);
+			
+			if (!isSameType(initType, localVariable.getType()))
+			{
+				throw new SemanticException(localVariable.getLine() + ": semantic error; not compatible init value");
+			}
+			
+			localVariable.getInitValue().semType = initType;
 		}
-		
+
 		return localVariable.semType = localVariable.getType();
 	}
 
 	public Object visit(VariableLocation location) 
 	{
 		Scope varScope = table.getSymbol(location.scope, location.getName());
-		if (varScope == null){
+		if (varScope == null)
+		{
 			throw new SemanticException(location.getLine() + ": semantic error; " + location.getName() + " not found in symbol table");
 		}
 
-		if (!location.isExternal() && inStatic && varScope instanceof FieldScope){
+		if (!location.isExternal() && inStatic && varScope instanceof FieldScope)
+		{
 			throw new SemanticException(location.getLine() + ": semantic error; Use of field inside static method is not allowed");
 		}
 		
@@ -247,130 +298,157 @@ public class TypeChecker implements Visitor {
 
 	public Object visit(Field location) 
 	{
-		//location.getObject().scope = location.scope;
-		Type objType = (Type) location.accept(this);
-		Scope objScope = table.getSymbol(location.scope, objType.getName());
-		String fieldName = location.getName();
-		if (objScope.getSymbol(fieldName) == null || !(objScope.getSymbol(fieldName) instanceof FieldScope)){
-			// TODO: some error
+		Type objType = (Type) location.getType();
+		Scope objTypeScope = table.root;
+		if (!objType.IsPimitive())
+		{
+			objTypeScope = table.getSymbol(location.scope, objType.getName());
+			if (objTypeScope == null)
+				throw new SemanticException(location.getLine() + ": semantic error; Use of field inside static method is not allowed");
 		}
-		if (inStatic){
-			//if (table.getEnclosingClass(location.scope).getName().equals(objScope.getName())){
-			//	throw new SemanticException(location.getLine() + ": semantic error; Use of field inside static method is not allowed");
-			//}
+		
+	 	String fieldName = location.getName();
+		
+		if (inStatic)
+		{
+			if (table.getEnclosingClass(location.scope).getName().equals(objTypeScope.getName()))
+			{
+				throw new SemanticException(location.getLine() + ": semantic error; Unknown inclosing type");
+			}
 		}
-		ClassScope objcls  = (ClassScope) table.getSymbol(location.scope, objType.getName());
-		Scope fieldScope = table.getSymbol(objcls, fieldName);
+		
+		ClassScope objScope = table.getEnclosingClass(location.scope);
+		Scope fieldScope = table.getSymbol(objScope, fieldName);
+		
 		return location.semType =  ((PrimitiveScope)fieldScope).getType();
 	}
 
 	public Object visit(ArrayLocation location) 
 	{
-		location.getArray().scope = location.scope;
-		location.getIndex().scope = location.scope;
 		Type arrType = (Type) location.getArray().accept(this);
 		Type indexType = (Type) location.getIndex().accept(this);
-		if (!indexType.getName().equals("int")){
-			throw new SemanticException("Non int for index");
+		
+		if (!indexType.getName().equals("int"))
+		{
+			throw new SemanticException(location.getLine() + ": semantic error; Non int for index");
 		}
+		
 		// copy type and give 1 dimension lower:
 		Type copied = null;
-		if (arrType instanceof PrimitiveType){
+		if (arrType instanceof PrimitiveType)
+		{
 			copied = new PrimitiveType(arrType.getLine(), ((PrimitiveType) arrType).getType());
 		}
-		else if (arrType instanceof Type){
+		else if (arrType instanceof Type)
+		{
 			copied = new Type(arrType.getLine(), ((Type)arrType).getName());
 		}
 		
-		for (int i=0; i<arrType.getDimension() - 1;i++){
+		for (int i=0; i<arrType.getDimension() - 1;i++)
+		{
 			copied.incrementDimension();
 		}
+		
 		return location.semType = copied;
 	}
 
-	public Object visit(StaticCall call) {
+	public Object visit(StaticCall call) 
+	{
 		String methodName = call.getName();
 		String clsName = call.getClassName();
 		Scope clsScope = table.getSymbol(call.scope, clsName);
-		if (clsScope == null){
+		
+		if (clsScope == null)
+		{
 			throw new SemanticException(call.getLine() + ": semantic error; Class " + clsName + " doesn't exist");
 		}
+		
 		MethodScope methodScope = (MethodScope) table.getSymbol(clsScope, methodName);
-		if (methodScope == null){
+		if (methodScope == null)
+		{
 			throw new SemanticException(call.getLine() + ": semantic error; Method " + methodName + " doesn't exist");
 		}
-		if (call.getArguments().size() != methodScope.params.size()){
+		
+		if (call.getArguments().size() != methodScope.params.size())
+		{
 			throw new SemanticException(call.getLine() + ": semantic error; Invalid number of arguments for " + clsName + "." + methodName);
 		}
-		if (!isSameSignature(call, methodScope)){
+		
+		if (!isSameSignature(call, methodScope))
+		{
 			throw new SemanticException(call.getLine() + ": semantic error; Method " + methodName + " is not applicable for the arguments given");
 		}
+		
 		return call.semType = methodScope.getRetType();
 	}
 	
 	public Object visit(VirtualCall call) 
 	{
-		Type objType = null;
-		if (call == null){
-			objType = new Type(0, table.getEnclosingClass(call.scope).getName());
-		}
-		else{
-			//call.getObject().scope = call.scope;
-			objType = (Type) call.accept(this);	
-		}
-		Scope objScope = table.getSymbol(call.scope, objType.getName());
-
 		String methodName = call.getName();
-		//MethodScope methodScope = (MethodScope) table.getSymbol(call.scope, methodName);
-		MethodScope methodScope = (MethodScope) table.getSymbol(objScope, methodName);
-		MethodScope encMethod = table.getEnclosingMethod(call.scope);
-		if (methodScope == null){
-			if (call == null){
-				throw new SemanticException(call.getLine() + ": semantic error; " + methodName + " not found in symbol table");
-			}
-			else{
-				throw new SemanticException(call.getLine() + ": semantic error; Method " + objType.getName() + "." + methodName + " not found in type table");
-			}
+		
+		String clsName = null;
+		Expression location = call.getLocation();
+		ClassScope clsScope = null;
+		if (location == null)
+		{
+			clsScope = table.getEnclosingClass(call.scope);
+			if (clsScope != null)
+				clsName = clsScope.icClass.getName();
 		}
-		if (!table.isEnclosedInVirtualMethod(call.scope) && !encMethod.getName().equals("main") && methodScope.isVirtual() && call == null){
-			throw new SemanticException(call.getLine() + ": semantic error; Calling a local virtual method from inside a static method is not allowed");
+		else
+		{
+			clsName = ((Type)location.accept(this)).getName();
+			clsScope = (ClassScope)table.getSymbol(call.scope, clsName);
 		}
-		if (call.getArguments().size() != methodScope.params.size()){
-			if (call == null){
-				throw new SemanticException(call.getLine() + ": semantic error; Invalid number of arguments for " + methodName);
-			}
-			else{
-				throw new SemanticException(call.getLine() + ": semantic error; Invalid number of arguments for " + objType.getName() + "." + methodName);
-			}
+		
+		if (clsScope == null)
+		{
+			throw new SemanticException(call.getLine() + ": semantic error; Class " + clsName + " doesn't exist");
 		}
-		if (!isSameSignature(call, methodScope)){
-			if (call == null){
-				throw new SemanticException(call.getLine() + ": semantic error; Method " + methodName + " is not applicable for the arguments given");
-			}
-			else{
-				throw new SemanticException(call.getLine() + ": semantic error; Method" + objType.getName() + "." + methodName + " is not applicable for the arguments given");
-			}
+		
+		MethodScope methodScope = (MethodScope) table.getSymbol(clsScope, methodName);
+		if (methodScope == null)
+		{
+			throw new SemanticException(call.getLine() + ": semantic error; Method " + methodName + " doesn't exist");
 		}
+		
+		if (call.getArguments().size() != methodScope.params.size())
+		{
+			throw new SemanticException(call.getLine() + ": semantic error; Invalid number of arguments for " + clsName + "." + methodName);
+		}
+		
+		if (!isSameSignature(call, methodScope))
+		{
+			throw new SemanticException(call.getLine() + ": semantic error; Method " + methodName + " is not applicable for the arguments given");
+		}
+		
 		return call.semType = methodScope.getRetType();
 	}
 	
-	public boolean isSameSignature(Call call, MethodScope scope){
+	public boolean isSameSignature(Call call, MethodScope scope)
+	{
 		int params = call.getArguments().size();
 		List<Expression> callArgs = call.getArguments();
 		List<Scope> methodArgs = scope.params;
-		for (int i=0; i < params; i++){
+		
+		for (int i=0; i < params; i++)
+		{
 			callArgs.get(i).scope = call.scope;
 			Type argType = (Type) callArgs.get(i).accept(this);
 			Type paramType = ((PrimitiveScope)methodArgs.get(i)).getType();
-			if (!isSameType(paramType, argType)){
+			
+			if (!isSameType(paramType, argType))
+			{
 				return false;
 			}
 		}
 		return true;
 	}
 	
-	public Object visit(This thisExpression) {
-		if (inStatic){
+	public Object visit(This thisExpression) 
+	{
+		if (inStatic)
+		{
 			throw new SemanticException(thisExpression.getLine() + ": semantic error; Use of 'this' expression inside static method is not allowed");
 		}
 		
@@ -378,68 +456,81 @@ public class TypeChecker implements Visitor {
 		return thisExpression.semType = new Type(cls.getLine(), cls.getName());
 	}
 
-	public Object visit(NewClass newClass) {
+	public Object visit(NewClass newClass)
+	{
 		return newClass.semType = new Type(newClass.getLine(), newClass.getName());
 	}
 
 	public Object visit(NewArray newArray) 
 	{
 		newArray.getSize().accept(this);
-		if (newArray.getSize().semType.getName().equals("int")){
+		if (newArray.getSize().semType.getName().equals("int"))
+		{
 			// TODO: not great, better copy but ?
 			Type arr = newArray.getType();
 			arr.incrementDimension();
 			return newArray.semType = arr;
 		}
-		//TODO: some error
-		return null;
+		else
+		{
+			throw new SemanticException(newArray.getLine() + ": semantic error; Size expressio is not of integer type");
+		}
 	}
 
-	public Object visit(Length length) {
-		length.getArray().scope = length.scope;
+	public Object visit(Length length) 
+	{
 		length.getArray().accept(this);
 		// all is fine return an int.
 		
 		return length.semType = new PrimitiveType(length.getLine(), DataTypes.INT);
 	}
 
-	public Object visit(Literal literal) {
-		switch(literal.getType()) {
+	public Object visit(Literal literal) 
+	{
+		switch(literal.getType()) 
+		{
 		case INTEGER:
 			return literal.semType = new PrimitiveType(literal.getLine(), DataTypes.INT);
 		case STRING:
 			return literal.semType = new PrimitiveType(literal.getLine(), DataTypes.STRING);
 		case NULL:
-			return literal.semType = new PrimitiveType(literal.getLine(), DataTypes.VOID);
+			return literal.semType = null;
 		case TRUE:
 			return literal.semType = new PrimitiveType(literal.getLine(), DataTypes.BOOLEAN);
 		case FALSE:
 			return literal.semType = new PrimitiveType(literal.getLine(), DataTypes.BOOLEAN);
 		}
+		
 		return null;
 	}
 
-	public Object visit(UnaryOp unaryOp) {
+	public Object visit(UnaryOp unaryOp) 
+	{
 		unaryOp.getOperand().scope = unaryOp.scope;
 		unaryOp.getOperand().accept(this);
 		Type operand = unaryOp.getOperand().semType;
 		UnaryOps op = unaryOp.getOperator();
-		switch(op){
-		case UMINUS:
-			if (operand.getName().equals("int")){
-				return unaryOp.semType = new PrimitiveType(operand.getLine(),DataTypes.INT);
-			}
-			break;	
-		case LNEG:
-			if (operand.getName().equals("boolean")){
-				return unaryOp.semType = new PrimitiveType(operand.getLine(),DataTypes.BOOLEAN);
-			}
-			break;
+		
+		switch(op)
+		{
+			case UMINUS:
+				if (operand.getName().equals("int"))
+				{
+					return unaryOp.semType = new PrimitiveType(operand.getLine(),DataTypes.INT);
+				}
+				break;	
+			case LNEG:
+				if (operand.getName().equals("boolean"))
+				{
+					return unaryOp.semType = new PrimitiveType(operand.getLine(),DataTypes.BOOLEAN);
+				}
+				break;
 		}
 		return null;
 	}
 
-	public Object visit(BinaryOp binaryOp) {
+	public Object visit(BinaryOp binaryOp) 
+	{
 		binaryOp.getFirstOperand().scope = binaryOp.scope;
 		binaryOp.getSecondOperand().scope = binaryOp.scope;
 		binaryOp.getFirstOperand().accept(this);
@@ -451,88 +542,107 @@ public class TypeChecker implements Visitor {
 		Type b = binaryOp.getSecondOperand().semType;
 		BinaryOps op = binaryOp.getOperator();
 		
-		switch(op){
-		case PLUS:
-			temp = add(a,b);
-			if (temp == null){
-				throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid arithmatic binary op (" + op + ") on non-integer and non-string expression");
-			}
-			return binaryOp.semType = temp;
-		case MINUS:
-		case MULTIPLY:
-		case DIVIDE:
-		case MOD:
-			temp = arith(a,b);
-			if (temp == null){
-				throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid arithmatic binary op (" + op + ") on non-integer expression");
-			}
-			return binaryOp.semType = temp;
-		case LTE:
-		case GTE:
-		case GT:
-		case LT:
-			temp = comp(a,b);
-			if (temp == null){
-				throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid logical binary op (" + op + ") on non-integer expression");
-			}
-			return binaryOp.semType = temp;
-		case EQUAL:
-		case NEQUAL:
-			temp = eq(a,b);
-			if (temp == null){
-				throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid comparison binary op (" + op + ") on expressions of different types");
-			}
-			return binaryOp.semType = temp;
-		case LOR:
-		case LAND:
-			temp = logic(a,b);
-			if (temp == null){
-				throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid logical binary op (" + op + ") on non-boolean expression");
-			}
-			return binaryOp.semType = temp;
-		default:
-			throw new SemanticException("Bad op");
+		switch(op)
+		{
+			case PLUS:
+				temp = add(a,b, binaryOp);
+				if (temp == null)
+				{
+					throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid arithmatic binary op (" + op + ") on non-integer and non-string expression");
+				}
+				return binaryOp.semType = temp;
+			case MINUS:
+			case MULTIPLY:
+			case DIVIDE:
+			case MOD:
+				temp = arith(a,b);
+				if (temp == null)
+				{
+					throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid arithmatic binary op (" + op + ") on non-integer expression");
+				}
+				return binaryOp.semType = temp;
+			case LTE:
+			case GTE:
+			case GT:
+			case LT:
+				temp = comp(a,b);
+				if (temp == null)
+				{
+					throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid logical binary op (" + op + ") on non-integer expression");
+				}
+				return binaryOp.semType = temp;
+			case EQUAL:
+			case NEQUAL:
+				temp = eq(a,b);
+				if (temp == null)
+				{
+					throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid comparison binary op (" + op + ") on expressions of different types");
+				}
+				return binaryOp.semType = temp;
+			case LOR:
+			case LAND:
+				temp = logic(a,b);
+				if (temp == null)
+				{
+					throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid logical binary op (" + op + ") on non-boolean expression");
+				}
+				return binaryOp.semType = temp;
+			default:
+				throw new SemanticException("Bad op");
 		}
 	}
 
-	private Type logic(Type a, Type b) {
-		if (a.getName().equals(b.getName()) && a.getName().equals("boolean")){
+	private Type logic(Type a, Type b)
+	{
+		if (a.getName().equals(b.getName()) && a.getName().equals("boolean"))
+		{
+			return new PrimitiveType(a.getLine(),DataTypes.BOOLEAN);
+		}
+		
+		return null;
+	}
+
+	private Type eq(Type a, Type b) 
+	{
+		if (isSameType(a,b))
+		{
 			return new PrimitiveType(a.getLine(),DataTypes.BOOLEAN);
 		}
 		return null;
 	}
 
-	private Type eq(Type a, Type b) {
-		if (isSameType(a,b)){
-			return new PrimitiveType(a.getLine(),DataTypes.BOOLEAN);
-		}
-		return null;
-	}
-
-	private Type comp(Type a, Type b) {
-		if (a.getName().equals(b.getName()) && a.getName().equals("int")){
+	private Type comp(Type a, Type b)
+	{
+		if (a.getName().equals(b.getName()) && a.getName().equals("int"))
+		{
 			return new PrimitiveType(a.getLine(), DataTypes.BOOLEAN);
 		}
 		return null;
 	}
 
-	private Type arith(Type a, Type b) {
-		if (a.getName().equals(b.getName()) && a.getName().equals("int")){
+	private Type arith(Type a, Type b) 
+	{
+		if (a.getName().equals(b.getName()) && a.getName().equals("int"))
+		{
 			return new PrimitiveType(a.getLine(),DataTypes.INT);
 		}
 		return null;
 	}
 
-	private Type add(Type a, Type b) {
-		if (a instanceof PrimitiveType && b instanceof PrimitiveType){
-			if (a.getName().equals(b.getName())){
-				switch (a.getName()){
+	private Type add(Type a, Type b, BinaryOp binaryOp) 
+	{
+		if (a instanceof PrimitiveType && b instanceof PrimitiveType)
+		{
+			if (a.getName().equals(b.getName()))
+			{
+				switch (a.getName())
+				{
 				case "int":
 					return new PrimitiveType(a.getLine(),DataTypes.INT);
 				case "string":
 					return new PrimitiveType(a.getLine(),DataTypes.STRING);
 				default:
-					//TODO: some error
+					throw new SemanticException(binaryOp.getLine() + ": semantic error; cannot use '+' on this type");
 				}
 			}	
 		}
@@ -548,21 +658,18 @@ public class TypeChecker implements Visitor {
 
 	public Object visit(Formal formal) 
 	{
-		formal.semType = formal.getType();
-		return null;
+		return formal.semType = formal.getType();
 	}
 
 	public Object visit(Type type) 
 	{
-		type.semType = type;
-		return null;
+		return type.semType = type;
 	}
 
 	public Object visit(CallStatement callStatement) 
 	{
 		Type type = (Type)callStatement.getCall().accept(this);
-		callStatement.semType = type;
-		return null;
+		return callStatement.semType = type;
 	}
 
 	public Object visit(Break breakStatement)
@@ -570,52 +677,62 @@ public class TypeChecker implements Visitor {
 		return null;
 	}
 
-	public Object visit(Continue continueStatement) {
+	public Object visit(Continue continueStatement) 
+	{
 		return null;
 	}
 
 	public Object visit(MathBinaryOp binaryOp) 
 	{
-		return null;
-		/*Type firstOperandtype = (Type)binaryOp.getFirstOperand().accept(this);
+		Type firstOperandtype = (Type)binaryOp.getFirstOperand().accept(this);
 		Type secondOperandtype = (Type)binaryOp.getSecondOperand().accept(this);
 		
-		if (!firstOperandtype.getName().equals("INT") ||
-			!secondOperandtype.getName().equals("INT"))
+		if (!firstOperandtype.IsInteger() ||
+			!secondOperandtype.IsInteger())
 		{
-			
+			throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid logical binary op (" + binaryOp.getOperator() + ") is not Integer type");
 		}
 		
-		return new PrimitiveType(binaryOp.getLine(), DataTypes.INT);*/
+		return new PrimitiveType(binaryOp.getLine(), DataTypes.INT);
 	}
 
-	public Object visit(LogicalBinaryOp binaryOp) {
-		
+	public Object visit(LogicalBinaryOp binaryOp) 
+	{
 		Type firstOpType = (Type)binaryOp.getFirstOperand().accept(this);
 		Type secondOpType = (Type)binaryOp.getSecondOperand().accept(this);
-			
 		
-		if (!isSameType(firstOpType, secondOpType) &&
-			(firstOpType.getName().equals("BOOLEAN")||
-			 firstOpType.getName().equals("INT")))
+		if (!isSameType(firstOpType, secondOpType) && (firstOpType != null || !firstOpType.IsIntegerOrBoolean()))
 		{
-			throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid logical binary op (" + binaryOp.getOperator() + ") is not BOLLEAN type");
+			throw new SemanticException(binaryOp.getLine() + ": semantic error; Invalid logical binary op (" + binaryOp.getOperator() + ") is not BOLLEAN or Integer type");
 		}
 		
 		return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
 	}
 
-	public Object visit(MathUnaryOp unaryOp) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(MathUnaryOp unaryOp) 
+	{
+		Type op = (Type)unaryOp.getOperand().accept(this);
+		if (!op.getName().equals("INT"))
+		{
+			throw new SemanticException(unaryOp.getLine() + ": semantic error; cannot use math operation on expression of type " + op.getName());
+		}
+		
+		return op;
 	}
 
-	public Object visit(LogicalUnaryOp unaryOp) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(LogicalUnaryOp unaryOp) 
+	{
+		Type op = (Type)unaryOp.getOperand().accept(this);
+		if (!op.getName().equals("BOOLEAN"))
+		{
+			throw new SemanticException(unaryOp.getLine() + ": semantic error; cannot use math operation on expression of type " + op.getName());
+		}
+		
+		return op;
 	}
 
-	public Object visit(ExpressionBlock expressionBlock) {
+	public Object visit(ExpressionBlock expressionBlock) 
+	{
 		return expressionBlock.getExpression().accept(this);
 	}
 }

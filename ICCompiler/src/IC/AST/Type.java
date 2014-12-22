@@ -41,19 +41,33 @@ public class Type extends ASTNode {
 		return name;
 	}
 
-	public int getDimension() {
+	public int getDimension() 
+	{
 		return dimension;
 	}
 
-	public void incrementDimension() {
+	public void incrementDimension() 
+	{
 		++dimension;
 	}
 	
-	public boolean IsPimitive(){
+	public boolean IsPimitive()
+	{
 		return false;
 	}
 
-	public boolean IsIntegerOrBoolean(){
+	public boolean IsIntegerOrBoolean()
+	{
+		return false;
+	}
+	
+	public boolean IsInteger()
+	{
+		return false;
+	}
+	
+	public boolean IsBoolean()
+	{
 		return false;
 	}
 }

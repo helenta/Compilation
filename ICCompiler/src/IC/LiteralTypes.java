@@ -27,18 +27,19 @@ public enum LiteralTypes {
 			}
 		}
 
-		public String toFormattedString(Object value) {
+		public String toFormattedString(Object value)
+		{
 			if (value == null)
 				return String.valueOf(value);
 			StringBuffer formattedString = new StringBuffer(value.toString());
 
-			replaceEscapeSequences(formattedString);
-			return "\"" + formattedString.toString() + "\"";
+			//replaceEscapeSequences(formattedString);
+			return formattedString.toString();
 		}
 	},
 	TRUE(true, "Boolean literal"),
 	FALSE(false, "Boolean literal"),
-	NULL(null, "Null Literal");
+	NULL(null, "Null literal");
 	
 	private Object value;
 	

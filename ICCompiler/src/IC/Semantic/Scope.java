@@ -49,16 +49,21 @@ public abstract class Scope {
 		return symbols.containsKey(key);
 	}
 	
-	public void addSymbol(Scope scope, List<Scope> collection){
-		if (symbols.containsKey(scope.getName())){
+	public void addSymbol(Scope scope, List<Scope> collection)
+	{
+		if (symbols.containsKey(scope.getName()))
+		{
 			Scope contained = symbols.get(scope.getName());
-			if (scope instanceof MethodScope && contained instanceof FieldScope){
+			if (scope instanceof MethodScope && contained instanceof FieldScope)
+			{
 				throw new SemanticException(scope.getLine() + ": semantic error; Method " + scope.getName() + " is shadowing a field with the same name");
 			}
-			if (scope instanceof LocalScope && contained instanceof FormalScope){
+			if (scope instanceof LocalScope && contained instanceof FormalScope)
+			{
 				throw new SemanticException(scope.getLine() + ": semantic error; Local variable " + scope.getName() + " is shadowing a parameter");
 			}
-			throw new SemanticException(scope.getLine() + ": semantic error; Id " + scope.getName() + "already defined in current scope");
+			
+			throw new SemanticException(scope.getLine() + ": semantic error; Id " + scope.getName() + " already defined in current scope");
 		}
 		symbols.put(scope.getName(), scope);
 		if (collection != null){

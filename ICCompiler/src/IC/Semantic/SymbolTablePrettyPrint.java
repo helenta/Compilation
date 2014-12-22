@@ -8,22 +8,27 @@ public class SymbolTablePrettyPrint implements ScopeVisitor {
 	public static Map<String,Integer> typeTable = new HashMap<String,Integer>();
 	private static Integer id = 0;
 	
-	public Object visit(ClassScope classScope) {
+	public Object visit(ClassScope classScope) 
+	{
 		StringBuffer output = new StringBuffer();
 		output.append("Class Symbol Table: " + classScope.getName() + "\n");
 		
 		// Fields
-		for (Scope field : classScope.fields) {
+		for (Scope field : classScope.fields)
+		{
 			output.append("    ");
 			output.append(field.accept(this) + "\n");
 		}
 		// Method signatures
-		for (Scope method : classScope.methods) {
-			if (!((MethodScope)method).isVirtual()) {
+		for (Scope method : classScope.methods) 
+		{
+			if (!((MethodScope)method).isVirtual())
+			{
 				output.append("    ");
 				output.append("Static method: " + ((MethodScope) method).signature(false) + "\n");
 			}
-			else {
+			else 
+			{
 				output.append("    ");
 				output.append("Virtual method: " + ((MethodScope) method).signature(false) + "\n");
 			}

@@ -36,8 +36,6 @@ public abstract class Method extends ASTNode {
 		this.name = name;
 		this.formals = formals;
 		this.statements = statements;
-		
-		Collections.reverse(this.formals);
 	}
 
 	public Type getType() {

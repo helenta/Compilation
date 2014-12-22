@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class SymbolTableBuilder implements Visitor {
-	
+public class SymbolTableBuilder implements Visitor 
+{	
 	private boolean inWhile = false;
 	
-	public Object visit(Program program) {
+	public Object visit(Program program) 
+	{
 		SymbolTable symbolTable = new SymbolTable();
 		// Put base classes
 		for (ICClass decl : program.getClasses()){
@@ -33,46 +34,63 @@ public class SymbolTableBuilder implements Visitor {
 		return symbolTable;
 	}
 
-	public Object visit(ICClass icClass) {
-		ClassScope clsScope = new ClassScope(icClass.getName(), icClass.getLine());
-		for (Field field : icClass.getFields()){
-			clsScope.addSymbol((FieldScope)field.accept(this), clsScope.fields);
+	public Object visit(ICClass icClass) 
+	{
+		ClassScope clsScope = new ClassScope(icClass.getName(), icClass.getLine(), icClass);
+		for (Field field : icClass.getFields())
+		{
 			field.scope = clsScope;
+			clsScope.addSymbol((FieldScope)field.accept(this), clsScope.fields);
 		}
-		for (Method method : icClass.getMethods()){
+		
+		for (Method method : icClass.getMethods())
+		{
+			method.scope = clsScope;
 			MethodScope methodScope = (MethodScope) method.accept(this);
-			if (method instanceof StaticMethod || method instanceof LibraryMethod){
+			if (method instanceof StaticMethod || method instanceof LibraryMethod)
+			{
 				clsScope.addSymbol(methodScope, clsScope.methods);
 			}
-			else {
+			else
+			{
 				methodScope.setVirtual(true);
 				clsScope.addSymbol(methodScope, clsScope.methods);
 			}
-			method.scope = clsScope;
 		}
 		return clsScope;
 	}
 
-	public Object visit(Field field) {
-		FieldScope fieldScope = new FieldScope(field.getName(), field.getType(), field.getLine());
+	public Object visit(Field field) 
+	{
+		FieldScope fieldScope = new FieldScope(field.scope, field.getName(), field.getType(), field.getLine());
+		fieldScope.setParent(field.scope);
+		field.scope = fieldScope;
 		return fieldScope;
 	}
 
-	public Object visit(VirtualMethod method) {
+	public Object visit(VirtualMethod method) 
+	{
 		return makeMethodScope(method);
 	}
 
-	public Object visit(StaticMethod method) {
+	public Object visit(StaticMethod method) 
+	{
 		return makeMethodScope(method);
 	}
 
-	private Object makeMethodScope(Method method){
+	private Object makeMethodScope(Method method)
+	{
 		MethodScope methodScope = new MethodScope(method.getName(), method.getType(), method.getLine(), false, method);
-		for (Formal form : method.getFormals()){
+		methodScope.setParent(method.scope);
+		method.scope = methodScope;
+		
+		for (Formal form : method.getFormals())
+		{
 			form.scope = methodScope;
 			FormalScope formal = (FormalScope) form.accept(this);
 			methodScope.addSymbol(formal, methodScope.params);
 		}
+		
 		for (Statement stmt : method.getStatements())
 		{
 			stmt.scope = methodScope;
@@ -90,64 +108,87 @@ public class SymbolTableBuilder implements Visitor {
 			else if (stmt instanceof While)
 			{
 				Object wh = stmt.accept(this);
-				if (wh instanceof LocalScope){
+				if (wh instanceof LocalScope)
+				{
 					methodScope.addSymbol((LocalScope)wh, methodScope.locals);
 				}
-				if (wh instanceof BlockScope){
+				if (wh instanceof BlockScope)
+				{
 					methodScope.addAnonymousScope((BlockScope) wh, methodScope.blocks);
 				}
 			}
-			else if (stmt instanceof If){
-				@SuppressWarnings("unchecked")
+			else if (stmt instanceof If)
+			{
 				List<Scope> blocks = (List<Scope>) stmt.accept(this);
-				for (Scope scope : blocks){
-					if (scope instanceof LocalScope){
+				for (Scope scope : blocks)
+				{
+					if (scope instanceof LocalScope)
+					{
 						methodScope.addSymbol((LocalScope)scope, methodScope.locals);
 					}
-					if (scope instanceof BlockScope){
+					else if (scope instanceof BlockScope)
+					{
 						methodScope.addAnonymousScope((BlockScope) scope, methodScope.blocks);
 					}
 				}
 			}
-			else{
+			else
+			{
 				stmt.accept(this);
 			}
 		}
+		
 		return methodScope;
 	}
 	
-	public Object visit(LibraryMethod method) {
+	public Object visit(LibraryMethod method) 
+	{
 		return makeMethodScope(method);
 	}
 
-	public Object visit(Formal formal) {
-		return new FormalScope(formal.getName(), formal.getType(), formal.getLine());
+	public Object visit(Formal formal) 
+	{
+		FormalScope formalScope = new FormalScope(formal.getName(), formal.getType(), formal.getLine());
+		formalScope.setParent(formal.scope);
+		formal.scope = formalScope;
+		
+		return formalScope;
 	}
 
-	public Object visit(If ifStatement) {
+	public Object visit(If ifStatement) 
+	{
 		List<Scope> blocks = new ArrayList<Scope>();
-		if (ifStatement.getOperation() instanceof If){
+		if (ifStatement.getOperation() instanceof If)
+		{
 			blocks.addAll((Collection<? extends Scope>) ifStatement.getOperation().accept(this));
 		}
-		else{
+		else
+		{
 			blocks.add((Scope) ifStatement.getOperation().accept(this));
 		}
-		if (ifStatement.hasElse()){
+		
+		if (ifStatement.hasElse())
+		{
 			ifStatement.getElseOperation().scope = ifStatement.scope;
-			if (ifStatement.getElseOperation() instanceof If){
+			if (ifStatement.getElseOperation() instanceof If)
+			{
 				blocks.addAll((Collection<? extends Scope>) ifStatement.getElseOperation().accept(this));
 			}
-			else{
+			else
+			{
 				blocks.add((Scope) ifStatement.getElseOperation().accept(this));
 			}
 		}	
+		
 		ifStatement.getOperation().scope = ifStatement.scope;
 		ifStatement.getCondition().scope = ifStatement.scope;
 		ifStatement.getCondition().accept(this);
+		
 		return blocks;
 	}
 
-	public Object visit(While whileStatement) {
+	public Object visit(While whileStatement) 
+	{
 		boolean outer = inWhile;
 		inWhile = true;
 		
@@ -165,38 +206,47 @@ public class SymbolTableBuilder implements Visitor {
 		}
 		whileScope.setParent(whileStatement.scope);
 		
-		whileStatement.getCondition().scope = whileScope;
+		whileStatement.getCondition().scope = whileStatement.scope;
 		whileStatement.getCondition().accept(this);
 		
-		whileStatement.getOperation().scope = whileScope;
-		Scope whScope = (Scope) whileStatement.getOperation().accept(this);
-		if (!outer){
+		whileStatement.getOperation().scope = whileStatement.scope;
+		whileStatement.getOperation().accept(this);
+		
+		whileStatement.getOperation().scope = whileStatement.scope;
+		if (!outer)
+		{
 			inWhile = false;
 		}
 		return whileScope;
 	}
 
-	public Object visit(Break breakStatement) {
-		if (!inWhile){
+	public Object visit(Break breakStatement) 
+	{
+		if (!inWhile)
+		{
 			throw new SemanticException(breakStatement.getLine()+ ": semantic error; Use of 'break' statement outside of loop not allowed");
 		}
-		return null;
+		return breakStatement.scope;
 	}
 
-	public Object visit(Continue continueStatement) {
-		if (!inWhile){
+	public Object visit(Continue continueStatement) 
+	{
+		if (!inWhile)
+		{
 			throw new SemanticException(continueStatement.getLine()+ ": semantic error; Use of 'continue' statement outside of loop not allowed");
 		}
-		return null;
+		return continueStatement.scope;
 	}
 
-	public Object visit(StatementsBlock statementsBlock) {
+	public Object visit(StatementsBlock statementsBlock) 
+	{
 		BlockScope blkScope = new BlockScope(statementsBlock.getLine(), statementsBlock);
 		blkScope.setParent(statementsBlock.scope);
 		for (Statement stmt : statementsBlock.getStatements())
 		{	
 			stmt.scope = blkScope;
-			if (stmt instanceof LocalVariable){
+			if (stmt instanceof LocalVariable)
+			{
 				LocalScope local = (LocalScope) stmt.accept(this);
 				blkScope.addSymbol(local, blkScope.locals);
 				
@@ -204,11 +254,13 @@ public class SymbolTableBuilder implements Visitor {
 				localVarible.getType().scope = blkScope;
 				localVarible.getInitValue().scope = blkScope;
 			}
-			else if (stmt instanceof StatementsBlock){
+			else if (stmt instanceof StatementsBlock)
+			{
 				BlockScope subBlkScope = (BlockScope) stmt.accept(this);
 				blkScope.addAnonymousScope(subBlkScope, blkScope.blocks);
 			}
-			else if (stmt instanceof While){
+			else if (stmt instanceof While)
+			{
 				Object wh = stmt.accept(this);
 				if (wh instanceof LocalScope){
 					blkScope.addSymbol((LocalScope)wh, blkScope.locals);
@@ -220,26 +272,23 @@ public class SymbolTableBuilder implements Visitor {
 				((While)stmt).getCondition().scope = blkScope;
 				((While)stmt).getOperation().scope = blkScope;
 			}
-			else if (stmt instanceof If){
-				@SuppressWarnings("unchecked")
+			else if (stmt instanceof If)
+			{
 				List<Scope> blocks = (List<Scope>) stmt.accept(this);
-				for (Scope scope : blocks){
-					if (scope instanceof LocalScope){
+				for (Scope scope : blocks)
+				{
+					if (scope instanceof LocalScope)
+					{
 						blkScope.addSymbol((LocalScope)scope, blkScope.locals);
 					}
-					if (scope instanceof BlockScope){
+					if (scope instanceof BlockScope)
+					{
 						blkScope.addAnonymousScope((BlockScope) scope, blkScope.blocks);
 					}
 				}
-				
-				((If)stmt).getCondition().scope = blkScope;
-				((If)stmt).getOperation().scope = blkScope;
-				
-				if (((If)stmt).getElseOperation() != null){
-					((If)stmt).getElseOperation().scope = blkScope;
-				}
 			}
-			else{
+			else
+			{
 				stmt.accept(this);
 			}
 		}
@@ -253,6 +302,8 @@ public class SymbolTableBuilder implements Visitor {
 		localVariable.scope = localScope;
 		localScope.symbols.put(localVariable.getName(), localVariable.scope);
 		
+		localVariable.getType().scope = localScope;
+		
 		if (localVariable.getInitValue() != null)
 		{
 			localVariable.getInitValue().scope = localScope;
@@ -264,12 +315,11 @@ public class SymbolTableBuilder implements Visitor {
 
 	public Object visit(PrimitiveType type) 
 	{
-		//type.scope = type.p
 		return null;
 	}
 
-	public Object visit(Type type) {
-		// TODO Auto-generated method stub
+	public Object visit(Type type) 
+	{
 		return null;
 	}
 
@@ -283,31 +333,35 @@ public class SymbolTableBuilder implements Visitor {
 			assignment.getAssignment().scope = assignment.scope;
 			assignment.getAssignment().accept(this);
 		}
-		return null;
+		
+		return assignment.scope;
 	}
 
 	public Object visit(CallStatement callStatement) 
 	{
 		callStatement.getCall().scope = callStatement.scope;
 		callStatement.getCall().accept(this);
-		return null;
+		
+		return callStatement.scope;
 	}
 
 	public Object visit(Return returnStatement) 
 	{
 		returnStatement.getValue().scope = returnStatement.scope;
 		returnStatement.getValue().accept(this);
-		return null;
+		
+		return returnStatement.scope;
 	}
 
-	public Object visit(VariableLocation location) {
-		
+	public Object visit(VariableLocation location) 
+	{	
 		if (location.getLocation() != null)
 		{
 			location.getLocation().scope = location.scope;
 			location.getLocation().accept(this);
 		}
-		return null;
+		
+		return location.scope;
 	}
 
 	public Object visit(ArrayLocation location) 
@@ -318,11 +372,11 @@ public class SymbolTableBuilder implements Visitor {
 		location.getIndex().scope = location.scope;
 		location.getIndex().accept(this);
 		
-		return null;
+		return location.scope;
 	}
 
 	public Object visit(StaticCall call) 
-	{
+	{	
 		if (call.getArguments() != null)
 		{
 			for (Expression expArg : call.getArguments())
@@ -332,7 +386,7 @@ public class SymbolTableBuilder implements Visitor {
 			}
 		}
 		
-		return null;
+		return call.scope;
 	}
 
 	public Object visit(VirtualCall call) 
@@ -349,17 +403,17 @@ public class SymbolTableBuilder implements Visitor {
 			}
 		}
 		
-		return null;
+		return call.scope;
 	}
 
 	public Object visit(This thisExpression) 
 	{
-		return null;
+		return thisExpression.scope;
 	}
 
 	public Object visit(NewClass newClass) 
 	{
-		return null;
+		return newClass.scope;
 	}
 
 	public Object visit(NewArray newArray) {
@@ -369,7 +423,7 @@ public class SymbolTableBuilder implements Visitor {
 		
 		newArray.getType().scope = newArray.scope;
 		
-		return null;
+		return newArray.scope;
 	}
 
 	public Object visit(Length length) 
@@ -377,7 +431,7 @@ public class SymbolTableBuilder implements Visitor {
 		length.getArray().scope = length.scope;
 		length.getArray().accept(this);
 		
-		return null;
+		return length.scope;
 	}
 
 	public Object visit(MathBinaryOp binaryOp) 
@@ -388,7 +442,7 @@ public class SymbolTableBuilder implements Visitor {
 		binaryOp.getSecondOperand().scope = binaryOp.scope;
 		binaryOp.getSecondOperand().accept(this);
 		
-		return null;
+		return binaryOp.scope;
 	}
 
 	public Object visit(LogicalBinaryOp binaryOp)
@@ -399,14 +453,15 @@ public class SymbolTableBuilder implements Visitor {
 		binaryOp.getSecondOperand().scope = binaryOp.scope;
 		binaryOp.getSecondOperand().accept(this);
 		
-		return null;
+		return binaryOp.scope;
 	}
 
 	public Object visit(MathUnaryOp unaryOp) 
 	{
 		unaryOp.getOperand().scope = unaryOp.scope;
 		unaryOp.getOperand().accept(this);
-		return null;
+		
+		return unaryOp.scope;
 	}
 
 	public Object visit(LogicalUnaryOp unaryOp) 
@@ -414,18 +469,20 @@ public class SymbolTableBuilder implements Visitor {
 		unaryOp.getOperand().scope = unaryOp.scope;
 		unaryOp.getOperand().accept(this);
 		
-		return null;
+		return unaryOp.scope;
 	}
 
 	public Object visit(Literal literal)
 	{
-		return null;
+		return literal.scope;
 	}
 
 	public Object visit(ExpressionBlock expressionBlock) 
 	{
 		expressionBlock.getExpression().scope = expressionBlock.scope;
-		return null;
+		expressionBlock.getExpression().accept(this);
+		
+		return expressionBlock.scope;
 	}
 
 }

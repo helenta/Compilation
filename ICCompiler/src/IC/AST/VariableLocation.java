@@ -44,7 +44,8 @@ public class VariableLocation extends Location {
 		this.name = name;
 	}
 
-	public boolean isExternal() {
+	public boolean isExternal() 
+	{
 		return (location != null);
 	}
 
