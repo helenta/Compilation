@@ -58,6 +58,12 @@ public class SymbolTable {
 	}
 	
 	public Scope getSymbol(Scope scope, String name){
+		// todo: remove
+		if (scope == null)
+		{
+			int y = 0;
+			y++;
+		}
 		if (scope.hasSymbol(name)){
 			return scope.getSymbol(name);
 		}

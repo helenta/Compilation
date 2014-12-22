@@ -69,22 +69,26 @@ public class SymbolTableBuilder implements Visitor {
 	private Object makeMethodScope(Method method){
 		MethodScope methodScope = new MethodScope(method.getName(), method.getType(), method.getLine(), false, method);
 		for (Formal form : method.getFormals()){
+			form.scope = methodScope;
 			FormalScope formal = (FormalScope) form.accept(this);
 			methodScope.addSymbol(formal, methodScope.params);
-			form.scope = methodScope;
 		}
 		for (Statement stmt : method.getStatements())
 		{
 			stmt.scope = methodScope;
-			if (stmt instanceof LocalVariable){
+			
+			if (stmt instanceof LocalVariable)
+			{
 				LocalScope local = (LocalScope) stmt.accept(this);
 				methodScope.addSymbol(local, methodScope.locals);
 			}
-			else if (stmt instanceof StatementsBlock){
+			else if (stmt instanceof StatementsBlock)
+			{
 				BlockScope blkScope = (BlockScope) stmt.accept(this);
 				methodScope.addAnonymousScope(blkScope, methodScope.blocks);
 			}
-			else if (stmt instanceof While){
+			else if (stmt instanceof While)
+			{
 				Object wh = stmt.accept(this);
 				if (wh instanceof LocalScope){
 					methodScope.addSymbol((LocalScope)wh, methodScope.locals);
@@ -139,18 +143,37 @@ public class SymbolTableBuilder implements Visitor {
 		}	
 		ifStatement.getOperation().scope = ifStatement.scope;
 		ifStatement.getCondition().scope = ifStatement.scope;
+		ifStatement.getCondition().accept(this);
 		return blocks;
 	}
 
 	public Object visit(While whileStatement) {
 		boolean outer = inWhile;
 		inWhile = true;
+		
+		Scope whileScope = null;
+		if (whileStatement.getOperation() instanceof StatementsBlock)
+		{
+			BlockScope blockScope = new BlockScope("while", whileStatement.getLine(), (StatementsBlock)whileStatement.getOperation());
+			whileScope = blockScope;
+		}
+		else
+		{
+			Statement statement = whileStatement.getOperation();
+			LocalScope scope = new LocalScope("while singke statement", statement.getLine());
+			whileScope = scope;
+		}
+		whileScope.setParent(whileStatement.scope);
+		
+		whileStatement.getCondition().scope = whileScope;
+		whileStatement.getCondition().accept(this);
+		
+		whileStatement.getOperation().scope = whileScope;
 		Scope whScope = (Scope) whileStatement.getOperation().accept(this);
-		whileStatement.getOperation().scope = whileStatement.scope;
 		if (!outer){
 			inWhile = false;
 		}
-		return whScope;
+		return whileScope;
 	}
 
 	public Object visit(Break breakStatement) {
@@ -169,7 +192,10 @@ public class SymbolTableBuilder implements Visitor {
 
 	public Object visit(StatementsBlock statementsBlock) {
 		BlockScope blkScope = new BlockScope(statementsBlock.getLine(), statementsBlock);
-		for (Statement stmt : statementsBlock.getStatements()){
+		blkScope.setParent(statementsBlock.scope);
+		for (Statement stmt : statementsBlock.getStatements())
+		{	
+			stmt.scope = blkScope;
 			if (stmt instanceof LocalVariable){
 				LocalScope local = (LocalScope) stmt.accept(this);
 				blkScope.addSymbol(local, blkScope.locals);
@@ -216,7 +242,6 @@ public class SymbolTableBuilder implements Visitor {
 			else{
 				stmt.accept(this);
 			}
-			stmt.scope = blkScope;
 		}
 		return blkScope;
 	}
@@ -224,8 +249,17 @@ public class SymbolTableBuilder implements Visitor {
 	public Object visit(LocalVariable localVariable) 
 	{
 		LocalScope localScope = new LocalScope(localVariable.getName(), localVariable.getType(), localVariable.getLine());
+		localScope.setParent(localVariable.scope);
 		localVariable.scope = localScope;
-		return localScope;
+		localScope.symbols.put(localVariable.getName(), localVariable.scope);
+		
+		if (localVariable.getInitValue() != null)
+		{
+			localVariable.getInitValue().scope = localScope;
+			localVariable.getInitValue().accept(this);
+		}
+		
+		return localVariable.scope;
 	}
 
 	public Object visit(PrimitiveType type) 
@@ -241,91 +275,156 @@ public class SymbolTableBuilder implements Visitor {
 
 	public Object visit(Assignment assignment) 
 	{
-		//LocalScope local = new LocalScope(assignment.)
+		assignment.getVariable().scope = assignment.scope;
+		assignment.getVariable().accept(this);
+		
+		if (assignment.getAssignment() != null)
+		{
+			assignment.getAssignment().scope = assignment.scope;
+			assignment.getAssignment().accept(this);
+		}
 		return null;
 	}
 
-	public Object visit(CallStatement callStatement) {
-		// TODO Auto-generated method stub
+	public Object visit(CallStatement callStatement) 
+	{
+		callStatement.getCall().scope = callStatement.scope;
+		callStatement.getCall().accept(this);
 		return null;
 	}
 
-	public Object visit(Return returnStatement) {
-		// TODO Auto-generated method stub
+	public Object visit(Return returnStatement) 
+	{
+		returnStatement.getValue().scope = returnStatement.scope;
+		returnStatement.getValue().accept(this);
 		return null;
 	}
 
 	public Object visit(VariableLocation location) {
 		
-		String name = location.getName();
+		if (location.getLocation() != null)
+		{
+			location.getLocation().scope = location.scope;
+			location.getLocation().accept(this);
+		}
+		return null;
+	}
+
+	public Object visit(ArrayLocation location) 
+	{
+		location.getArray().scope = location.scope;
+		location.getArray().accept(this);
 		
-		//location.semType = 
-				
+		location.getIndex().scope = location.scope;
+		location.getIndex().accept(this);
+		
 		return null;
 	}
 
-	public Object visit(ArrayLocation location) {
-		// TODO Auto-generated method stub
+	public Object visit(StaticCall call) 
+	{
+		if (call.getArguments() != null)
+		{
+			for (Expression expArg : call.getArguments())
+			{
+				expArg.scope = call.scope;
+				expArg.accept(this);
+			}
+		}
+		
 		return null;
 	}
 
-	public Object visit(StaticCall call) {
-		// TODO Auto-generated method stub
+	public Object visit(VirtualCall call) 
+	{
+		call.getLocation().scope = call.scope;
+		call.getLocation().accept(this);
+		
+		if (call.getArguments() != null)
+		{
+			for (Expression expArg : call.getArguments())
+			{
+				expArg.scope = call.scope;
+				expArg.accept(this);
+			}
+		}
+		
 		return null;
 	}
 
-	public Object visit(VirtualCall call) {
-		// TODO Auto-generated method stub
+	public Object visit(This thisExpression) 
+	{
 		return null;
 	}
 
-	public Object visit(This thisExpression) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object visit(NewClass newClass) {
-		// TODO Auto-generated method stub
+	public Object visit(NewClass newClass) 
+	{
 		return null;
 	}
 
 	public Object visit(NewArray newArray) {
-		// TODO Auto-generated method stub
+		
+		newArray.getSize().scope = newArray.scope;
+		newArray.getSize().accept(this);
+		
+		newArray.getType().scope = newArray.scope;
+		
 		return null;
 	}
 
-	public Object visit(Length length) {
-		// TODO Auto-generated method stub
+	public Object visit(Length length) 
+	{
+		length.getArray().scope = length.scope;
+		length.getArray().accept(this);
+		
 		return null;
 	}
 
-	public Object visit(MathBinaryOp binaryOp) {
-		// TODO Auto-generated method stub
+	public Object visit(MathBinaryOp binaryOp) 
+	{
+		binaryOp.getFirstOperand().scope = binaryOp.scope;
+		binaryOp.getFirstOperand().accept(this);
+		
+		binaryOp.getSecondOperand().scope = binaryOp.scope;
+		binaryOp.getSecondOperand().accept(this);
+		
 		return null;
 	}
 
-	public Object visit(LogicalBinaryOp binaryOp) {
-		// TODO Auto-generated method stub
+	public Object visit(LogicalBinaryOp binaryOp)
+	{
+		binaryOp.getFirstOperand().scope = binaryOp.scope;
+		binaryOp.getFirstOperand().accept(this);
+		
+		binaryOp.getSecondOperand().scope = binaryOp.scope;
+		binaryOp.getSecondOperand().accept(this);
+		
 		return null;
 	}
 
-	public Object visit(MathUnaryOp unaryOp) {
-		// TODO Auto-generated method stub
+	public Object visit(MathUnaryOp unaryOp) 
+	{
+		unaryOp.getOperand().scope = unaryOp.scope;
+		unaryOp.getOperand().accept(this);
 		return null;
 	}
 
-	public Object visit(LogicalUnaryOp unaryOp) {
-		// TODO Auto-generated method stub
+	public Object visit(LogicalUnaryOp unaryOp) 
+	{
+		unaryOp.getOperand().scope = unaryOp.scope;
+		unaryOp.getOperand().accept(this);
+		
 		return null;
 	}
 
-	public Object visit(Literal literal) {
-		// TODO Auto-generated method stub
+	public Object visit(Literal literal)
+	{
 		return null;
 	}
 
-	public Object visit(ExpressionBlock expressionBlock) {
-		// TODO Auto-generated method stub
+	public Object visit(ExpressionBlock expressionBlock) 
+	{
+		expressionBlock.getExpression().scope = expressionBlock.scope;
 		return null;
 	}
 

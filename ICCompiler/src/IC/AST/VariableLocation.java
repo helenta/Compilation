@@ -39,8 +39,9 @@ public class VariableLocation extends Location {
 	 *            Name of variable.
 	 */
 	public VariableLocation(int line, Expression location, String name) {
-		this(line, name);
+		super(line);
 		this.location = location;
+		this.name = name;
 	}
 
 	public boolean isExternal() {

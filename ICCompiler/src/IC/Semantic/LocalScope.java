@@ -12,6 +12,10 @@ public class LocalScope extends PrimitiveScope {
 	public LocalScope(String name, Type type, int line) {
 		super(name, type, line);
 	}
+	
+	public LocalScope(String name, int line) {
+		super(name, null, line);
+	}
 
 	@Override
 	public Object accept(ScopeVisitor visitor) {

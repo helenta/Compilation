@@ -290,6 +290,13 @@ public class PrettyPrinter implements Visitor {
 
 	public Object visit(VariableLocation location) {
 		StringBuffer output = new StringBuffer();
+		
+		// todo: remove
+		if (location.semType == null)
+		{
+			int t = 0; 
+			t++;
+		}
 
 		indent(output, location);
 		output.append("Reference to variable: " + location.getName());
