@@ -5,19 +5,19 @@ import java.util.HashMap;
 import java.util.List;
 
 public class VirtualMap {
-	private String clsName;
+	private String className;
 	private Scope scope;
 	private List<String> fields;
 	private HashMap<String,String> methods;
-	private HashMap<String,MethodScope> methodScops;
+	private HashMap<String,MethodScope> methodScopes;
 	
 	
-	public VirtualMap(String clsName,Scope scope2) {
-		this.scope = scope2;
-		this.clsName = clsName;
+	public VirtualMap(String clsName,Scope scope) {
+		this.scope = scope;
+		this.className = clsName;
 		this.fields = new ArrayList<String>();
 		this.methods = new HashMap<String,String>();
-		this.methodScops = new HashMap<String,MethodScope>();
+		this.methodScopes = new HashMap<String,MethodScope>();
 	}
 	
 	public Scope getScope() {
@@ -27,16 +27,6 @@ public class VirtualMap {
 	public void setScope(ClassScope scope) {
 		this.scope = scope;
 	}
-
-	/*
-	 * this method calculates the total size of a class object
-	 * by adding the total size of each field
-	 */
-	public int getClassAllocSize(){
-		return fields.size() + 1;
-		
-	}
-
 	
 	public List<String> getFields() {
 		return fields;
@@ -46,75 +36,33 @@ public class VirtualMap {
 		return methods;
 	}
 
-	public void addMethod(String name) {
-		
-		methods.put(name,clsName);
-		
-	}
-
 	public void addField(String name) {
-		fields.add(name);
-		
+		fields.add(name);	
 	}
-	public static VirtualMap createExtendsCls(String clsName, VirtualMap clsSuper,Scope scope2){
-		VirtualMap cls =new VirtualMap(clsName,scope2);
-		for(String method : clsSuper.getMethods().keySet()){
-			cls.addMethod(method,clsSuper.getMethods().get(method),clsSuper.getScopeOfMethod(method));
+	
+	public static VirtualMap createExtendsClass(String className, VirtualMap superClass,Scope scope){
+		VirtualMap cls = new VirtualMap(className,scope);
+		for(String method : superClass.getMethods().keySet()){
+			cls.addMethod(method,superClass.getMethods().get(method),superClass.getScopeOfMethod(method));
 		}
-		for(String field : clsSuper.getFields()){
+		for(String field : superClass.getFields()){
 			cls.addField(field);
 		}
 		return cls;
 	}
 
 	public MethodScope getScopeOfMethod(String method) {
-		return methodScops.get(method);
+		return methodScopes.get(method);
 	}
 
-	public void addMethod(String method, String clsNameSuper) {
-		methods.put(method,clsNameSuper);
-		
+	public void addMethod(String method, String superClassName, MethodScope scope) {
+		methods.put(method,superClassName);
+		methodScopes.put(method,scope);	
 	}
 
-	public void addMethod(String method, String clsNameSuper, MethodScope scope2) {
-		methods.put(method,clsNameSuper);
-		methodScops.put(method,scope2);
-		
-	}
-	public void addMethodScope(String method,MethodScope scope) {
-		methodScops.put(method,scope);
-		
-	}
-	
-	public String getClsName() {
-		return clsName;
-	}
-
-	public int findMethodIndex(String method) {
-		int index=0;
-		for(String m : methods.keySet()){
-			if (m.equals(method)){
-				return index;
-			}
-			index++;
-		}
-		return -1;
-	}
-
-	public int getFildOffset(String field) {
-		int index=1;
-		for(String f : fields){
-			if (f.equals(field)){
-				return index;
-			}
-			index++;
-		}
-		return -1;
-	}
-
-	public void addSuperMethodsAndFields(VirtualMap superCls) {
-		HashMap<String, String> superMethods = superCls.getMethods();
-		List<String> superFields = superCls.getFields();
+	public void addSuperMethodsAndFields(VirtualMap superClass) {
+		HashMap<String, String> superMethods = superClass.getMethods();
+		List<String> superFields = superClass.getFields();
 		
 		for (String f : superFields) {
 			if(!this.fields.contains(f)){
@@ -123,16 +71,11 @@ public class VirtualMap {
 		}
 		for (String m : superMethods.keySet()) {
 			if(!this.methods.containsKey(m)){
-				methods.put(m, superCls.getMethods().get(m));
-				methodScops.put(m, superCls.getScopeOfMethod(m));
+				methods.put(m, superClass.getMethods().get(m));
+				methodScopes.put(m, superClass.getScopeOfMethod(m));
 					
 				}
-			}
-		
+			}		
 	}
-
-	public HashMap<String, MethodScope> getMethodScops() {
-		return methodScops;
-	}
-
+	
 }

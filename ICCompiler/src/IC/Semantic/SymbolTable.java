@@ -9,85 +9,53 @@ public class SymbolTable {
 	}
 	
 	public String toString(){
-		SymbolTablePrettyPrint pp = new SymbolTablePrettyPrint();
-		return (String)pp.visit(root);
+		SymbolTablePrettyPrint prettyPrint = new SymbolTablePrettyPrint();
+		return (String)prettyPrint.visit(root);
 		
 	}
 	
-	public boolean isDerived(String derName, String supName){
-		if (this.root == null)
-		{
-			int t = 0;
-			t = 1;
-		}
-		Scope derScope = this.root.getSymbol(derName);
+	public MethodScope getEnclosingMethod(Scope scope){
+		if (scope instanceof GlobalScope)
+			return null;
+		if (scope instanceof MethodScope)
+			return (MethodScope) scope;
+		return getEnclosingMethod(scope.getParent());
+	}
+	
+	public Scope getSymbol(Scope scope, String name){
+		if (scope.hasSymbol(name))
+			return scope.getSymbol(name);
+		if (scope.getParent() == null)
+			return null;
+		return getSymbol(scope.getParent(), name);
+	}
+	
+	public ClassScope getEnclosingClass(Scope scope){
+		if (scope instanceof GlobalScope)
+			return null;
+		if (scope instanceof ClassScope)
+			return (ClassScope) scope;
+		return getEnclosingClass(scope.getParent());
+	}
+	
+	public boolean isDerivedName(String derivedName, String superName){
+		Scope derScope = this.root.getSymbol(derivedName);
 		if (derScope == null)
 		{
 			return false;
 		}
 		Scope parentScope = derScope.getParent();
-		if (parentScope instanceof GlobalScope){
+		if (parentScope instanceof GlobalScope)
 			return false;
-		}
-		
-		if (derScope.getParent().getName().equals(supName)){
+		if (derScope.getParent().getName().equals(superName))
 			return true;
-		}
-		return isDerived(parentScope.getName(), supName);
+		return isDerivedName(parentScope.getName(), superName);
 	}
 	
-	public boolean isEnclosedInVirtualMethod(Scope scope){
-		MethodScope method = getEnclosingMethod(scope);
-		if (method == null){
-			return false;
-		}
-		return method.isVirtual();
-	}
-	
-	public MethodScope getEnclosingMethod(Scope scope){
-		if (scope instanceof GlobalScope){
-			return null;
-		}
-		if (scope instanceof MethodScope){
-			return (MethodScope) scope;
-		}
-		return getEnclosingMethod(scope.getParent());
-	}
-	
-	public Scope getSymbol(Scope scope, String name){
-		if (scope == null)
-		{
-			int y = 0;
-			y++;
-		}
-		
-		if (scope.hasSymbol(name))
-		{
-			return scope.getSymbol(name);
-		}
-		
-		if (scope.getParent() == null)
-		{
-			return null;
-		}
-		
-		return getSymbol(scope.getParent(), name);
-	}
-	
-	public ClassScope getEnclosingClass(Scope scope){
-		if (scope instanceof GlobalScope){
-			return null;
-		}
-		if (scope instanceof ClassScope){
-			return (ClassScope) scope;
-		}
-		return getEnclosingClass(scope.getParent());
-	}
-	
-	public void addLibTable(SymbolTable libTable){
-		Scope libScope = libTable.root.classScopes.get(0);
-		this.root.classScopes.add(0, libScope);
-		this.root.symbols.put(libScope.getName(), libScope);
-		libScope.setParent(this.root);
+	public void addLibraryTable(SymbolTable libraryTable){
+		Scope libraryScope = libraryTable.root.classScopes.get(0);
+		this.root.classScopes.add(0, libraryScope);
+		this.root.symbols.put(libraryScope.getName(), libraryScope);
+		libraryScope.setParent(this.root);
 	}
 }

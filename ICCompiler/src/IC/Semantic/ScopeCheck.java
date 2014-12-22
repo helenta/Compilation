@@ -1,20 +1,17 @@
-/**
- * 
- */
 package IC.Semantic;
 
-public final class ScopeChecker implements ScopeVisitor 
+public final class ScopeCheck implements ScopeVisitor 
 {
-	private IScopeChecker scope_checker;
+	private IScopeCheck scopeChecker;
 	
-	public ScopeChecker(IScopeChecker checker)
+	public ScopeCheck(IScopeCheck checker)
 	{
-		this.scope_checker = checker;
+		this.scopeChecker = checker;
 	}
 
 	public Object visit(ClassScope classScope) 
 	{
-		this.scope_checker.Check(classScope);
+		this.scopeChecker.Check(classScope);
 		
 		for (Scope methodScope : classScope.methods)
 		{
@@ -32,40 +29,40 @@ public final class ScopeChecker implements ScopeVisitor
 
 	public Object visit(GlobalScope globalScope) 
 	{
-		this.scope_checker.Check(globalScope);
+		this.scopeChecker.Check(globalScope);
 		
 		for (Scope classScopes : globalScope.classScopes)
 		{
 			visit((ClassScope)classScopes);
 		}
 		
-		return this.scope_checker.IsSucess();
+		return this.scopeChecker.isSuccess();
 	}
 
 	public Object visit(FieldScope fieldScope) 
 	{
-		this.scope_checker.Check(fieldScope);
+		this.scopeChecker.Check(fieldScope);
 		
 		return null;
 	}
 
 	public Object visit(FormalScope formalScope) 
 	{
-		this.scope_checker.Check(formalScope);
+		this.scopeChecker.Check(formalScope);
 	
 		return null;
 	}
 
 	public Object visit(LocalScope localScope) 
 	{
-		this.scope_checker.Check(localScope);
+		this.scopeChecker.Check(localScope);
 		
 		return null;
 	}
 
 	public Object visit(BlockScope blockScope) 
 	{
-		this.scope_checker.Check(blockScope);
+		this.scopeChecker.Check(blockScope);
 		
 		for (Scope childeBlockScope : blockScope.blocks)
 		{
@@ -82,7 +79,7 @@ public final class ScopeChecker implements ScopeVisitor
 	
 	public Object visit(MethodScope methodScope) 
 	{
-		this.scope_checker.Check(methodScope);
+		this.scopeChecker.Check(methodScope);
 		
 		return null;
 	}

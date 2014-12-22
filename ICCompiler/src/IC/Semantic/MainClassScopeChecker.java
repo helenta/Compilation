@@ -3,7 +3,7 @@ package IC.Semantic;
 import IC.DataTypes;
 import IC.AST.PrimitiveType;
 
-public class MainClassScopeChecker implements IScopeChecker 
+public class MainClassScopeChecker implements IScopeCheck 
 {
 	int mainMethodTimes = 0;
 	boolean errorMainMethod = false;
@@ -21,8 +21,8 @@ public class MainClassScopeChecker implements IScopeChecker
 		{
 			mainMethodTimes++;
 		
-			if (!(methodScope.retType instanceof PrimitiveType) ||
-				(((PrimitiveType)methodScope.retType).getType() != DataTypes.VOID))
+			if (!(methodScope.returnType instanceof PrimitiveType) ||
+				(((PrimitiveType)methodScope.returnType).getType() != DataTypes.VOID))
 			{
 				errorMainMethod = true;
 			}
@@ -32,7 +32,7 @@ public class MainClassScopeChecker implements IScopeChecker
 		}
 	}
 
-	public boolean IsSucess() 
+	public boolean isSuccess() 
 	{
 		return !errorMainMethod && (mainMethodTimes == 1);
 	}

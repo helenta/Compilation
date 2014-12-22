@@ -26,7 +26,6 @@ public class Compiler{
     	if (program == null)
     		return;
 		
-		// find libary arg
 		if (args.length == 1)
 			return;
 		
@@ -66,13 +65,13 @@ public class Compiler{
 			{
 				Program libaryProgram = new Program(libaryClass);
 				SymbolTable libTable = (SymbolTable)new SymbolTableVisitor().visit(libaryProgram);
-				table.addLibTable(libTable);
+				table.addLibraryTable(libTable);
 			}
 			
-			TypeChecker checker = new TypeChecker(table);
+			TypeCheck checker = new TypeCheck(table);
 			checker.visit(program); 
 			
-			ScopeChecker mainChecker = new ScopeChecker(new MainClassScopeChecker());
+			ScopeCheck mainChecker = new ScopeCheck(new MainClassScopeChecker());
 			boolean success = (boolean)mainChecker.visit(table.root);
 			if (!success) {
 				throw new SemanticError("semantic error at some line: wrong main method");			

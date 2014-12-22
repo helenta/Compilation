@@ -42,23 +42,20 @@ public class ClassScope extends Scope {
 		for (Scope method : subClass.methods){
 			if (classScope.hasSymbol(method.getName())){
 				Scope sym = classScope.getSymbol(method.getName());
-				if (sym instanceof FieldScope){
+				if (sym instanceof FieldScope)
 					throw new SemanticError("semantic error at line " + method.getLine() + ": " + 
 				"method " + sym.getName() + " shadows a field with the same name");
-				}
-				if (sym instanceof MethodScope && !((MethodScope) sym).signature(false).equals(((MethodScope) method).signature(false))){
+				if (sym instanceof MethodScope && !((MethodScope) sym).signature(false).equals(((MethodScope) method).signature(false)))
 					throw new SemanticError("semantic error at line " + method.getLine() + ": " + 
 				"method " + sym.getName() + " overloads a method with the same name");
-				}
 			}
 		}
 		for (Scope field : subClass.fields){
 			if (classScope.hasSymbol(field.getName())){
 				Scope sym = classScope.getSymbol(field.getName());
-				if (sym instanceof FieldScope){
+				if (sym instanceof FieldScope)
 					throw new SemanticError("semantic error at line " + field.getLine() + ": " + 
 				"field " + sym.getName() + " shadows a field with the same name");
-				}
 			}
 		}
 	}

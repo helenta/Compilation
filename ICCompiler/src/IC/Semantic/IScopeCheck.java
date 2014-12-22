@@ -1,8 +1,8 @@
 package IC.Semantic;
 
-public interface IScopeChecker 
+public interface IScopeCheck 
 {	
 	void Check(Scope scope);
 	
-	boolean IsSucess();
+	boolean isSuccess();
 }

@@ -8,24 +8,24 @@ import java.util.List;
 
 public class SymbolTableVisitor implements Visitor 
 {	
-	private boolean inWhile = false;
+	private boolean insideWhile = false;
 	
 	public Object visit(Program program) 
 	{
 		SymbolTable symbolTable = new SymbolTable();
-		for (ICClass decl : program.getClasses()){
-			ClassScope clsScope = (ClassScope) decl.accept(this);
-			symbolTable.root.addSymbol(clsScope, symbolTable.root.classScopes);
-			if (!decl.hasSuperClass())
-				decl.scope = symbolTable.root;
+		for (ICClass icClass : program.getClasses()){
+			ClassScope classScope = (ClassScope) icClass.accept(this);
+			symbolTable.root.addSymbol(classScope, symbolTable.root.classScopes);
+			if (!icClass.hasSuperClass())
+				icClass.scope = symbolTable.root;
 			else{
-				if (!symbolTable.root.hasSymbol(decl.getSuperClassName()) || decl.getName().equals(decl.getSuperClassName())){
-					 throw new SemanticError("semantic error at line " + decl.getLine() + ": " + 
-				"class " + decl.getSuperClassName() + "is not defined when trying to extend it by class " + decl.getName());
+				if (!symbolTable.root.hasSymbol(icClass.getSuperClassName()) || icClass.getName().equals(icClass.getSuperClassName())){
+					 throw new SemanticError("semantic error at line " + icClass.getLine() + ": " + 
+				"class " + icClass.getSuperClassName() + "is not defined when trying to extend it by class " + icClass.getName());
 				}
-				ClassScope parent = (ClassScope) symbolTable.root.getSymbol(decl.getSuperClassName());
-				decl.scope = parent;
-				parent.addDerived(clsScope, decl.getLine());
+				ClassScope parent = (ClassScope) symbolTable.root.getSymbol(icClass.getSuperClassName());
+				icClass.scope = parent;
+				parent.addDerived(classScope, icClass.getLine());
 			}
 		}
 		
@@ -34,28 +34,29 @@ public class SymbolTableVisitor implements Visitor
 
 	public Object visit(ICClass icClass) 
 	{
-		ClassScope clsScope = new ClassScope(icClass.getName(), icClass.getLine(), icClass);
+		ClassScope classScope = new ClassScope(icClass.getName(), icClass.getLine(), icClass);
+		
 		for (Field field : icClass.getFields())
 		{
-			field.scope = clsScope;
-			clsScope.addSymbol((FieldScope)field.accept(this), clsScope.fields);
+			field.scope = classScope;
+			classScope.addSymbol((FieldScope)field.accept(this), classScope.fields);
 		}
 		
 		for (Method method : icClass.getMethods())
 		{
-			method.scope = clsScope;
+			method.scope = classScope;
 			MethodScope methodScope = (MethodScope) method.accept(this);
 			if (method instanceof StaticMethod || method instanceof LibraryMethod)
 			{
-				clsScope.addSymbol(methodScope, clsScope.methods);
+				classScope.addSymbol(methodScope, classScope.methods);
 			}
 			else
 			{
 				methodScope.setVirtual(true);
-				clsScope.addSymbol(methodScope, clsScope.methods);
+				classScope.addSymbol(methodScope, classScope.methods);
 			}
 		}
-		return clsScope;
+		return classScope;
 	}
 
 	public Object visit(Field field) 
@@ -89,51 +90,41 @@ public class SymbolTableVisitor implements Visitor
 			methodScope.addSymbol(formal, methodScope.params);
 		}
 		
-		for (Statement stmt : method.getStatements())
+		for (Statement statement : method.getStatements())
 		{
-			stmt.scope = methodScope;
+			statement.scope = methodScope;
 			
-			if (stmt instanceof LocalVariable)
+			if (statement instanceof LocalVariable)
 			{
-				LocalScope local = (LocalScope) stmt.accept(this);
+				LocalScope local = (LocalScope) statement.accept(this);
 				methodScope.addSymbol(local, methodScope.locals);
 			}
-			else if (stmt instanceof StatementsBlock)
+			else if (statement instanceof StatementsBlock)
 			{
-				BlockScope blkScope = (BlockScope) stmt.accept(this);
-				methodScope.addAnonymousScope(blkScope, methodScope.blocks);
+				BlockScope blockScope = (BlockScope) statement.accept(this);
+				methodScope.addAnonymousScope(blockScope, methodScope.blocks);
 			}
-			else if (stmt instanceof While)
+			else if (statement instanceof While)
 			{
-				Object wh = stmt.accept(this);
-				if (wh instanceof LocalScope)
-				{
-					methodScope.addSymbol((LocalScope)wh, methodScope.locals);
-				}
-				if (wh instanceof BlockScope)
-				{
-					methodScope.addAnonymousScope((BlockScope) wh, methodScope.blocks);
-				}
+				Object w = statement.accept(this);
+				if (w instanceof LocalScope)
+					methodScope.addSymbol((LocalScope)w, methodScope.locals);
+				if (w instanceof BlockScope)
+					methodScope.addAnonymousScope((BlockScope) w, methodScope.blocks);
 			}
-			else if (stmt instanceof If)
+			else if (statement instanceof If)
 			{
-				List<Scope> blocks = (List<Scope>) stmt.accept(this);
+				List<Scope> blocks = (List<Scope>) statement.accept(this);
 				for (Scope scope : blocks)
 				{
 					if (scope instanceof LocalScope)
-					{
 						methodScope.addSymbol((LocalScope)scope, methodScope.locals);
-					}
 					else if (scope instanceof BlockScope)
-					{
 						methodScope.addAnonymousScope((BlockScope) scope, methodScope.blocks);
-					}
 				}
 			}
 			else
-			{
-				stmt.accept(this);
-			}
+				statement.accept(this);
 		}
 		
 		return methodScope;
@@ -157,25 +148,17 @@ public class SymbolTableVisitor implements Visitor
 	{
 		List<Scope> blocks = new ArrayList<Scope>();
 		if (ifStatement.getOperation() instanceof If)
-		{
 			blocks.addAll((Collection<? extends Scope>) ifStatement.getOperation().accept(this));
-		}
 		else
-		{
 			blocks.add((Scope) ifStatement.getOperation().accept(this));
-		}
 		
 		if (ifStatement.hasElse())
 		{
 			ifStatement.getElseOperation().scope = ifStatement.scope;
 			if (ifStatement.getElseOperation() instanceof If)
-			{
 				blocks.addAll((Collection<? extends Scope>) ifStatement.getElseOperation().accept(this));
-			}
 			else
-			{
 				blocks.add((Scope) ifStatement.getElseOperation().accept(this));
-			}
 		}	
 		
 		ifStatement.getOperation().scope = ifStatement.scope;
@@ -187,8 +170,8 @@ public class SymbolTableVisitor implements Visitor
 
 	public Object visit(While whileStatement) 
 	{
-		boolean outer = inWhile;
-		inWhile = true;
+		boolean out = insideWhile;
+		insideWhile = true;
 		
 		Scope whileScope = null;
 		if (whileStatement.getOperation() instanceof StatementsBlock)
@@ -199,7 +182,7 @@ public class SymbolTableVisitor implements Visitor
 		else
 		{
 			Statement statement = whileStatement.getOperation();
-			LocalScope scope = new LocalScope("while singke statement", statement.getLine());
+			LocalScope scope = new LocalScope("while single statement", statement.getLine());
 			whileScope = scope;
 		}
 		whileScope.setParent(whileStatement.scope);
@@ -211,86 +194,83 @@ public class SymbolTableVisitor implements Visitor
 		whileStatement.getOperation().accept(this);
 		
 		whileStatement.getOperation().scope = whileStatement.scope;
-		if (!outer)
+		if (!out)
 		{
-			inWhile = false;
+			insideWhile = false;
 		}
 		return whileScope;
 	}
 
 	public Object visit(Break breakStatement) 
 	{
-		if (!inWhile)
+		if (!insideWhile)
 		{
-			throw new SemanticError(breakStatement.getLine()+ ": semantic error; Use of 'break' statement outside of loop not allowed");
+			throw new SemanticError("semantic error at line " + breakStatement.getLine() + ": " + 
+		"break statement is being used outside of a loop");
 		}
 		return breakStatement.scope;
 	}
 
 	public Object visit(Continue continueStatement) 
 	{
-		if (!inWhile)
+		if (!insideWhile)
 		{
-			throw new SemanticError(continueStatement.getLine()+ ": semantic error; Use of 'continue' statement outside of loop not allowed");
+			throw new SemanticError("semantic error at line " + continueStatement.getLine() + ": " + 
+		"break statement is being used outside of a loop");
 		}
 		return continueStatement.scope;
 	}
 
 	public Object visit(StatementsBlock statementsBlock) 
 	{
-		BlockScope blkScope = new BlockScope(statementsBlock.getLine(), statementsBlock);
-		blkScope.setParent(statementsBlock.scope);
-		for (Statement stmt : statementsBlock.getStatements())
+		BlockScope blockScope = new BlockScope(statementsBlock.getLine(), statementsBlock);
+		blockScope.setParent(statementsBlock.scope);
+		
+		for (Statement statement : statementsBlock.getStatements())
 		{	
-			stmt.scope = blkScope;
-			if (stmt instanceof LocalVariable)
+			statement.scope = blockScope;
+			if (statement instanceof LocalVariable)
 			{
-				LocalScope local = (LocalScope) stmt.accept(this);
-				blkScope.addSymbol(local, blkScope.locals);
+				LocalScope local = (LocalScope) statement.accept(this);
+				blockScope.addSymbol(local, blockScope.locals);
 				
-				LocalVariable localVarible = (LocalVariable)stmt;
-				localVarible.getType().scope = blkScope;
-				localVarible.getInitValue().scope = blkScope;
+				LocalVariable localVarible = (LocalVariable)statement;
+				localVarible.getType().scope = blockScope;
+				localVarible.getInitValue().scope = blockScope;
 			}
-			else if (stmt instanceof StatementsBlock)
+			else if (statement instanceof StatementsBlock)
 			{
-				BlockScope subBlkScope = (BlockScope) stmt.accept(this);
-				blkScope.addAnonymousScope(subBlkScope, blkScope.blocks);
+				BlockScope subBlockScope = (BlockScope) statement.accept(this);
+				blockScope.addAnonymousScope(subBlockScope, blockScope.blocks);
 			}
-			else if (stmt instanceof While)
+			else if (statement instanceof While)
 			{
-				Object wh = stmt.accept(this);
-				if (wh instanceof LocalScope){
-					blkScope.addSymbol((LocalScope)wh, blkScope.locals);
-				}
-				if (wh instanceof BlockScope){
-					blkScope.addAnonymousScope((BlockScope) wh, blkScope.blocks);
-				}
+				Object w = statement.accept(this);
+				if (w instanceof LocalScope)
+					blockScope.addSymbol((LocalScope)w, blockScope.locals);				
+				if (w instanceof BlockScope)
+					blockScope.addAnonymousScope((BlockScope) w, blockScope.blocks);
 				
-				((While)stmt).getCondition().scope = blkScope;
-				((While)stmt).getOperation().scope = blkScope;
+				((While)statement).getCondition().scope = blockScope;
+				((While)statement).getOperation().scope = blockScope;
 			}
-			else if (stmt instanceof If)
+			else if (statement instanceof If)
 			{
-				List<Scope> blocks = (List<Scope>) stmt.accept(this);
+				List<Scope> blocks = (List<Scope>) statement.accept(this);
 				for (Scope scope : blocks)
 				{
 					if (scope instanceof LocalScope)
-					{
-						blkScope.addSymbol((LocalScope)scope, blkScope.locals);
-					}
+						blockScope.addSymbol((LocalScope)scope, blockScope.locals);
 					if (scope instanceof BlockScope)
-					{
-						blkScope.addAnonymousScope((BlockScope) scope, blkScope.blocks);
-					}
+						blockScope.addAnonymousScope((BlockScope) scope, blockScope.blocks);
 				}
 			}
 			else
 			{
-				stmt.accept(this);
+				statement.accept(this);
 			}
 		}
-		return blkScope;
+		return blockScope;
 	}
 
 	public Object visit(LocalVariable localVariable) 

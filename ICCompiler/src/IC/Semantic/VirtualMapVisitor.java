@@ -8,37 +8,39 @@ import IC.AST.*;
 
 public class VirtualMapVisitor implements Visitor{
 	HashMap<String, VirtualMap> classMap;
-	List<VirtualMap> extNosuper;
-	String currCls;
+	List<VirtualMap> extended;
+	String currentClass;
 	SymbolTable table;
+	
 	public VirtualMapVisitor(HashMap<String, VirtualMap> map, SymbolTable table) {
 		this.classMap = map;
-		extNosuper = new ArrayList<VirtualMap>();
+		extended = new ArrayList<VirtualMap>();
 		this.table = table;
 	}
 
 	public Object visit(Program program) {
-		for (ICClass cls : program.getClasses()){
+		for(ICClass cls : program.getClasses()){
 			cls.accept(this);
 		}
-		for( VirtualMap ext : extNosuper){
+		for(VirtualMap ext : extended){
 			ext.addSuperMethodsAndFields(classMap.get(ext.getScope().getParent().getName()));
 		}
 		return null;
 	}
 
 	public Object visit(ICClass icClass) {
-		currCls = icClass.getName();
+		currentClass = icClass.getName();
+		
 		if(icClass.hasSuperClass()){
 			VirtualMap superClass = classMap.get(icClass.getSuperClassName());
 			if(superClass==null){
 				VirtualMap extCls = new VirtualMap(icClass.getName(),icClass.scope);
 				classMap.put(icClass.getName(), extCls);
-				extNosuper.add(extCls);
+				extended.add(extCls);
 			}
 			else
 			{
-				VirtualMap extCls = VirtualMap.createExtendsCls(icClass.getName(), superClass,icClass.scope);
+				VirtualMap extCls = VirtualMap.createExtendsClass(icClass.getName(), superClass,icClass.scope);
 				classMap.put(icClass.getName(), extCls);
 			}
 		}
@@ -62,15 +64,14 @@ public class VirtualMapVisitor implements Visitor{
 	}
 
 	public Object visit(Field field) {
-		String clsName = currCls;
-		classMap.get(clsName).addField(field.getName());
+		String className = currentClass;
+		classMap.get(className).addField(field.getName());
 		return null;
 	}
 
 	public Object visit(VirtualMethod method) {
-		String clsName = currCls;
-		
-		classMap.get(clsName).addMethod(method.getName(),clsName,(MethodScope)table.getSymbol(method.scope, method.getName()));
+		String className = currentClass;	
+		classMap.get(className).addMethod(method.getName(),className,(MethodScope)table.getSymbol(method.scope, method.getName()));
 		return null;
 	}
 

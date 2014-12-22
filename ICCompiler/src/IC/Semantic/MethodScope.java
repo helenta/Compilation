@@ -10,14 +10,13 @@ public class MethodScope extends Scope {
 	public List<Scope> params;
 	public List<Scope> locals;
 	public List<Scope> blocks;
-	protected Type retType;
+	protected Type returnType;
 	protected boolean virtual;
-	
 	public Method method;
 	
 	public MethodScope(String name, Type retType, int line, boolean virtual, Method method) {
 		super(name, line);
-		this.retType = retType;
+		this.returnType = retType;
 		locals = new ArrayList<Scope>();
 		blocks = new ArrayList<Scope>();
 		params = new ArrayList<Scope>();
@@ -25,8 +24,8 @@ public class MethodScope extends Scope {
 		this.method = method;
 	}
 
-	public Type getRetType() {
-		return retType;
+	public Type getReturnType() {
+		return returnType;
 	}
 
 	public boolean isVirtual() {
@@ -53,8 +52,8 @@ public class MethodScope extends Scope {
 				output.append(((PrimitiveScope) param).getTypeName() + ", ");
 			output.delete(output.length()-2, output.length());
 		}
-		output.append(" -> " + retType.getName());
-		for (int i=0;i<retType.getDimension();i++){
+		output.append(" -> " + returnType.getName());
+		for (int i=0;i<returnType.getDimension();i++){
 			output.append("[]");
 		}
 		output.append("}");
