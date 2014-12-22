@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class SymbolTableBuilder implements Visitor 
+public class SymbolTableVisitor implements Visitor 
 {	
 	private boolean inWhile = false;
 	
@@ -20,7 +20,7 @@ public class SymbolTableBuilder implements Visitor
 				decl.scope = symbolTable.root;
 			else{
 				if (!symbolTable.root.hasSymbol(decl.getSuperClassName()) || decl.getName().equals(decl.getSuperClassName())){
-					 throw new SemanticException("semantic error at line " + decl.getLine() + ": " + 
+					 throw new SemanticError("semantic error at line " + decl.getLine() + ": " + 
 				"class " + decl.getSuperClassName() + "is not defined when trying to extend it by class " + decl.getName());
 				}
 				ClassScope parent = (ClassScope) symbolTable.root.getSymbol(decl.getSuperClassName());
@@ -222,7 +222,7 @@ public class SymbolTableBuilder implements Visitor
 	{
 		if (!inWhile)
 		{
-			throw new SemanticException(breakStatement.getLine()+ ": semantic error; Use of 'break' statement outside of loop not allowed");
+			throw new SemanticError(breakStatement.getLine()+ ": semantic error; Use of 'break' statement outside of loop not allowed");
 		}
 		return breakStatement.scope;
 	}
@@ -231,7 +231,7 @@ public class SymbolTableBuilder implements Visitor
 	{
 		if (!inWhile)
 		{
-			throw new SemanticException(continueStatement.getLine()+ ": semantic error; Use of 'continue' statement outside of loop not allowed");
+			throw new SemanticError(continueStatement.getLine()+ ": semantic error; Use of 'continue' statement outside of loop not allowed");
 		}
 		return continueStatement.scope;
 	}

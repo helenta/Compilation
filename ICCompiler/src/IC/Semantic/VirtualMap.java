@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class virtualMapper {
+public class VirtualMap {
 	private String clsName;
 	private Scope scope;
 	private List<String> fields;
@@ -12,7 +12,7 @@ public class virtualMapper {
 	private HashMap<String,MethodScope> methodScops;
 	
 	
-	public virtualMapper(String clsName,Scope scope2) {
+	public VirtualMap(String clsName,Scope scope2) {
 		this.scope = scope2;
 		this.clsName = clsName;
 		this.fields = new ArrayList<String>();
@@ -56,8 +56,8 @@ public class virtualMapper {
 		fields.add(name);
 		
 	}
-	public static virtualMapper createExtendsCls(String clsName, virtualMapper clsSuper,Scope scope2){
-		virtualMapper cls =new virtualMapper(clsName,scope2);
+	public static VirtualMap createExtendsCls(String clsName, VirtualMap clsSuper,Scope scope2){
+		VirtualMap cls =new VirtualMap(clsName,scope2);
 		for(String method : clsSuper.getMethods().keySet()){
 			cls.addMethod(method,clsSuper.getMethods().get(method),clsSuper.getScopeOfMethod(method));
 		}
@@ -112,7 +112,7 @@ public class virtualMapper {
 		return -1;
 	}
 
-	public void addSuperMethodsAndFields(virtualMapper superCls) {
+	public void addSuperMethodsAndFields(VirtualMap superCls) {
 		HashMap<String, String> superMethods = superCls.getMethods();
 		List<String> superFields = superCls.getFields();
 		

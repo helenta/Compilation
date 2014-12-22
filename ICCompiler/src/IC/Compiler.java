@@ -60,17 +60,23 @@ public class Compiler{
     {
     	try
 		{
-			SymbolTable table = (SymbolTable) new SymbolTableBuilder().visit(program);
+			SymbolTable table = (SymbolTable) new SymbolTableVisitor().visit(program);
 			
 			if (libaryClass != null && libaryClass.size() > 0)
 			{
 				Program libaryProgram = new Program(libaryClass);
-				SymbolTable libTable = (SymbolTable)new SymbolTableBuilder().visit(libaryProgram);
+				SymbolTable libTable = (SymbolTable)new SymbolTableVisitor().visit(libaryProgram);
 				table.addLibTable(libTable);
 			}
 			
 			TypeChecker checker = new TypeChecker(table);
 			checker.visit(program); 
+			
+			ScopeChecker mainChecker = new ScopeChecker(new MainClassScopeChecker());
+			boolean success = (boolean)mainChecker.visit(table.root);
+			if (!success) {
+				throw new SemanticError("semantic error at some line: wrong main method");			
+			}
 			
 	    	if (arg.equals("-print-ast"))
 	    	{

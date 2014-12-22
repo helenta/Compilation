@@ -6,14 +6,14 @@ import java.util.List;
 
 import IC.AST.*;
 
-public class virtualMapBuilder implements Visitor{
-	HashMap<String, virtualMapper> classMap;
-	List<virtualMapper> extNosuper;
+public class VirtualMapVisitor implements Visitor{
+	HashMap<String, VirtualMap> classMap;
+	List<VirtualMap> extNosuper;
 	String currCls;
 	SymbolTable table;
-	public virtualMapBuilder(HashMap<String, virtualMapper> map, SymbolTable table) {
+	public VirtualMapVisitor(HashMap<String, VirtualMap> map, SymbolTable table) {
 		this.classMap = map;
-		extNosuper = new ArrayList<virtualMapper>();
+		extNosuper = new ArrayList<VirtualMap>();
 		this.table = table;
 	}
 
@@ -21,7 +21,7 @@ public class virtualMapBuilder implements Visitor{
 		for (ICClass cls : program.getClasses()){
 			cls.accept(this);
 		}
-		for( virtualMapper ext : extNosuper){
+		for( VirtualMap ext : extNosuper){
 			ext.addSuperMethodsAndFields(classMap.get(ext.getScope().getParent().getName()));
 		}
 		return null;
@@ -30,20 +30,20 @@ public class virtualMapBuilder implements Visitor{
 	public Object visit(ICClass icClass) {
 		currCls = icClass.getName();
 		if(icClass.hasSuperClass()){
-			virtualMapper superClass = classMap.get(icClass.getSuperClassName());
+			VirtualMap superClass = classMap.get(icClass.getSuperClassName());
 			if(superClass==null){
-				virtualMapper extCls = new virtualMapper(icClass.getName(),icClass.scope);
+				VirtualMap extCls = new VirtualMap(icClass.getName(),icClass.scope);
 				classMap.put(icClass.getName(), extCls);
 				extNosuper.add(extCls);
 			}
 			else
 			{
-				virtualMapper extCls = virtualMapper.createExtendsCls(icClass.getName(), superClass,icClass.scope);
+				VirtualMap extCls = VirtualMap.createExtendsCls(icClass.getName(), superClass,icClass.scope);
 				classMap.put(icClass.getName(), extCls);
 			}
 		}
 		else{
-			classMap.put(icClass.getName(), new virtualMapper(icClass.getName(),icClass.scope));
+			classMap.put(icClass.getName(), new VirtualMap(icClass.getName(),icClass.scope));
 		}
 		for (Field field : icClass.getFields()){
 			field.accept(this);

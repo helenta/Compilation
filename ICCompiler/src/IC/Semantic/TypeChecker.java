@@ -90,7 +90,7 @@ public class TypeChecker implements Visitor
 		
 		if (!isSameType(refType, exprType))
 		{
-			throw new SemanticException("semantic error at line " + assignment.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + assignment.getLine() + ": " + 
 		"cannot assign type " + printType(exprType) +  " to a variable of type " + printType(refType));
 		}
 		
@@ -173,7 +173,7 @@ public class TypeChecker implements Visitor
 		{
 			if (!retValueTypeName.equals("void"))
 			{
-				throw new SemanticException("semantic error at line " + returnStatement.getLine() + ": " + 
+				throw new SemanticError("semantic error at line " + returnStatement.getLine() + ": " + 
 			printType(retType) + "is not the type of the return statment");
 			}
 			return null;
@@ -189,7 +189,7 @@ public class TypeChecker implements Visitor
 		
 		else if (expType == null && retType.IsIntegerOrBoolean())
 		{
-			throw new SemanticException("semantic error at line " + returnStatement.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + returnStatement.getLine() + ": " + 
 		printType(retType) + "is not the type of the return statment");
 		}
 		
@@ -197,14 +197,14 @@ public class TypeChecker implements Visitor
 		{
 			if (!(table.isDerived(expType.getName(), retValueTypeName)))
 			{
-				throw new SemanticException("semantic error at line " + returnStatement.getLine() + ": " + 
+				throw new SemanticError("semantic error at line " + returnStatement.getLine() + ": " + 
 			printType(retType) + "is not the type of the return statment");
 			}
 		}
 		
 		if (!retValueTypeName.equals(expType.getName()))
 		{
-			throw new SemanticException("semantic error at line " + returnStatement.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + returnStatement.getLine() + ": " + 
 		printType(retType) + "is not the type of the return statment");
 		}
 		
@@ -219,7 +219,7 @@ public class TypeChecker implements Visitor
 		
 		if (!cond.IsBoolean())
 		{
-			throw new SemanticException("semantic error at line " + ifStatement.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + ifStatement.getLine() + ": " + 
 		"if statment has no condition of type boolean");
 		}
 		
@@ -240,7 +240,7 @@ public class TypeChecker implements Visitor
 	
 		if (!cond.getName().equals("boolean"))
 		{
-			throw new SemanticException("semantic error at line " + whileStatement.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + whileStatement.getLine() + ": " + 
 		"while statment has no condition of type boolean");
 		}
 		
@@ -271,7 +271,7 @@ public class TypeChecker implements Visitor
 			
 			if (!isSameType(initType, localVariable.getType()))
 			{
-				throw new SemanticException("semantic error at line " + localVariable.getLine() + ": " + 
+				throw new SemanticError("semantic error at line " + localVariable.getLine() + ": " + 
 			"init value of local variable is not compatible");
 			}
 			
@@ -286,13 +286,13 @@ public class TypeChecker implements Visitor
 		Scope varScope = table.getSymbol(location.scope, location.getName());
 		if (varScope == null)
 		{
-			throw new SemanticException("semantic error at line " + location.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + location.getLine() + ": " + 
 		location.getName() + "is not in symbol table");
 		}
 
 		if (!location.isExternal() && inStatic && varScope instanceof FieldScope)
 		{
-			throw new SemanticException("semantic error at line " + location.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + location.getLine() + ": " + 
 		"field cannot be used inside static method");
 		}
 		
@@ -314,7 +314,7 @@ public class TypeChecker implements Visitor
 		{
 			objTypeScope = table.getSymbol(location.scope, objType.getName());
 			if (objTypeScope == null)
-				throw new SemanticException("semantic error at line " + location.getLine() + ": " + 
+				throw new SemanticError("semantic error at line " + location.getLine() + ": " + 
 			"field cannot be used inside static method");		
 		}
 		
@@ -324,7 +324,7 @@ public class TypeChecker implements Visitor
 		{
 			if (table.getEnclosingClass(location.scope).getName().equals(objTypeScope.getName()))
 			{
-				throw new SemanticException("semantic error at line " + location.getLine() + ": " + 
+				throw new SemanticError("semantic error at line " + location.getLine() + ": " + 
 			"enclosing type unknown");
 			}
 		}
@@ -342,7 +342,7 @@ public class TypeChecker implements Visitor
 		
 		if (!indexType.getName().equals("int"))
 		{
-			throw new SemanticException("semantic error at line " + location.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + location.getLine() + ": " + 
 		"index type is different from int");
 		}
 		
@@ -372,26 +372,26 @@ public class TypeChecker implements Visitor
 		
 		if (clsScope == null)
 		{
-			throw new SemanticException("semantic error at line " + call.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + call.getLine() + ": " + 
 		"class " + clsName + " does not exist");
 		}
 		
 		MethodScope methodScope = (MethodScope) table.getSymbol(clsScope, methodName);
 		if (methodScope == null)
 		{
-			throw new SemanticException("semantic error at line " + call.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + call.getLine() + ": " + 
 		"method " + methodName + " does not exist");
 		}
 		
 		if (call.getArguments().size() != methodScope.params.size())
 		{
-			throw new SemanticException("semantic error at line " + call.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + call.getLine() + ": " + 
 		"method " + methodName + "has wrong number of arguments");
 		}
 		
 		if (!isSameSignature(call, methodScope))
 		{
-			throw new SemanticException("semantic error at line " + call.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + call.getLine() + ": " + 
 		"method " + methodName + " can not be called with these arguments");
 			
 		}
@@ -420,26 +420,26 @@ public class TypeChecker implements Visitor
 		
 		if (clsScope == null)
 		{
-			throw new SemanticException("semantic error at line " + call.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + call.getLine() + ": " + 
 		"class " + clsName + " does not exist");
 		}
 		
 		MethodScope methodScope = (MethodScope) table.getSymbol(clsScope, methodName);
 		if (methodScope == null)
 		{
-			throw new SemanticException("semantic error at line " + call.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + call.getLine() + ": " + 
 		"method " + methodName + " does not exist");
 		}
 		
 		if (call.getArguments().size() != methodScope.params.size())
 		{
-			throw new SemanticException("semantic error at line " + call.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + call.getLine() + ": " + 
 		"method " + methodName + "has wrong number of arguments");
 		}
 		
 		if (!isSameSignature(call, methodScope))
 		{
-			throw new SemanticException("semantic error at line " + call.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + call.getLine() + ": " + 
 		"method " + methodName + " can not be called with these arguments");
 		}
 		
@@ -470,7 +470,7 @@ public class TypeChecker implements Visitor
 	{
 		if (inStatic)
 		{
-			throw new SemanticException("semantic error at line " + thisExpression.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + thisExpression.getLine() + ": " + 
 		"'this' expression can not be used inside static method");
 		}
 		
@@ -494,7 +494,7 @@ public class TypeChecker implements Visitor
 		}
 		else
 		{
-			throw new SemanticException("semantic error at line " + newArray.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + newArray.getLine() + ": " + 
 					"size expression is not of type int");
 		}
 	}
@@ -568,7 +568,7 @@ public class TypeChecker implements Visitor
 				temp = add(a,b, binaryOp);
 				if (temp == null)
 				{
-					throw new SemanticException("semantic error at line " + binaryOp.getLine() + ": " + 
+					throw new SemanticError("semantic error at line " + binaryOp.getLine() + ": " + 
 				"wrong arithmatic binary operation (" + op + ")");
 				}
 				return binaryOp.semType = temp;
@@ -579,7 +579,7 @@ public class TypeChecker implements Visitor
 				temp = arith(a,b);
 				if (temp == null)
 				{
-					throw new SemanticException("semantic error at line " + binaryOp.getLine() + ": " + 
+					throw new SemanticError("semantic error at line " + binaryOp.getLine() + ": " + 
 				"wrong arithmatic binary operation (" + op + ")");
 				}
 				return binaryOp.semType = temp;
@@ -590,7 +590,7 @@ public class TypeChecker implements Visitor
 				temp = comp(a,b);
 				if (temp == null)
 				{
-					throw new SemanticException("semantic error at line " + binaryOp.getLine() + ": " + 
+					throw new SemanticError("semantic error at line " + binaryOp.getLine() + ": " + 
 				"wrong logical binary operation (" + op + ")");				
 				}
 				return binaryOp.semType = temp;
@@ -599,7 +599,7 @@ public class TypeChecker implements Visitor
 				temp = eq(a,b);
 				if (temp == null)
 				{
-					throw new SemanticException("semantic error at line " + binaryOp.getLine() + ": " + 
+					throw new SemanticError("semantic error at line " + binaryOp.getLine() + ": " + 
 				"wrong logical binary operation (" + op + ")");	
 				}
 				return binaryOp.semType = temp;
@@ -608,12 +608,12 @@ public class TypeChecker implements Visitor
 				temp = logic(a,b);
 				if (temp == null)
 				{
-					throw new SemanticException("semantic error at line " + binaryOp.getLine() + ": " + 
+					throw new SemanticError("semantic error at line " + binaryOp.getLine() + ": " + 
 				"wrong logical binary operation (" + op + ")");	
 				}
 				return binaryOp.semType = temp;
 			default:
-				throw new SemanticException("Bad op");
+				throw new SemanticError("Bad op");
 		}
 	}
 
@@ -667,7 +667,7 @@ public class TypeChecker implements Visitor
 				case "string":
 					return new PrimitiveType(a.getLine(),DataTypes.STRING);
 				default:
-					throw new SemanticException("semantic error at line " + binaryOp.getLine() + ": " + 
+					throw new SemanticError("semantic error at line " + binaryOp.getLine() + ": " + 
 				"add operation cannot be used");
 				}
 			}	
@@ -715,7 +715,7 @@ public class TypeChecker implements Visitor
 		if (!firstOperandtype.IsInteger() ||
 			!secondOperandtype.IsInteger())
 		{
-			throw new SemanticException("semantic error at line " + binaryOp.getLine() + ": " + 
+			throw new SemanticError("semantic error at line " + binaryOp.getLine() + ": " + 
 		"wrong logical binary operation");
 		}
 		
@@ -729,7 +729,7 @@ public class TypeChecker implements Visitor
 		
 		if (!isSameType(firstOpType, secondOpType) && (firstOpType != null || !firstOpType.IsIntegerOrBoolean()))
 		{
-			throw new SemanticException("semantic error at line " + binaryOp.getLine() + ": " +
+			throw new SemanticError("semantic error at line " + binaryOp.getLine() + ": " +
 		"wrong logical binary operation");
 		}
 		
@@ -741,7 +741,7 @@ public class TypeChecker implements Visitor
 		Type op = (Type)unaryOp.getOperand().accept(this);
 		if (!op.getName().equals("INT"))
 		{
-			throw new SemanticException("semantic error at line " + unaryOp.getLine() + ": " +
+			throw new SemanticError("semantic error at line " + unaryOp.getLine() + ": " +
 		"math operation can not be used on expression of type " + op.getName());
 		}
 		
@@ -753,7 +753,7 @@ public class TypeChecker implements Visitor
 		Type op = (Type)unaryOp.getOperand().accept(this);
 		if (!op.getName().equals("BOOLEAN"))
 		{
-			throw new SemanticException("semantic error at line " + unaryOp.getLine() + ": " +
+			throw new SemanticError("semantic error at line " + unaryOp.getLine() + ": " +
 		"math operation can not be used on expression of type " + op.getName());
 		}
 		
