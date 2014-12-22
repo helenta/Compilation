@@ -37,34 +37,6 @@ public class BlockScope extends Scope {
 	public Object accept(ScopeVisitor visitor) {
 		return visitor.visit(this);
 	}
-
-//	public BlockType getType() {
-//		return type;
-//	}
-//
-//	public void setType(BlockType type) {
-//		this.type = type;
-//	}
-
-//	public enum BlockType {
-//
-//		IF("if"), 
-//		WHILE("while"), 
-//		BLOCK("block"), 
-//		ELSE("else");
-//		
-//		private String description;
-//
-//		private BlockType(String description) {
-//			this.description = description;
-//		}
-//
-//		@Override
-//		public String toString()
-//		{
-//			return description;
-//		}
-//	}
 	
 	@Override
 	public String getName(){

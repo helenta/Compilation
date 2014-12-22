@@ -43,10 +43,12 @@ public class ClassScope extends Scope {
 			if (classScope.hasSymbol(method.getName())){
 				Scope sym = classScope.getSymbol(method.getName());
 				if (sym instanceof FieldScope){
-					throw new SemanticException(method.getLine() + ": semantic error; Method " + sym.getName() + " is shadowing a field with the same name");
+					throw new SemanticException("semantic error at line " + method.getLine() + ": " + 
+				"method " + sym.getName() + " shadows a field with the same name");
 				}
 				if (sym instanceof MethodScope && !((MethodScope) sym).signature(false).equals(((MethodScope) method).signature(false))){
-					throw new SemanticException(method.getLine() + ": semantic error; method '" + sym.getName() + "' overloads a different method with the same name");
+					throw new SemanticException("semantic error at line " + method.getLine() + ": " + 
+				"method " + sym.getName() + " overloads a method with the same name");
 				}
 			}
 		}
@@ -54,10 +56,10 @@ public class ClassScope extends Scope {
 			if (classScope.hasSymbol(field.getName())){
 				Scope sym = classScope.getSymbol(field.getName());
 				if (sym instanceof FieldScope){
-					throw new SemanticException(field.getLine() + ": semantic error; Field " + sym.getName() + " is shadowing a field with the same name");
+					throw new SemanticException("semantic error at line " + field.getLine() + ": " + 
+				"field " + sym.getName() + " shadows a field with the same name");
 				}
 			}
 		}
-	
 	}
 }

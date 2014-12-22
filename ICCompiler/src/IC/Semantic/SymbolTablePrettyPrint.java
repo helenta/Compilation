@@ -13,13 +13,12 @@ public class SymbolTablePrettyPrint implements ScopeVisitor {
 		StringBuffer output = new StringBuffer();
 		output.append("Class Symbol Table: " + classScope.getName() + "\n");
 		
-		// Fields
 		for (Scope field : classScope.fields)
 		{
 			output.append("    ");
 			output.append(field.accept(this) + "\n");
 		}
-		// Method signatures
+
 		for (Scope method : classScope.methods) 
 		{
 			if (!((MethodScope)method).isVirtual())
@@ -41,7 +40,7 @@ public class SymbolTablePrettyPrint implements ScopeVisitor {
 		}
 		output.deleteCharAt(output.length() - 2);
 		output.append("\n\n");
-		// Method displays
+
 		for (Scope method: classScope.methods)
 			output.append(method.accept(this));
 		return output.toString();
@@ -82,7 +81,7 @@ public class SymbolTablePrettyPrint implements ScopeVisitor {
 	public Object visit(BlockScope blockScope) {
 		StringBuffer output = new StringBuffer();
 		output.append("Statement Block Symbol Table: ( located in " + blockScope.getParent().getName() + " )\n");
-		// Locals
+
 		for (Scope local : blockScope.locals) {
 			output.append("    ");
 			output.append(local.accept(this) + "\n");
@@ -104,7 +103,7 @@ public class SymbolTablePrettyPrint implements ScopeVisitor {
 	public Object visit(MethodScope methodScope) {
 		StringBuffer output = new StringBuffer();
 		output.append("Method Symbol Table: " + methodScope.getName() + "\n");
-		// Params
+
 		for (Scope formal : methodScope.params) {
 			if(((PrimitiveScope) formal).getType().IsPimitive())	
 				typeTable.put("Primitive type: " +  ((PrimitiveScope) formal).getType().getName(), ++id);
@@ -114,7 +113,7 @@ public class SymbolTablePrettyPrint implements ScopeVisitor {
 			output.append("    ");
 			output.append(formal.accept(this) + "\n");
 		}
-		// Locals
+
 		for (Scope local : methodScope.locals) {
 			if(((PrimitiveScope) local).getType().IsPimitive())	
 				typeTable.put("Primitive type: " +  ((PrimitiveScope) local).getType().getName(), ++id);
@@ -134,7 +133,7 @@ public class SymbolTablePrettyPrint implements ScopeVisitor {
 			output.append("\n");
 		}
 		output.append("\n");	
-		// Blocks
+
 		for (Scope block : methodScope.blocks)
 			output.append(block.accept(this) + "\n");
 		return output.toString();

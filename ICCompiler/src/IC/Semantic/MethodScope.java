@@ -48,10 +48,7 @@ public class MethodScope extends Scope {
 			output.append(this.name + " ");
 		}
 		output.append("{");
-		if (this.params.size() == 0){
-			//output.append("void");
-		}
-		else{
+		if (this.params.size() != 0){
 			for (Scope param : this.params)
 				output.append(((PrimitiveScope) param).getTypeName() + ", ");
 			output.delete(output.length()-2, output.length());

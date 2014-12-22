@@ -13,19 +13,17 @@ public class SymbolTableBuilder implements Visitor
 	public Object visit(Program program) 
 	{
 		SymbolTable symbolTable = new SymbolTable();
-		// Put base classes
 		for (ICClass decl : program.getClasses()){
 			ClassScope clsScope = (ClassScope) decl.accept(this);
 			symbolTable.root.addSymbol(clsScope, symbolTable.root.classScopes);
 			if (!decl.hasSuperClass())
-			// Set root as the scope for DeclClasses AST nodes.
 				decl.scope = symbolTable.root;
 			else{
 				if (!symbolTable.root.hasSymbol(decl.getSuperClassName()) || decl.getName().equals(decl.getSuperClassName())){
-					 throw new SemanticException(decl.getLine() + ": semantic error; Class " + decl.getName() + " cannot extend " + decl.getSuperClassName() + ", since it's not yet defined");
+					 throw new SemanticException("semantic error at line " + decl.getLine() + ": " + 
+				"class " + decl.getSuperClassName() + "is not defined when trying to extend it by class " + decl.getName());
 				}
 				ClassScope parent = (ClassScope) symbolTable.root.getSymbol(decl.getSuperClassName());
-				// Set parent class as scope for those sub classes.
 				decl.scope = parent;
 				parent.addDerived(clsScope, decl.getLine());
 			}

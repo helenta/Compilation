@@ -15,18 +15,15 @@ public class SymbolTable {
 	}
 	
 	public boolean isDerived(String derName, String supName){
-		// todo: remove
 		if (this.root == null)
 		{
 			int t = 0;
 			t = 1;
 		}
 		Scope derScope = this.root.getSymbol(derName);
-		// todo: remove
-		if (derScope == null) // promitive type
+		if (derScope == null)
 		{
 			return false;
-			//derScope = this.root.getSymbol(derName);
 		}
 		Scope parentScope = derScope.getParent();
 		if (parentScope instanceof GlobalScope){
@@ -58,7 +55,6 @@ public class SymbolTable {
 	}
 	
 	public Scope getSymbol(Scope scope, String name){
-		// todo: remove
 		if (scope == null)
 		{
 			int y = 0;

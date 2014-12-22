@@ -56,14 +56,17 @@ public abstract class Scope {
 			Scope contained = symbols.get(scope.getName());
 			if (scope instanceof MethodScope && contained instanceof FieldScope)
 			{
-				throw new SemanticException(scope.getLine() + ": semantic error; Method " + scope.getName() + " is shadowing a field with the same name");
+				throw new SemanticException("semantic error at line " + scope.getLine() + ": " + 
+			"method " + scope.getName() + " shadows a field with the same name");
 			}
 			if (scope instanceof LocalScope && contained instanceof FormalScope)
 			{
-				throw new SemanticException(scope.getLine() + ": semantic error; Local variable " + scope.getName() + " is shadowing a parameter");
+				throw new SemanticException("semantic error at line " + scope.getLine() + ": " + 
+			"local variable " + scope.getName() + " shadows a parameter with the same name");
 			}
 			
-			throw new SemanticException(scope.getLine() + ": semantic error; Id " + scope.getName() + " already defined in current scope");
+			throw new SemanticException("semantic error at line " + scope.getLine() + ": " + 
+			"double definition of id " + scope.getName() + " in the same scope");
 		}
 		symbols.put(scope.getName(), scope);
 		if (collection != null){
