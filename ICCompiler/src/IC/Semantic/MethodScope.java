@@ -42,9 +42,12 @@ public class MethodScope extends Scope {
 		return visitor.visit(this);
 	}
 
-	public String signature(){
+	public String signature(boolean onlyFormals){
 		StringBuffer output = new StringBuffer();
-		output.append(this.name + " {");
+		if (!onlyFormals) {
+			output.append(this.name + " ");
+		}
+		output.append("{");
 		if (this.params.size() == 0){
 			//output.append("void");
 		}

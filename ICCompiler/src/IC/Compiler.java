@@ -2,6 +2,8 @@ package IC;
 
 import java.io.*;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import java_cup.runtime.Symbol;
 import IC.AST.*;
@@ -75,10 +77,22 @@ public class Compiler{
 	    	    System.out.println(output);	    
 	    	}
 	
-	    	if (arg.equals("-dump-symtab")) 
+	    	if (arg.equals("-dump-symtab")) {
 				System.out.println(table);
+				
+				System.out.println("Type Table");
+				Map<String, Integer> map = SymbolTablePrettyPrint.typeTable;
+				Map<Integer, String> typeTable = new TreeMap<Integer,String>();
+				int i = 0;
+				for (String name : map.keySet())
+					typeTable.put(map.get(name), name);
+				
+				for (Integer id : typeTable.keySet()){
+		            String value = typeTable.get(id).toString();  
+		            System.out.println("    " + (++i) + ": " + value);  
+				} 
+	    	}
 		}
-		// todo: remove
 		catch (NullPointerException ex)
 		{
 			for (StackTraceElement elem : ex.getStackTrace())
