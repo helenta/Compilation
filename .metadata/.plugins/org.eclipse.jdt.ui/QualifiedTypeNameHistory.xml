@@ -2,7 +2,22 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="java.lang.Throwable"/>
 <fullyQualifiedTypeName name="java.lang.NullPointerException"/>
-<fullyQualifiedTypeName name="IC.DataTypes"/>
 <fullyQualifiedTypeName name="IC.Parser.LibParser"/>
+<fullyQualifiedTypeName name="IC.Semantic.IScopeChecker"/>
+<fullyQualifiedTypeName name="IC.Semantic.MainClassScopeChecker"/>
+<fullyQualifiedTypeName name="IC.AST.Method"/>
+<fullyQualifiedTypeName name="IC.AST.Continue"/>
+<fullyQualifiedTypeName name="IC.Semantic.ScopeChecker"/>
+<fullyQualifiedTypeName name="IC.AST.Assignment"/>
+<fullyQualifiedTypeName name="IC.Semantic.SemanticException"/>
+<fullyQualifiedTypeName name="IC.Semantic.BlockScope"/>
+<fullyQualifiedTypeName name="IC.AST.StatementsBlock"/>
+<fullyQualifiedTypeName name="IC.AST.Statement"/>
+<fullyQualifiedTypeName name="java.lang.String"/>
 <fullyQualifiedTypeName name="IC.AST.PrimitiveType"/>
+<fullyQualifiedTypeName name="IC.DataTypes"/>
+<fullyQualifiedTypeName name="IC.AST.ICClass"/>
+<fullyQualifiedTypeName name="IC.Semantic.GlobalScope"/>
+<fullyQualifiedTypeName name="IC.Semantic.LocalScope"/>
+<fullyQualifiedTypeName name="javax.management.openmbean.SimpleType"/>
 </qualifiedTypeNameHistroy>

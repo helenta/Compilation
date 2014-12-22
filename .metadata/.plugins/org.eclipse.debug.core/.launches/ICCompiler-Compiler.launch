@@ -8,6 +8,6 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="IC.Compiler"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="test\example2.ic -print-ast -Ltest\libic.sig"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="test\example2.ic -dump-symtab -Ltest\libic.sig"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="ICCompiler"/>
 </launchConfiguration>
