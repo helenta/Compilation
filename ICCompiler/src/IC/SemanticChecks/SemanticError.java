@@ -1,4 +1,4 @@
-package IC.Semantic;
+package IC.SemanticChecks;
 
 public class SemanticError extends Error {
 	

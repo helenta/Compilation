@@ -5,10 +5,6 @@ import java.io.IOException;
 
 import IC.AST.*;
 import java_cup.runtime.*;
-import IC.DataTypes;
-import IC.LiteralTypes;
-import IC.UnaryOps;
-import IC.BinaryOps;
 
 
 parser code  {:

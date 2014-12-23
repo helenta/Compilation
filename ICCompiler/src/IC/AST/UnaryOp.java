@@ -1,6 +1,5 @@
 package IC.AST;
 
-import IC.UnaryOps;
 
 /**
  * Abstract base class for unary operation AST nodes.

@@ -1,6 +1,5 @@
 package IC.AST;
 
-import IC.UnaryOps;
 
 /**
  * Mathematical unary operation AST node.

@@ -1,4 +1,6 @@
-package IC.Semantic;
+package IC.SemanticChecks;
+
+import IC.SymbolTables.Scope;
 
 public interface IScopeCheck 
 {	

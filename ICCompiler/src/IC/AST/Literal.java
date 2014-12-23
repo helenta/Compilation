@@ -1,6 +1,5 @@
 package IC.AST;
 
-import IC.LiteralTypes;
 
 /**
  * Literal value AST node.

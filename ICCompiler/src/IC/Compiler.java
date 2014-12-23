@@ -8,7 +8,10 @@ import java.util.TreeMap;
 import java_cup.runtime.Symbol;
 import IC.AST.*;
 import IC.Parser.*;
-import IC.Semantic.*;
+import IC.SemanticChecks.*;
+import IC.SymbolTables.SymbolTable;
+import IC.SymbolTables.SymbolTablePrettyPrint;
+import IC.SymbolTables.SymbolTableVisitor;
 
 public class Compiler{
 	

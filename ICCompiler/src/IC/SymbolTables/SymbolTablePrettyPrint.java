@@ -1,7 +1,9 @@
-package IC.Semantic;
+package IC.SymbolTables;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import IC.SemanticChecks.ScopeVisitor;
 
 public class SymbolTablePrettyPrint implements ScopeVisitor {
 

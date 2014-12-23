@@ -1,4 +1,4 @@
-package IC.Semantic;
+package IC.SymbolTables;
 
 import IC.AST.Type;
 

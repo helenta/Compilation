@@ -1,6 +1,6 @@
 package IC.AST;
 
-import IC.Semantic.Scope;
+import IC.SymbolTables.Scope;
 
 /**
  * Abstract AST node base class.

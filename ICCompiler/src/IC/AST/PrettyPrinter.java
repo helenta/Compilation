@@ -1,7 +1,7 @@
 package IC.AST;
 
-import IC.Semantic.LocalScope;
-import IC.Semantic.SymbolTable;
+import IC.SymbolTables.LocalScope;
+import IC.SymbolTables.SymbolTable;
 
 
 /**

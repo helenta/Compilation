@@ -1,6 +1,5 @@
 package IC.AST;
 
-import IC.BinaryOps;
 
 /**
  * Abstract base class for binary operation AST nodes.

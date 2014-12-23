@@ -1,6 +1,7 @@
-package IC.Semantic;
+package IC.SymbolTables;
 
 import IC.AST.*;
+import IC.SemanticChecks.ScopeVisitor;
 
 import java.util.ArrayList;
 import java.util.List;

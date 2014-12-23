@@ -1,9 +1,10 @@
-package IC.Semantic;
+package IC.SymbolTables;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import IC.AST.*;
+import IC.SemanticChecks.ScopeVisitor;
 
 public class BlockScope extends Scope {
 

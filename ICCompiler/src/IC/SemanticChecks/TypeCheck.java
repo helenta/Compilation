@@ -1,8 +1,14 @@
-package IC.Semantic;
+package IC.SemanticChecks;
 
 import java.util.List;
 
 import IC.AST.*;
+import IC.SymbolTables.ClassScope;
+import IC.SymbolTables.FieldScope;
+import IC.SymbolTables.MethodScope;
+import IC.SymbolTables.PrimitiveScope;
+import IC.SymbolTables.Scope;
+import IC.SymbolTables.SymbolTable;
 import IC.*;
 
 public class TypeCheck implements Visitor

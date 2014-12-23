@@ -1,7 +1,9 @@
-package IC.Semantic;
+package IC.SymbolTables;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import IC.SemanticChecks.ScopeVisitor;
 
 public class GlobalScope extends Scope {
 	

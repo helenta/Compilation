@@ -1,6 +1,5 @@
 package IC.AST;
 
-import IC.DataTypes;
 
 /**
  * Abstract base class for data type AST nodes.

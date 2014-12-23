@@ -1,6 +1,5 @@
 package IC.AST;
 
-import IC.BinaryOps;
 
 /**
  * Mathematical binary operation AST node.

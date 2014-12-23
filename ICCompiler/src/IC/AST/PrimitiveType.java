@@ -1,6 +1,5 @@
 package IC.AST;
 
-import IC.DataTypes;
 
 /**
  * Primitive data type AST node.

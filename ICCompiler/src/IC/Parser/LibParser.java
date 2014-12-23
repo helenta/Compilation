@@ -6,7 +6,6 @@
 package IC.Parser;
 
 import IC.AST.*;
-import IC.DataTypes;
 import java_cup.runtime.*;
 import java.util.*;
 import java.io.*;

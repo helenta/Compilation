@@ -1,4 +1,4 @@
-package IC;
+package IC.AST;
 
 /**
  * Enum of the IC language's literal value types. Includes methods for creating

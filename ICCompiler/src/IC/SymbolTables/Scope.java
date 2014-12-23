@@ -1,7 +1,10 @@
-package IC.Semantic;
+package IC.SymbolTables;
 
 import java.util.HashMap;
 import java.util.List;
+
+import IC.SemanticChecks.ScopeVisitor;
+import IC.SemanticChecks.SemanticError;
 
 public abstract class Scope {
 	

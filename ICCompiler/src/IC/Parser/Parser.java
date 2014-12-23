@@ -9,10 +9,6 @@ import java.util.*;
 import java.io.IOException;
 import IC.AST.*;
 import java_cup.runtime.*;
-import IC.DataTypes;
-import IC.LiteralTypes;
-import IC.UnaryOps;
-import IC.BinaryOps;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20140808 (SVN rev 54) generated parser.

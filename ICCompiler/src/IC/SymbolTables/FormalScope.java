@@ -1,6 +1,7 @@
-package IC.Semantic;
+package IC.SymbolTables;
 
 import IC.AST.Type;
+import IC.SemanticChecks.ScopeVisitor;
 
 public class FormalScope extends PrimitiveScope {
 	

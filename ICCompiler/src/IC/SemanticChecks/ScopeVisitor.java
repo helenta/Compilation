@@ -1,4 +1,12 @@
-package IC.Semantic;
+package IC.SemanticChecks;
+
+import IC.SymbolTables.BlockScope;
+import IC.SymbolTables.ClassScope;
+import IC.SymbolTables.FieldScope;
+import IC.SymbolTables.FormalScope;
+import IC.SymbolTables.GlobalScope;
+import IC.SymbolTables.LocalScope;
+import IC.SymbolTables.MethodScope;
 
 public interface ScopeVisitor {
 

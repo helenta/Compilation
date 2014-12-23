@@ -1,4 +1,5 @@
-package IC.Semantic;
+package IC.SymbolTables;
+
 
 public class SymbolTable {
 	

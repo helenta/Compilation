@@ -1,4 +1,4 @@
-package IC.Semantic;
+package IC.SymbolTables;
 
 import java.util.ArrayList;
 import java.util.HashMap;

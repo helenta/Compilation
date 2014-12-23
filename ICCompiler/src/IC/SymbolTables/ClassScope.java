@@ -1,9 +1,11 @@
-package IC.Semantic;
+package IC.SymbolTables;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import IC.AST.*;
+import IC.SemanticChecks.ScopeVisitor;
+import IC.SemanticChecks.SemanticError;
 
 public class ClassScope extends Scope {
 	public List<Scope> methods;

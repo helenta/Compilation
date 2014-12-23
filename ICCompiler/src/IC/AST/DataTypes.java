@@ -1,4 +1,4 @@
-package IC;
+package IC.AST;
 
 /**
  * Enum of the IC language's primitive data types.
