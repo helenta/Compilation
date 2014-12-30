@@ -1,5 +1,7 @@
 # A program to test Boolean instructions
 str1: " s"
+n : "f"
+n : "g"
 
  _foo:
 Move str1,R0
@@ -8,12 +10,13 @@ Return 9999
 
 _ic_main:
   Move 3,  R1
+  Move n,  R4
   Move R1, x
   Move 2,  R2
   Move R2, y
   Add  R1, R2
   Move R1, x
-  Library __printi(R2),Rdummy
+  Library __println(R4),Rdummy
   StaticCall _foo(),Rdummy
   Library __exit(0),R0
   #Xor 1,R1

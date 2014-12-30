@@ -1,0 +1,8 @@
+1) Manager to allocate register
+2) Save main method - location
+3) Implement class representation
+4) Implement method representation
+5) Implement library method representation
+6) Implement Expression representation
+7) Program: program head (with it's literal), program ic_main, program methods
+8) EmitVisitor holds program parts
