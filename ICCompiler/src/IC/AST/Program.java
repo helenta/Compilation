@@ -7,11 +7,13 @@ import java.util.List;
  * 
  * @author Tovi Almozlino
  */
-public class Program extends ASTNode {
+public class Program extends ASTNode
+{
 
-	private List<ICClass> classes;
+	private List<ICClass>	classes;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -19,14 +21,16 @@ public class Program extends ASTNode {
 	 * Constructs a new program node.
 	 * 
 	 * @param classes
-	 *            List of all classes declared in the program.
+	 *          List of all classes declared in the program.
 	 */
-	public Program(List<ICClass> classes) {
+	public Program(List<ICClass> classes)
+	{
 		super(0);
 		this.classes = classes;
 	}
 
-	public List<ICClass> getClasses() {
+	public List<ICClass> getClasses()
+	{
 		return classes;
 	}
 

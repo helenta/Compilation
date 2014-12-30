@@ -5,16 +5,17 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public enum UnaryOps {
+public enum UnaryOps
+{
 
-	UMINUS("-", "unary subtraction"), 
-	LNEG("!", "logical negation");
+	UMINUS("-", "unary subtraction"), LNEG("!", "logical negation");
 
-	private String operator;
+	private String	operator;
 
-	private String description;
+	private String	description;
 
-	private UnaryOps(String operator, String description) {
+	private UnaryOps(String operator, String description)
+	{
 		this.operator = operator;
 		this.description = description;
 	}
@@ -24,7 +25,8 @@ public enum UnaryOps {
 	 * 
 	 * @return The string representation.
 	 */
-	public String getOperatorString() {
+	public String getOperatorString()
+	{
 		return operator;
 	}
 
@@ -33,7 +35,8 @@ public enum UnaryOps {
 	 * 
 	 * @return The description.
 	 */
-	public String getDescription() {
+	public String getDescription()
+	{
 		return description;
 	}
 }

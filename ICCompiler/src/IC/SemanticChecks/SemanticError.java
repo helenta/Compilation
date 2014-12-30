@@ -1,8 +1,10 @@
 package IC.SemanticChecks;
 
-public class SemanticError extends Error {
-	
-	public SemanticError(String message) {
+public class SemanticError extends Error
+{
+
+	public SemanticError(String message)
+	{
 		super(message);
 	}
 }

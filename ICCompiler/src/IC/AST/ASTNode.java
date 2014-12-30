@@ -7,34 +7,37 @@ import IC.SymbolTables.Scope;
  * 
  * @author Tovi Almozlino
  */
-public abstract class ASTNode {
+public abstract class ASTNode
+{
 
-	private int line;
-	
-	public Scope scope;
-	public Type semType;
+	private int	 line;
+
+	public Scope	scope;
+	public Type	 semType;
 
 	/**
 	 * Double dispatch method, to allow a visitor to visit a specific subclass.
 	 * 
 	 * @param visitor
-	 *            The visitor.
+	 *          The visitor.
 	 * @return A value propagated by the visitor.
 	 */
 	public abstract Object accept(Visitor visitor);
 
 	/**
-	 * Constructs an AST node corresponding to a line number in the original
-	 * code. Used by subclasses.
+	 * Constructs an AST node corresponding to a line number in the original code.
+	 * Used by subclasses.
 	 * 
 	 * @param line
-	 *            The line number.
+	 *          The line number.
 	 */
-	protected ASTNode(int line) {
+	protected ASTNode(int line)
+	{
 		this.line = line;
 	}
 
-	public int getLine() {
+	public int getLine()
+	{
 		return line;
 	}
 

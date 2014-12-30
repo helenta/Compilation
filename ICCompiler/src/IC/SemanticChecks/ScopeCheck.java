@@ -9,87 +9,86 @@ import IC.SymbolTables.LocalScope;
 import IC.SymbolTables.MethodScope;
 import IC.SymbolTables.Scope;
 
-public final class ScopeCheck implements ScopeVisitor 
+public final class ScopeCheck implements ScopeVisitor
 {
-	private IScopeCheck scopeChecker;
-	
+	private IScopeCheck	scopeChecker;
+
 	public ScopeCheck(IScopeCheck checker)
 	{
 		this.scopeChecker = checker;
 	}
 
-	public Object visit(ClassScope classScope) 
+	public Object visit(ClassScope classScope)
 	{
 		this.scopeChecker.Check(classScope);
-		
+
 		for (Scope methodScope : classScope.methods)
 		{
-			visit((MethodScope)methodScope);
+			visit((MethodScope) methodScope);
 		}
-		
+
 		for (Scope fieldScope : classScope.fields)
 		{
-			visit((FieldScope)fieldScope);
+			visit((FieldScope) fieldScope);
 		}
-		
+
 		return null;
 	}
 
-
-	public Object visit(GlobalScope globalScope) 
+	public Object visit(GlobalScope globalScope)
 	{
 		this.scopeChecker.Check(globalScope);
-		
+
 		for (Scope classScopes : globalScope.classScopes)
 		{
-			visit((ClassScope)classScopes);
+			visit((ClassScope) classScopes);
 		}
-		
+
 		return this.scopeChecker.isSuccess();
 	}
 
-	public Object visit(FieldScope fieldScope) 
+	public Object visit(FieldScope fieldScope)
 	{
 		this.scopeChecker.Check(fieldScope);
-		
+
 		return null;
 	}
 
-	public Object visit(FormalScope formalScope) 
+	public Object visit(FormalScope formalScope)
 	{
 		this.scopeChecker.Check(formalScope);
-	
+
 		return null;
 	}
 
-	public Object visit(LocalScope localScope) 
+	public Object visit(LocalScope localScope)
 	{
 		this.scopeChecker.Check(localScope);
-		
+
 		return null;
 	}
 
-	public Object visit(BlockScope blockScope) 
+	public Object visit(BlockScope blockScope)
 	{
 		this.scopeChecker.Check(blockScope);
-		
+
 		for (Scope childeBlockScope : blockScope.blocks)
 		{
-			visit((BlockScope)childeBlockScope);
+			visit((BlockScope) childeBlockScope);
 		}
-		
+
 		for (Scope localScope : blockScope.locals)
 		{
-			visit((LocalScope)localScope);
+			visit((LocalScope) localScope);
 		}
-		
+
 		return null;
 	}
-	
-	public Object visit(MethodScope methodScope) 
+
+	public Object visit(MethodScope methodScope)
 	{
 		this.scopeChecker.Check(methodScope);
-		
+
 		return null;
 	}
 

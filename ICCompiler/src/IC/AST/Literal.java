@@ -1,18 +1,19 @@
 package IC.AST;
 
-
 /**
  * Literal value AST node.
  * 
  * @author Tovi Almozlino
  */
-public class Literal extends Expression {
+public class Literal extends Expression
+{
 
-	private LiteralTypes type;
+	private LiteralTypes	type;
 
-	private Object value;
+	private Object	     value;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -20,11 +21,12 @@ public class Literal extends Expression {
 	 * Constructs a new literal node.
 	 * 
 	 * @param line
-	 *            Line number of the literal.
+	 *          Line number of the literal.
 	 * @param type
-	 *            Literal type.
+	 *          Literal type.
 	 */
-	public Literal(int line, LiteralTypes type) {
+	public Literal(int line, LiteralTypes type)
+	{
 		super(line);
 		this.type = type;
 		value = type.getValue();
@@ -34,22 +36,25 @@ public class Literal extends Expression {
 	 * Constructs a new literal node, with a value.
 	 * 
 	 * @param line
-	 *            Line number of the literal.
+	 *          Line number of the literal.
 	 * @param type
-	 *            Literal type.
+	 *          Literal type.
 	 * @param value
-	 *            Value of literal.
+	 *          Value of literal.
 	 */
-	public Literal(int line, LiteralTypes type, Object value) {
+	public Literal(int line, LiteralTypes type, Object value)
+	{
 		this(line, type);
 		this.value = value;
 	}
 
-	public LiteralTypes getType() {
+	public LiteralTypes getType()
+	{
 		return type;
 	}
 
-	public Object getValue() {
+	public Object getValue()
+	{
 		return value;
 	}
 

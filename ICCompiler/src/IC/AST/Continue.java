@@ -5,9 +5,11 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public class Continue extends Statement {
+public class Continue extends Statement
+{
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -15,9 +17,10 @@ public class Continue extends Statement {
 	 * Constructs a continue statement node.
 	 * 
 	 * @param line
-	 *            Line number of continue statement.
+	 *          Line number of continue statement.
 	 */
-	public Continue(int line) {
+	public Continue(int line)
+	{
 		super(line);
 	}
 

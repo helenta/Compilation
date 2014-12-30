@@ -5,11 +5,13 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public class CallStatement extends Statement {
+public class CallStatement extends Statement
+{
 
-	private Call call;
+	private Call	call;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -17,14 +19,16 @@ public class CallStatement extends Statement {
 	 * Constructs a new method call statement node.
 	 * 
 	 * @param call
-	 *            Method call expression.
+	 *          Method call expression.
 	 */
-	public CallStatement(Call call) {
+	public CallStatement(Call call)
+	{
 		super(call.getLine());
 		this.call = call;
 	}
 
-	public Call getCall() {
+	public Call getCall()
+	{
 		return call;
 	}
 

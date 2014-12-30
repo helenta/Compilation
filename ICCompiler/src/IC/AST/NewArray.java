@@ -5,13 +5,15 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public class NewArray extends New {
+public class NewArray extends New
+{
 
-	private Type type;
+	private Type	     type;
 
-	private Expression size;
+	private Expression	size;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -19,21 +21,24 @@ public class NewArray extends New {
 	 * Constructs a new array creation expression node.
 	 * 
 	 * @param type
-	 *            Data type of new array.
+	 *          Data type of new array.
 	 * @param size
-	 *            Size of new array.
+	 *          Size of new array.
 	 */
-	public NewArray(Type type, Expression size) {
+	public NewArray(Type type, Expression size)
+	{
 		super(type.getLine());
 		this.type = type;
 		this.size = size;
 	}
 
-	public Type getType() {
+	public Type getType()
+	{
 		return type;
 	}
 
-	public Expression getSize() {
+	public Expression getSize()
+	{
 		return size;
 	}
 

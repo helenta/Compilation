@@ -5,13 +5,15 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public class Formal extends ASTNode {
+public class Formal extends ASTNode
+{
 
-	private Type type;
+	private Type	 type;
 
-	private String name;
+	private String	name;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -19,21 +21,24 @@ public class Formal extends ASTNode {
 	 * Constructs a new parameter node.
 	 * 
 	 * @param type
-	 *            Data type of parameter.
+	 *          Data type of parameter.
 	 * @param name
-	 *            Name of parameter.
+	 *          Name of parameter.
 	 */
-	public Formal(Type type, String name) {
+	public Formal(Type type, String name)
+	{
 		super(type.getLine());
 		this.type = type;
 		this.name = name;
 	}
 
-	public Type getType() {
+	public Type getType()
+	{
 		return type;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 

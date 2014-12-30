@@ -7,17 +7,19 @@ import java.util.List;
  * 
  * @author Tovi Almozlino
  */
-public class ICClass extends ASTNode {
+public class ICClass extends ASTNode
+{
 
-	private String name;
+	private String	     name;
 
-	private String superClassName = null;
+	private String	     superClassName	= null;
 
-	private List<Field> fields;
+	private List<Field>	 fields;
 
-	private List<Method> methods;
+	private List<Method>	methods;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -25,16 +27,16 @@ public class ICClass extends ASTNode {
 	 * Constructs a new class node.
 	 * 
 	 * @param line
-	 *            Line number of class declaration.
+	 *          Line number of class declaration.
 	 * @param name
-	 *            Class identifier name.
+	 *          Class identifier name.
 	 * @param fields
-	 *            List of all fields in the class.
+	 *          List of all fields in the class.
 	 * @param methods
-	 *            List of all methods in the class.
+	 *          List of all methods in the class.
 	 */
-	public ICClass(int line, String name, List<Field> fields,
-			List<Method> methods) {
+	public ICClass(int line, String name, List<Field> fields, List<Method> methods)
+	{
 		super(line);
 		this.name = name;
 		this.fields = fields;
@@ -45,39 +47,45 @@ public class ICClass extends ASTNode {
 	 * Constructs a new class node, with a superclass.
 	 * 
 	 * @param line
-	 *            Line number of class declaration.
+	 *          Line number of class declaration.
 	 * @param name
-	 *            Class identifier name.
+	 *          Class identifier name.
 	 * @param superClassName
-	 *            Superclass identifier name.
+	 *          Superclass identifier name.
 	 * @param fields
-	 *            List of all fields in the class.
+	 *          List of all fields in the class.
 	 * @param methods
-	 *            List of all methods in the class.
+	 *          List of all methods in the class.
 	 */
 	public ICClass(int line, String name, String superClassName,
-			List<Field> fields, List<Method> methods) {
+	    List<Field> fields, List<Method> methods)
+	{
 		this(line, name, fields, methods);
 		this.superClassName = superClassName;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 
-	public boolean hasSuperClass() {
+	public boolean hasSuperClass()
+	{
 		return (superClassName != null);
 	}
 
-	public String getSuperClassName() {
+	public String getSuperClassName()
+	{
 		return superClassName;
 	}
 
-	public List<Field> getFields() {
+	public List<Field> getFields()
+	{
 		return fields;
 	}
 
-	public List<Method> getMethods() {
+	public List<Method> getMethods()
+	{
 		return methods;
 	}
 

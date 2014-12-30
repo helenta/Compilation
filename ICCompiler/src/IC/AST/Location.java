@@ -5,15 +5,17 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public abstract class Location extends Expression {
+public abstract class Location extends Expression
+{
 
 	/**
 	 * Constructs a new variable reference node. Used by subclasses.
 	 * 
 	 * @param line
-	 *            Line number of reference.
+	 *          Line number of reference.
 	 */
-	protected Location(int line) {
+	protected Location(int line)
+	{
 		super(line);
 	}
 

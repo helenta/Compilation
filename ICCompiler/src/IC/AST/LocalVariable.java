@@ -5,15 +5,17 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public class LocalVariable extends Statement {
+public class LocalVariable extends Statement
+{
 
-	private Type type;
+	private Type	     type;
 
-	private String name;
+	private String	   name;
 
-	private Expression initValue = null;
+	private Expression	initValue	= null;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -21,45 +23,51 @@ public class LocalVariable extends Statement {
 	 * Constructs a new local variable declaration statement node.
 	 * 
 	 * @param type
-	 *            Data type of local variable.
+	 *          Data type of local variable.
 	 * @param name
-	 *            Name of local variable.
+	 *          Name of local variable.
 	 */
-	public LocalVariable(Type type, String name) {
+	public LocalVariable(Type type, String name)
+	{
 		super(type.getLine());
 		this.type = type;
 		this.name = name;
 	}
 
 	/**
-	 * Constructs a new local variable declaration statement node, with an
-	 * initial value.
+	 * Constructs a new local variable declaration statement node, with an initial
+	 * value.
 	 * 
 	 * @param type
-	 *            Data type of local variable.
+	 *          Data type of local variable.
 	 * @param name
-	 *            Name of local variable.
+	 *          Name of local variable.
 	 * @param initValue
-	 *            Initial value of local variable.
+	 *          Initial value of local variable.
 	 */
-	public LocalVariable(Type type, String name, Expression initValue) {
+	public LocalVariable(Type type, String name, Expression initValue)
+	{
 		this(type, name);
 		this.initValue = initValue;
 	}
 
-	public Type getType() {
+	public Type getType()
+	{
 		return type;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 
-	public boolean hasInitValue() {
+	public boolean hasInitValue()
+	{
 		return (initValue != null);
 	}
 
-	public Expression getInitValue() {
+	public Expression getInitValue()
+	{
 		return initValue;
 	}
 

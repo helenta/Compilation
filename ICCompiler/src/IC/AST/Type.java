@@ -1,37 +1,40 @@
 package IC.AST;
 
-
 /**
  * Abstract base class for data type AST nodes.
  * 
  * @author Tovi Almozlino
  */
-public class Type extends ASTNode {
+public class Type extends ASTNode
+{
 
 	/**
 	 * Number of array 'dimensions' in data type. For example, int[][] ->
 	 * dimension = 2.
 	 */
-	private int dimension = 0;
-	
-	private String name;
+	private int	   dimension	= 0;
+
+	private String	name;
 
 	/**
 	 * Constructs a new type node. Used by subclasses.
 	 * 
 	 * @param line
-	 *            Line number of type declaration.
+	 *          Line number of type declaration.
 	 */
-	protected Type(int line) {
+	protected Type(int line)
+	{
 		super(line);
 	}
-	
-	public Type (int line, String name){
+
+	public Type(int line, String name)
+	{
 		super(line);
 		this.name = name;
 	}
-	
-	public Object accept(Visitor visitor) {
+
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -40,16 +43,16 @@ public class Type extends ASTNode {
 		return name;
 	}
 
-	public int getDimension() 
+	public int getDimension()
 	{
 		return dimension;
 	}
 
-	public void incrementDimension() 
+	public void incrementDimension()
 	{
 		++dimension;
 	}
-	
+
 	public boolean IsPimitive()
 	{
 		return false;
@@ -59,12 +62,12 @@ public class Type extends ASTNode {
 	{
 		return false;
 	}
-	
+
 	public boolean IsInteger()
 	{
 		return false;
 	}
-	
+
 	public boolean IsBoolean()
 	{
 		return false;

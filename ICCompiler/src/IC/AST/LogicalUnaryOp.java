@@ -1,14 +1,15 @@
 package IC.AST;
 
-
 /**
  * Logical unary operation AST node.
  * 
  * @author Tovi Almozlino
  */
-public class LogicalUnaryOp extends UnaryOp {
+public class LogicalUnaryOp extends UnaryOp
+{
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -16,11 +17,12 @@ public class LogicalUnaryOp extends UnaryOp {
 	 * Constructs a new logical unary operation node.
 	 * 
 	 * @param operator
-	 *            The operator.
+	 *          The operator.
 	 * @param operand
-	 *            The operand.
+	 *          The operand.
 	 */
-	public LogicalUnaryOp(UnaryOps operator, Expression operand) {
+	public LogicalUnaryOp(UnaryOps operator, Expression operand)
+	{
 		super(operator, operand);
 	}
 

@@ -7,33 +7,37 @@ import java.util.List;
  * 
  * @author Tovi Almozlino
  */
-public abstract class Call extends Expression {
+public abstract class Call extends Expression
+{
 
-	private String name;
+	private String	         name;
 
-	private List<Expression> arguments;
+	private List<Expression>	arguments;
 
 	/**
 	 * Constructs a new method call node. Used by subclasses.
 	 * 
 	 * @param line
-	 *            Line number of call.
+	 *          Line number of call.
 	 * @param name
-	 *            Name of method.
+	 *          Name of method.
 	 * @param arguments
-	 *            List of all method arguments.
+	 *          List of all method arguments.
 	 */
-	protected Call(int line, String name, List<Expression> arguments) {
+	protected Call(int line, String name, List<Expression> arguments)
+	{
 		super(line);
 		this.name = name;
 		this.arguments = arguments;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 
-	public List<Expression> getArguments() {
+	public List<Expression> getArguments()
+	{
 		return arguments;
 	}
 

@@ -3,33 +3,35 @@ package IC.AST;
 import IC.SymbolTables.LocalScope;
 import IC.SymbolTables.SymbolTable;
 
-
 /**
  * Pretty printing visitor - travels along the AST and prints info about each
  * node, in an easy-to-comprehend format.
  * 
  * @author Tovi Almozlino
  */
-public class PrettyPrinter implements Visitor {
+public class PrettyPrinter implements Visitor
+{
 
-	private int depth = 0; // depth of indentation
+	private int	        depth	= 0;	// depth of indentation
 
-	private String ICFilePath;
-	
-	private SymbolTable table;
+	private String	    ICFilePath;
+
+	private SymbolTable	table;
 
 	/**
 	 * Constructs a new pretty printer visitor.
 	 * 
 	 * @param ICFilePath
-	 *            The path + name of the IC file being compiled.
+	 *          The path + name of the IC file being compiled.
 	 */
-	public PrettyPrinter(String ICFilePath, SymbolTable table) {
+	public PrettyPrinter(String ICFilePath, SymbolTable table)
+	{
 		this.ICFilePath = ICFilePath;
 		this.table = table;
 	}
 
-	private void indent(StringBuffer output, ASTNode node) {
+	private void indent(StringBuffer output, ASTNode node)
+	{
 		output.append("\n");
 		for (int i = 0; i < depth; ++i)
 			output.append(" ");
@@ -37,11 +39,13 @@ public class PrettyPrinter implements Visitor {
 			output.append(node.getLine() + ": ");
 	}
 
-	private void indent(StringBuffer output) {
+	private void indent(StringBuffer output)
+	{
 		indent(output, null);
 	}
 
-	public Object visit(Program program) {
+	public Object visit(Program program)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output);
@@ -51,16 +55,18 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(ICClass icClass) {
+	public Object visit(ICClass icClass)
+	{
 		StringBuffer output = new StringBuffer();
 		String scope = icClass.scope.getName();
-		
+
 		indent(output, icClass);
 		output.append("Declaration of class: " + icClass.getName());
 		if (icClass.hasSuperClass())
 			output.append(", subclass of " + icClass.getSuperClassName());
 		depth += 4;
-		if (scope == "") {
+		if (scope == "")
+		{
 			scope = "Global";
 		}
 		output.append(", Type: " + icClass.getName() + ", Symbol table: " + scope);
@@ -72,7 +78,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(PrimitiveType type) {
+	public Object visit(PrimitiveType type)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, type);
@@ -83,7 +90,7 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(Type type) 
+	public Object visit(Type type)
 	{
 		StringBuffer output = new StringBuffer();
 
@@ -94,7 +101,7 @@ public class PrettyPrinter implements Visitor {
 		output.append(type.getName());
 		return output.toString();
 	}
-	
+
 	private String SimpleType(Type type)
 	{
 		StringBuffer output = new StringBuffer();
@@ -105,24 +112,28 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(Field field) {
+	public Object visit(Field field)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, field);
 		output.append("Declaration of field: " + field.getName());
-		output.append(", Type: " + field.getType().getName() + ", Symbol table: " + field.scope.getParent().getName());
+		output.append(", Type: " + field.getType().getName() + ", Symbol table: "
+		    + field.scope.getParent().getName());
 		++depth;
 		field.getType().accept(this);
 		--depth;
 		return output.toString();
 	}
 
-	public Object visit(LibraryMethod method) {
+	public Object visit(LibraryMethod method)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, method);
 		output.append("Declaration of library method: " + method.getName());
-		output.append(", Type: " + method.getType().getName() + ", Symbol table: " + method.scope.getName());
+		output.append(", Type: " + method.getType().getName() + ", Symbol table: "
+		    + method.scope.getName());
 		depth += 4;
 		output.append(method.getType().accept(this));
 		for (Formal formal : method.getFormals())
@@ -131,29 +142,33 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(Formal formal) {
+	public Object visit(Formal formal)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, formal);
 		output.append("Parameter: " + formal.getName());
-		output.append(", Type: " + SimpleType(formal.getType()) + ", Symbol table: " + formal.scope.getParent().getName());
+		output.append(", Type: " + SimpleType(formal.getType())
+		    + ", Symbol table: " + formal.scope.getParent().getName());
 		++depth;
-		//output.append(formal.getType().accept(this));
+		// output.append(formal.getType().accept(this));
 		--depth;
 		return output.toString();
 	}
 
-	public Object visit(VirtualMethod method) {
+	public Object visit(VirtualMethod method)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, method);
 		output.append("Declaration of virtual method: " + method.getName());
 		output.append(", Type: " + "{");
-		for (Formal formal : method.getFormals())			
+		for (Formal formal : method.getFormals())
 			output.append(formal.getType().getName() + ", ");
 		if (method.getFormals().size() > 0)
 			output.deleteCharAt(output.length() - 2);
-		output.append("-> " + method.getType().getName() + "}"+ ", Symbol table: " + method.scope.getParent().getName());		
+		output.append("-> " + method.getType().getName() + "}" + ", Symbol table: "
+		    + method.scope.getParent().getName());
 		depth += 4;
 		method.getType().accept(this);
 		for (Formal formal : method.getFormals())
@@ -164,15 +179,17 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(StaticMethod method) {
+	public Object visit(StaticMethod method)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, method);
 		output.append("Declaration of static method: " + method.getName());
 		output.append(", Type: " + "{");
-		for (Formal formal : method.getFormals())			
+		for (Formal formal : method.getFormals())
 			output.append(SimpleType(formal.getType()));
-		output.append(" -> " + SimpleType(method.getType()) + "}"+ ", Symbol table: " + method.scope.getParent().getName());
+		output.append(" -> " + SimpleType(method.getType()) + "}"
+		    + ", Symbol table: " + method.scope.getParent().getName());
 		depth += 4;
 		method.getType().accept(this);
 		for (Formal formal : method.getFormals())
@@ -183,7 +200,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(Assignment assignment) {
+	public Object visit(Assignment assignment)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, assignment);
@@ -196,7 +214,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(CallStatement callStatement) {
+	public Object visit(CallStatement callStatement)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, callStatement);
@@ -207,7 +226,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(Return returnStatement) {
+	public Object visit(Return returnStatement)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, returnStatement);
@@ -215,7 +235,8 @@ public class PrettyPrinter implements Visitor {
 		if (returnStatement.hasValue())
 			output.append(", with return value");
 		output.append(", Symbol table: " + returnStatement.scope.getName());
-		if (returnStatement.hasValue()) {
+		if (returnStatement.hasValue())
+		{
 			depth += 4;
 			output.append(returnStatement.getValue().accept(this));
 			depth -= 4;
@@ -223,7 +244,7 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(If ifStatement) 
+	public Object visit(If ifStatement)
 	{
 		StringBuffer output = new StringBuffer();
 
@@ -241,7 +262,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(While whileStatement) {
+	public Object visit(While whileStatement)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, whileStatement);
@@ -254,7 +276,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(Break breakStatement) {
+	public Object visit(Break breakStatement)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, breakStatement);
@@ -263,7 +286,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(Continue continueStatement) {
+	public Object visit(Continue continueStatement)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, continueStatement);
@@ -272,7 +296,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(StatementsBlock statementsBlock) {
+	public Object visit(StatementsBlock statementsBlock)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, statementsBlock);
@@ -285,16 +310,18 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(LocalVariable localVariable) {
+	public Object visit(LocalVariable localVariable)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, localVariable);
 		output.append("Declaration of local variable: " + localVariable.getName());
-	
-		if (localVariable.hasInitValue()) 
+
+		if (localVariable.hasInitValue())
 		{
 			output.append(", with initial value");
-			output.append(", Type: " + SimpleType(localVariable.getType()) + ", Symbol table: " + localVariable.scope.getParent().getName());
+			output.append(", Type: " + SimpleType(localVariable.getType())
+			    + ", Symbol table: " + localVariable.scope.getParent().getName());
 			depth += 2;
 		}
 		else
@@ -304,10 +331,11 @@ public class PrettyPrinter implements Visitor {
 			output.append(", Symbol table: ");
 			output.append(localVariable.scope.getParent().getName());
 		}
-		
+
 		depth += 2;
 		localVariable.getType().accept(this);
-		if (localVariable.hasInitValue()) {
+		if (localVariable.hasInitValue())
+		{
 			output.append(localVariable.getInitValue().accept(this));
 			depth -= 2;
 		}
@@ -324,13 +352,14 @@ public class PrettyPrinter implements Visitor {
 		if (location.isExternal())
 			output.append(", in external scope");
 		output.append(", Type: " + SimpleType(location.semType));
-		
+
 		if (location.scope instanceof LocalScope)
 			output.append(", Symbol table: " + location.scope.getParent().getName());
 		else
 			output.append(", Symbol table: " + location.scope.getName());
-		
-		if (location.isExternal()) {
+
+		if (location.isExternal())
+		{
 			depth += 4;
 			output.append(location.getLocation().accept(this));
 			depth -= 4;
@@ -338,16 +367,16 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(ArrayLocation location) 
+	public Object visit(ArrayLocation location)
 	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, location);
 		output.append("Reference to array");
-		
+
 		output.append(", Type: " + SimpleType(location.semType));
 		output.append(", Symbol table: " + location.scope.getName());
-		
+
 		depth += 4;
 		output.append(location.getArray().accept(this));
 		output.append(location.getIndex().accept(this));
@@ -355,12 +384,13 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(StaticCall call) {
+	public Object visit(StaticCall call)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, call);
-		output.append("Call to static method: " + call.getName()
-				+ ", in class " + call.getClassName());
+		output.append("Call to static method: " + call.getName() + ", in class "
+		    + call.getClassName());
 		depth += 4;
 		for (Expression argument : call.getArguments())
 			output.append(argument.accept(this));
@@ -368,7 +398,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(VirtualCall call) {
+	public Object visit(VirtualCall call)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, call);
@@ -384,7 +415,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(This thisExpression) {
+	public Object visit(This thisExpression)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, thisExpression);
@@ -392,7 +424,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(NewClass newClass) {
+	public Object visit(NewClass newClass)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, newClass);
@@ -402,7 +435,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(NewArray newArray) {
+	public Object visit(NewArray newArray)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, newArray);
@@ -417,7 +451,8 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(Length length) {
+	public Object visit(Length length)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, length);
@@ -428,11 +463,13 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(MathBinaryOp binaryOp) {
+	public Object visit(MathBinaryOp binaryOp)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, binaryOp);
-		output.append("Mathematical binary operation: " + binaryOp.getOperator().getDescription());
+		output.append("Mathematical binary operation: "
+		    + binaryOp.getOperator().getDescription());
 		output.append(", Type: int");
 		output.append(", Symbol table: " + binaryOp.scope.getName());
 		depth += 4;
@@ -442,11 +479,13 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(LogicalBinaryOp binaryOp) {
+	public Object visit(LogicalBinaryOp binaryOp)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, binaryOp);
-		output.append("Logical binary operation: " + binaryOp.getOperator().getDescription());
+		output.append("Logical binary operation: "
+		    + binaryOp.getOperator().getDescription());
 		output.append(", Type: boolean");
 		output.append(", Symbol table: ");
 		output.append(binaryOp.scope.getName());
@@ -457,11 +496,13 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(MathUnaryOp unaryOp) {
+	public Object visit(MathUnaryOp unaryOp)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, unaryOp);
-		output.append("Mathematical unary operation: " + unaryOp.getOperator().getDescription());
+		output.append("Mathematical unary operation: "
+		    + unaryOp.getOperator().getDescription());
 		output.append(", Type: boolean ");
 		depth += 4;
 		output.append(unaryOp.getOperand().accept(this));
@@ -469,11 +510,13 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(LogicalUnaryOp unaryOp) {
+	public Object visit(LogicalUnaryOp unaryOp)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, unaryOp);
-		output.append("Logical unary operation: " + unaryOp.getOperator().getDescription());
+		output.append("Logical unary operation: "
+		    + unaryOp.getOperator().getDescription());
 		output.append(", Type: boolean ");
 		depth += 4;
 		output.append(unaryOp.getOperand().accept(this));
@@ -481,43 +524,46 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(Literal literal) {
+	public Object visit(Literal literal)
+	{
 		StringBuffer output = new StringBuffer();
 		String type = "";
-		switch(literal.getType()) {
-		case TRUE:
-			type = "boolean";
-		case FALSE:
-			type = "boolean";
-			break;
-		case INTEGER:
-			type = "int";
-			break;
-		case STRING:
-			type = "string";
-			break;
-		case NULL:
-			type = "null";
-			break;
-		default:
-			break;
-		
+		switch (literal.getType())
+		{
+			case TRUE:
+				type = "boolean";
+			case FALSE:
+				type = "boolean";
+				break;
+			case INTEGER:
+				type = "int";
+				break;
+			case STRING:
+				type = "string";
+				break;
+			case NULL:
+				type = "null";
+				break;
+			default:
+				break;
+
 		}
 		indent(output, literal);
 		output.append(literal.getType().getDescription() + ": "
-				+ literal.getType().toFormattedString(literal.getValue()));
+		    + literal.getType().toFormattedString(literal.getValue()));
 		output.append(", Type: " + type);
 		output.append(", Symbol table: ");
-		
+
 		if (literal.scope instanceof LocalScope)
 			output.append(literal.scope.getParent().getName());
 		else
 			output.append(literal.scope.getName());
-		
+
 		return output.toString();
 	}
 
-	public Object visit(ExpressionBlock expressionBlock) {
+	public Object visit(ExpressionBlock expressionBlock)
+	{
 		StringBuffer output = new StringBuffer();
 
 		indent(output, expressionBlock);

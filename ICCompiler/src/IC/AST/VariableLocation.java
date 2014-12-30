@@ -5,13 +5,15 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public class VariableLocation extends Location {
+public class VariableLocation extends Location
+{
 
-	private Expression location = null;
+	private Expression	location	= null;
 
-	private String name;
+	private String	   name;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -19,11 +21,12 @@ public class VariableLocation extends Location {
 	 * Constructs a new variable reference node.
 	 * 
 	 * @param line
-	 *            Line number of reference.
+	 *          Line number of reference.
 	 * @param name
-	 *            Name of variable.
+	 *          Name of variable.
 	 */
-	public VariableLocation(int line, String name) {
+	public VariableLocation(int line, String name)
+	{
 		super(line);
 		this.name = name;
 	}
@@ -32,28 +35,31 @@ public class VariableLocation extends Location {
 	 * Constructs a new variable reference node, for an external location.
 	 * 
 	 * @param line
-	 *            Line number of reference.
+	 *          Line number of reference.
 	 * @param location
-	 *            Location of variable.
+	 *          Location of variable.
 	 * @param name
-	 *            Name of variable.
+	 *          Name of variable.
 	 */
-	public VariableLocation(int line, Expression location, String name) {
+	public VariableLocation(int line, Expression location, String name)
+	{
 		super(line);
 		this.location = location;
 		this.name = name;
 	}
 
-	public boolean isExternal() 
+	public boolean isExternal()
 	{
 		return (location != null);
 	}
 
-	public Expression getLocation() {
+	public Expression getLocation()
+	{
 		return location;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 

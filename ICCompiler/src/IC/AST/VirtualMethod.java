@@ -7,9 +7,11 @@ import java.util.List;
  * 
  * @author Tovi Almozlino
  */
-public class VirtualMethod extends Method {
+public class VirtualMethod extends Method
+{
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -17,16 +19,17 @@ public class VirtualMethod extends Method {
 	 * Constructs a new virtual method node.
 	 * 
 	 * @param type
-	 *            Data type returned by method.
+	 *          Data type returned by method.
 	 * @param name
-	 *            Name of method.
+	 *          Name of method.
 	 * @param formals
-	 *            List of method parameters.
+	 *          List of method parameters.
 	 * @param statements
-	 *            List of method's statements.
+	 *          List of method's statements.
 	 */
 	public VirtualMethod(Type type, String name, List<Formal> formals,
-			List<Statement> statements) {
+	    List<Statement> statements)
+	{
 		super(type, name, formals, statements);
 	}
 

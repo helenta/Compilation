@@ -7,11 +7,13 @@ import java.util.List;
  * 
  * @author Tovi Almozlino
  */
-public class StaticCall extends Call {
+public class StaticCall extends Call
+{
 
-	private String className;
+	private String	className;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -19,21 +21,23 @@ public class StaticCall extends Call {
 	 * Constructs a new static method call node.
 	 * 
 	 * @param line
-	 *            Line number of call.
+	 *          Line number of call.
 	 * @param className
-	 *            Name of method's class.
+	 *          Name of method's class.
 	 * @param name
-	 *            Name of method.
+	 *          Name of method.
 	 * @param arguments
-	 *            List of all method arguments.
+	 *          List of all method arguments.
 	 */
 	public StaticCall(int line, String className, String name,
-			List<Expression> arguments) {
+	    List<Expression> arguments)
+	{
 		super(line, name, arguments);
 		this.className = className;
 	}
 
-	public String getClassName() {
+	public String getClassName()
+	{
 		return className;
 	}
 

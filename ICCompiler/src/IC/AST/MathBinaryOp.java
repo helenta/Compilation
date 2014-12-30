@@ -1,14 +1,15 @@
 package IC.AST;
 
-
 /**
  * Mathematical binary operation AST node.
  * 
  * @author Tovi Almozlino
  */
-public class MathBinaryOp extends BinaryOp {
+public class MathBinaryOp extends BinaryOp
+{
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -16,13 +17,15 @@ public class MathBinaryOp extends BinaryOp {
 	 * Constructs a new mathematical binary operation node.
 	 * 
 	 * @param operand1
-	 *            The first operand.
+	 *          The first operand.
 	 * @param operator
-	 *            The operator.
+	 *          The operator.
 	 * @param operand2
-	 *            The second operand.
+	 *          The second operand.
 	 */
-	public MathBinaryOp(Expression operand1, BinaryOps operator, Expression operand2) {
+	public MathBinaryOp(Expression operand1, BinaryOps operator,
+	    Expression operand2)
+	{
 		super(operand1, operator, operand2);
 	}
 

@@ -5,13 +5,15 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public class Assignment extends Statement {
+public class Assignment extends Statement
+{
 
-	private Location variable;
+	private Location	 variable;
 
-	private Expression assignment;
+	private Expression	assignment;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -19,21 +21,24 @@ public class Assignment extends Statement {
 	 * Constructs a new assignment statement node.
 	 * 
 	 * @param variable
-	 *            Variable to assign a value to.
+	 *          Variable to assign a value to.
 	 * @param assignment
-	 *            Value to assign.
+	 *          Value to assign.
 	 */
-	public Assignment(Location variable, Expression assignment) {
+	public Assignment(Location variable, Expression assignment)
+	{
 		super(variable.getLine());
 		this.variable = variable;
 		this.assignment = assignment;
 	}
 
-	public Location getVariable() {
+	public Location getVariable()
+	{
 		return variable;
 	}
 
-	public Expression getAssignment() {
+	public Expression getAssignment()
+	{
 		return assignment;
 	}
 

@@ -5,11 +5,13 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public class NewClass extends New {
+public class NewClass extends New
+{
 
-	private String name;
+	private String	name;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -17,16 +19,18 @@ public class NewClass extends New {
 	 * Constructs a new class instance creation expression node.
 	 * 
 	 * @param line
-	 *            Line number of expression.
+	 *          Line number of expression.
 	 * @param name
-	 *            Name of class.
+	 *          Name of class.
 	 */
-	public NewClass(int line, String name) {
+	public NewClass(int line, String name)
+	{
 		super(line);
 		this.name = name;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 

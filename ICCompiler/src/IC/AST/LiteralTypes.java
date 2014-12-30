@@ -6,22 +6,29 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public enum LiteralTypes {
+public enum LiteralTypes
+{
 
-	INTEGER(DataTypes.INT.getDefaultValue(), "Integer literal"), 
-	STRING(DataTypes.STRING.getDefaultValue(), "String literal") {
-		private void replaceEscapeSequences(StringBuffer string) {
-			for (int i = 0; i < string.length(); ++i) {
+	INTEGER(DataTypes.INT.getDefaultValue(), "Integer literal"), STRING(
+	    DataTypes.STRING.getDefaultValue(), "String literal")
+	{
+		private void replaceEscapeSequences(StringBuffer string)
+		{
+			for (int i = 0; i < string.length(); ++i)
+			{
 				String replacement = String.valueOf(string.charAt(i));
 
 				if (string.charAt(i) == '\"')
 					replacement = "\\\"";
-				else if (string.charAt(i) == '\\')
-					replacement = "\\\\";
-				else if (string.charAt(i) == '\n')
-					replacement = "\\n";
-				else if (string.charAt(i) == '\t')
-					replacement = "\\t";
+				else
+					if (string.charAt(i) == '\\')
+						replacement = "\\\\";
+					else
+						if (string.charAt(i) == '\n')
+							replacement = "\\n";
+						else
+							if (string.charAt(i) == '\t')
+								replacement = "\\t";
 				string.replace(i, i + 1, replacement);
 				i += replacement.length() - 1;
 			}
@@ -33,19 +40,19 @@ public enum LiteralTypes {
 				return String.valueOf(value);
 			StringBuffer formattedString = new StringBuffer(value.toString());
 
-			//replaceEscapeSequences(formattedString);
+			// replaceEscapeSequences(formattedString);
 			return formattedString.toString();
 		}
 	},
-	TRUE(true, "Boolean literal"),
-	FALSE(false, "Boolean literal"),
-	NULL(null, "Null literal");
-	
-	private Object value;
-	
-	private String description;
+	TRUE(true, "Boolean literal"), FALSE(false, "Boolean literal"), NULL(null,
+	    "Null literal");
 
-	private LiteralTypes(Object value, String description) {
+	private Object	value;
+
+	private String	description;
+
+	private LiteralTypes(Object value, String description)
+	{
 		this.value = value;
 		this.description = description;
 	}
@@ -55,7 +62,8 @@ public enum LiteralTypes {
 	 * 
 	 * @return The value.
 	 */
-	public Object getValue() {
+	public Object getValue()
+	{
 		return value;
 	}
 
@@ -63,10 +71,11 @@ public enum LiteralTypes {
 	 * Returns a formatted string representation of a literal value.
 	 * 
 	 * @param value
-	 *            The value.
+	 *          The value.
 	 * @return The string.
 	 */
-	public String toFormattedString(Object value) {
+	public String toFormattedString(Object value)
+	{
 		return String.valueOf(value);
 	}
 
@@ -75,7 +84,8 @@ public enum LiteralTypes {
 	 * 
 	 * @return The description.
 	 */
-	public String getDescription() {
+	public String getDescription()
+	{
 		return description;
-	}	
+	}
 }

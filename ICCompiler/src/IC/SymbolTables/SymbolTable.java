@@ -1,45 +1,51 @@
 package IC.SymbolTables;
 
+public class SymbolTable
+{
 
-public class SymbolTable {
-	
-	public GlobalScope root;
-	
-	public SymbolTable() {
+	public GlobalScope	root;
+
+	public SymbolTable()
+	{
 		this.root = new GlobalScope();
 	}
-	
-	public String toString(){
+
+	public String toString()
+	{
 		SymbolTablePrettyPrint prettyPrint = new SymbolTablePrettyPrint();
-		return (String)prettyPrint.visit(root);
-		
+		return (String) prettyPrint.visit(root);
+
 	}
-	
-	public MethodScope getEnclosingMethod(Scope scope){
+
+	public MethodScope getEnclosingMethod(Scope scope)
+	{
 		if (scope instanceof GlobalScope)
 			return null;
 		if (scope instanceof MethodScope)
 			return (MethodScope) scope;
 		return getEnclosingMethod(scope.getParent());
 	}
-	
-	public Scope getSymbol(Scope scope, String name){
+
+	public Scope getSymbol(Scope scope, String name)
+	{
 		if (scope.hasSymbol(name))
 			return scope.getSymbol(name);
 		if (scope.getParent() == null)
 			return null;
 		return getSymbol(scope.getParent(), name);
 	}
-	
-	public ClassScope getEnclosingClass(Scope scope){
+
+	public ClassScope getEnclosingClass(Scope scope)
+	{
 		if (scope instanceof GlobalScope)
 			return null;
 		if (scope instanceof ClassScope)
 			return (ClassScope) scope;
 		return getEnclosingClass(scope.getParent());
 	}
-	
-	public boolean isDerivedName(String derivedName, String superName){
+
+	public boolean isDerivedName(String derivedName, String superName)
+	{
 		Scope derScope = this.root.getSymbol(derivedName);
 		if (derScope == null)
 		{
@@ -52,8 +58,9 @@ public class SymbolTable {
 			return true;
 		return isDerivedName(parentScope.getName(), superName);
 	}
-	
-	public void addLibraryTable(SymbolTable libraryTable){
+
+	public void addLibraryTable(SymbolTable libraryTable)
+	{
 		Scope libraryScope = libraryTable.root.classScopes.get(0);
 		this.root.classScopes.add(0, libraryScope);
 		this.root.symbols.put(libraryScope.getName(), libraryScope);

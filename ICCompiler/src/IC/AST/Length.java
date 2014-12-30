@@ -5,11 +5,13 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public class Length extends Expression {
+public class Length extends Expression
+{
 
-	private Expression array;
+	private Expression	array;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -17,14 +19,16 @@ public class Length extends Expression {
 	 * Constructs a new array length expression node.
 	 * 
 	 * @param array
-	 *            Expression representing an array.
+	 *          Expression representing an array.
 	 */
-	public Length(Expression array) {
+	public Length(Expression array)
+	{
 		super(array.getLine());
 		this.array = array;
 	}
 
-	public Expression getArray() {
+	public Expression getArray()
+	{
 		return array;
 	}
 

@@ -5,15 +5,17 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public abstract class Expression extends ASTNode {
+public abstract class Expression extends ASTNode
+{
 
 	/**
 	 * Constructs a new expression node. Used by subclasses.
 	 * 
 	 * @param line
-	 *            Line number of expression.
+	 *          Line number of expression.
 	 */
-	protected Expression(int line) {
+	protected Expression(int line)
+	{
 		super(line);
 	}
 }

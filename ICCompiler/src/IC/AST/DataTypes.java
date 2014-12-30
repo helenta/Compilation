@@ -5,18 +5,18 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public enum DataTypes {
+public enum DataTypes
+{
 
-	INT(0, "int"), 
-	BOOLEAN(false, "boolean"), 
-	STRING(null, "string"), 
-	VOID(null, "void");
-	
-	private Object value;
+	INT(0, "int"), BOOLEAN(false, "boolean"), STRING(null, "string"), VOID(null,
+	    "void");
 
-	private String description;
+	private Object	value;
 
-	private DataTypes(Object value, String description) {
+	private String	description;
+
+	private DataTypes(Object value, String description)
+	{
 		this.value = value;
 		this.description = description;
 	}
@@ -26,7 +26,8 @@ public enum DataTypes {
 	 * 
 	 * @return The value.
 	 */
-	public Object getDefaultValue() {
+	public Object getDefaultValue()
+	{
 		return value;
 	}
 
@@ -35,7 +36,8 @@ public enum DataTypes {
 	 * 
 	 * @return The description.
 	 */
-	public String getDescription() {
+	public String getDescription()
+	{
 		return description;
 	}
 

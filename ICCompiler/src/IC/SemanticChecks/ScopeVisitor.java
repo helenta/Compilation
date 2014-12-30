@@ -8,7 +8,8 @@ import IC.SymbolTables.GlobalScope;
 import IC.SymbolTables.LocalScope;
 import IC.SymbolTables.MethodScope;
 
-public interface ScopeVisitor {
+public interface ScopeVisitor
+{
 
 	public Object visit(ClassScope classScope);
 
@@ -25,4 +26,3 @@ public interface ScopeVisitor {
 	public Object visit(MethodScope methodScope);
 
 }
-

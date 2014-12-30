@@ -5,9 +5,11 @@ package IC.AST;
  * 
  * @author Tovi Almozlino
  */
-public class Break extends Statement {
+public class Break extends Statement
+{
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor)
+	{
 		return visitor.visit(this);
 	}
 
@@ -15,9 +17,10 @@ public class Break extends Statement {
 	 * Constructs a break statement node.
 	 * 
 	 * @param line
-	 *            Line number of break statement.
+	 *          Line number of break statement.
 	 */
-	public Break(int line) {
+	public Break(int line)
+	{
 		super(line);
 	}
 
