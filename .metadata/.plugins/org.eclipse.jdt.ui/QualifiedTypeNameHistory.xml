@@ -7,7 +7,6 @@
 <fullyQualifiedTypeName name="IC.Semantic.MainClassScopeChecker"/>
 <fullyQualifiedTypeName name="IC.AST.Method"/>
 <fullyQualifiedTypeName name="IC.AST.Continue"/>
-<fullyQualifiedTypeName name="IC.Semantic.ScopeChecker"/>
 <fullyQualifiedTypeName name="IC.AST.Assignment"/>
 <fullyQualifiedTypeName name="IC.Semantic.SemanticException"/>
 <fullyQualifiedTypeName name="IC.Semantic.BlockScope"/>
@@ -20,4 +19,5 @@
 <fullyQualifiedTypeName name="IC.Semantic.GlobalScope"/>
 <fullyQualifiedTypeName name="IC.Semantic.LocalScope"/>
 <fullyQualifiedTypeName name="javax.management.openmbean.SimpleType"/>
+<fullyQualifiedTypeName name="IC.Semantic.ScopeChecker"/>
 </qualifiedTypeNameHistroy>

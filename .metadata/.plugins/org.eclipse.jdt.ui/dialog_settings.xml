@@ -58,6 +58,38 @@
 	</section>
 	<section name="CallHierarchySearchScope">
 	</section>
+	<section name="javadoc">
+		<item value="private" key="access"/>
+		<item value="true" key="noindex"/>
+		<item value="C:\GIT\Compilation\ICCompiler\javadoc.xml" key="antpath"/>
+		<item value="true" key="nodeprecatedlist"/>
+		<item value="true" key="use"/>
+		<item value="false" key="author"/>
+		<item value="true" key="nodeprecated"/>
+		<item value="true" key="nonavbar"/>
+		<item value="" key="docletpath"/>
+		<item value="C:\Program Files\Java\jdk1.8.0_25\bin\javadoc.exe;C:\Program Files\Java\jdk1.8.0_25\lib\tools.jar" key="javadoc_command_history"/>
+		<item value="1.7" key="source"/>
+		<item value="false" key="version"/>
+		<item value="" key="docletname"/>
+		<item value="false" key="splitindex"/>
+		<item value="true" key="fromStandard"/>
+		<item value="false" key="notree"/>
+		<item value="C:\GIT" key="destdir"/>
+		<item value="false" key="openinbrowser"/>
+		<section name="projects">
+			<section name="ICCompiler">
+				<item value="C:\GIT\Compilation\ICCompiler\javadoc.xml" key="antpath"/>
+				<item value="C:\GIT" key="destdir"/>
+				<item value="" key="href"/>
+			</section>
+			<section name="Interpreter">
+				<item value="C:\GIT\Compilation\Interpreter\javadoc.xml" key="antpath"/>
+				<item value="C:\GIT\Compilation\Interpreter\doc" key="destdir"/>
+				<item value="" key="href"/>
+			</section>
+		</section>
+	</section>
 	<section name="JavaBuildConfigurationBlock">
 		<item value="false" key="expanded2"/>
 		<item value="false" key="expanded1"/>
@@ -96,6 +128,13 @@
 			<list key="workingSets">
 			</list>
 		</section>
+	</section>
+	<section name="JavadocWizardDialog">
+		<item value="616" key="DIALOG_WIDTH"/>
+		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+		<item value="567" key="DIALOG_HEIGHT"/>
+		<item value="383" key="DIALOG_X_ORIGIN"/>
+		<item value="8" key="DIALOG_Y_ORIGIN"/>
 	</section>
 	<section name="completion_proposal_size">
 	</section>
