@@ -9,14 +9,8 @@ Move R2, R3
 Move 5, R2
 Add R3, R2
 Move R2, j
-#j = j * j * 5
-Move j, R2
-Move R2, R3
-Move j, R2
-Mul R3, R2
-Move R2, R3
-Move 5, R2
-Mul R3, R2
+#j = 500
+Move 500, R2
 Move R2, j
 #BOOLEAN d = true
 Move 1, R2
@@ -41,6 +35,52 @@ Move R2, R3
 Move 100, R2
 Sub R2, R3
 Move R3, R2
+Move R2, j
+#if
+Move j, R2
+Move R2, R3
+Move 3, R2
+Mod R2, R3
+Move R3, R2
+Move R2, R3
+Move 0, R2
+Move 0, R4
+Compare R3, R2
+JumpFalse _Label_less_equal_14
+Move 1, R4
+_Label_less_equal_14:
+Move R4, R2
+Compare 1, R2
+JumpFalse _Label_end_if_14
+#Statement block line 15
+#break
+Jump _Label_while_end_11
+_Label_end_if_14:
+#if
+Move j, R2
+Move R2, R3
+Move 80, R2
+Mod R2, R3
+Move R3, R2
+Move R2, R3
+Move 0, R2
+Move 0, R4
+Compare R3, R2
+JumpFalse _Label_less_equal_19
+Move 1, R4
+_Label_less_equal_19:
+Move R4, R2
+Compare 1, R2
+JumpFalse _Label_end_if_19
+#Statement block line 20
+#continue
+Jump _Label_while_body_11
+_Label_end_if_19:
+#j = j + 30
+Move j, R2
+Move R2, R3
+Move 30, R2
+Add R3, R2
 Move R2, j
 Jump _Label_while_body_11
 _Label_while_end_11:

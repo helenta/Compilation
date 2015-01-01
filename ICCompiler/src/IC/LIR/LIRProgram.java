@@ -16,6 +16,8 @@ public final class LIRProgram
 	public int expressionRegister = 2;
 	public int expressionRegister1 = 3;
 	public int expressionRegister2 = 4;
+	public String breakLabel = null;
+	public String continueLabel = null;
 	
 	public int[] GetArgumentsRegisters(int count)
 	{

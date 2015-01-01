@@ -6,11 +6,23 @@ class Sieve
   {
     int i = 1;
     int j = i + 5;
-    j = j * j * 5;
+    j = 500;
     boolean d = true;
     while(j > 100)
     {
     	j = j - 100;
+    	if (j % 3 == 0)
+    	{
+    		break;
+    	}
+    	
+    	if (j % 80 == 0)
+    	{
+    		continue;
+    	}
+    	
+    	j = j + 30;
+    	
     }
     Library.printi(j);
   }

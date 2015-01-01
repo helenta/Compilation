@@ -127,7 +127,19 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(If ifStatement)
 	{
-		// TODO Auto-generated method stub
+		writer.println("#" + ifStatement.toString());
+		
+		String endIfLable = lirProgram.GetLabelName(ifStatement, "end_if");
+		
+		ifStatement.getCondition().accept(this);
+		// todo: else condition
+		writer.println("Compare 1, R" + lirProgram.expressionRegister);
+		writer.println("JumpFalse " + endIfLable);
+		
+		ifStatement.getOperation().accept(this);
+
+		writer.println(endIfLable + ":");
+		 
 		return null;
 	}
 
@@ -146,6 +158,9 @@ public class EmitVisitor implements Visitor
 		String labelWhileBody = lirProgram.GetLabelName(whileStatement, "while_body");
 		String labelWhileEnd = lirProgram.GetLabelName(whileStatement, "while_end");
 		
+		lirProgram.breakLabel = labelWhileEnd;
+		lirProgram.continueLabel = labelWhileBody;
+		
 		writer.println(labelWhileBody + ":");
 		whileStatement.getCondition().accept(this);
 		writer.println("Compare 1, R" + lirProgram.expressionRegister);
@@ -154,20 +169,39 @@ public class EmitVisitor implements Visitor
 		writer.println("Jump " + labelWhileBody);
 		writer.println(labelWhileEnd + ":");
 		
+		lirProgram.breakLabel = null;
+		lirProgram.continueLabel = null;
+		
 		return null;
 	}
 
 	@Override
 	public Object visit(Break breakStatement)
 	{
-		// TODO Auto-generated method stub
+		if (lirProgram.breakLabel == null)
+		{
+			writer.println("break Errorrr!!!!!!!!!!!!!!!!");
+			return null;
+		}
+		
+		writer.println("#break");
+		writer.println("Jump " + lirProgram.breakLabel);
+		
 		return null;
 	}
 
 	@Override
 	public Object visit(Continue continueStatement)
 	{
-		// TODO Auto-generated method stub
+		if (lirProgram.continueLabel == null)
+		{
+			writer.println("continue Errorrr!!!!!!!!!!!!!!!!");
+			return null;
+		}
+		
+		writer.println("#continue");
+		writer.println("Jump " + lirProgram.continueLabel);
+		
 		return null;
 	}
 
