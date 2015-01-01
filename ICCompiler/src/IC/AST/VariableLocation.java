@@ -46,7 +46,10 @@ public class VariableLocation extends Location
 
 	public String toString()
 	{	
-		return name + "." + location.toString();
+		if (location != null)
+			return name + "." + location.toString();
+		else
+			return name;
 	}
 
 }

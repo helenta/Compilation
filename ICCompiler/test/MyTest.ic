@@ -5,7 +5,14 @@ class Sieve
   static void main(string[] args) 
   {
     int i = 1;
-    Library.printi(i);
+    int j = i + 5;
+    j = j * j * 5;
+    boolean d = true;
+    while(j > 100)
+    {
+    	j = j - 100;
+    }
+    Library.printi(j);
   }
 
 }

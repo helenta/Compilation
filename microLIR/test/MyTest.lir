@@ -3,6 +3,51 @@ _ic_main:
 #INT i = 1
 Move 1, R2
 Move R2, i
-Library __printi(R2), Rdummy
+#INT j = i + 5
+Move i, R2
+Move R2, R3
+Move 5, R2
+Add R3, R2
+Move R2, j
+#j = j * j * 5
+Move j, R2
+Move R2, R3
+Move j, R2
+Mul R3, R2
+Move R2, R3
+Move 5, R2
+Mul R3, R2
+Move R2, j
+#BOOLEAN d = true
+Move 1, R2
+Move R2, d
+#while
+_Label_while_body_11:
+Move j, R2
+Move R2, R3
+Move 100, R2
+Move 0, R4
+Compare R3, R2
+JumpGE _Label_less_equal_11
+Move 1, R4
+_Label_less_equal_11:
+Move R4, R2
+Compare 1, R2
+JumpFalse _Label_while_end_11
+#Statement block line 12
+#j = j - 100
+Move j, R2
+Move R2, R3
+Move 100, R2
+Sub R2, R3
+Move R3, R2
+Move R2, j
+Jump _Label_while_body_11
+_Label_while_end_11:
+# Call printi(j)
+# evaluate arg 0
+Move j, R2
+Move R2, R5
+Library __printi(R5), Rdummy
 Library __exit(0),R0
 Return 9999
