@@ -7,7 +7,6 @@ package IC.AST;
  */
 public class CallStatement extends Statement
 {
-
 	private Call	call;
 
 	public Object accept(Visitor visitor)
@@ -15,12 +14,6 @@ public class CallStatement extends Statement
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new method call statement node.
-	 * 
-	 * @param call
-	 *          Method call expression.
-	 */
 	public CallStatement(Call call)
 	{
 		super(call.getLine());
@@ -32,4 +25,8 @@ public class CallStatement extends Statement
 		return call;
 	}
 
+	public String toString()
+	{
+		return call.toString();
+	}
 }

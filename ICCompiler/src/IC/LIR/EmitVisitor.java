@@ -1,42 +1,20 @@
 package IC.LIR;
 
-import IC.AST.ArrayLocation;
-import IC.AST.Assignment;
-import IC.AST.Break;
-import IC.AST.CallStatement;
-import IC.AST.Continue;
-import IC.AST.ExpressionBlock;
-import IC.AST.Field;
-import IC.AST.Formal;
-import IC.AST.ICClass;
-import IC.AST.If;
-import IC.AST.Length;
-import IC.AST.LibraryMethod;
-import IC.AST.Literal;
-import IC.AST.LocalVariable;
-import IC.AST.LogicalBinaryOp;
-import IC.AST.LogicalUnaryOp;
-import IC.AST.MathBinaryOp;
-import IC.AST.MathUnaryOp;
-import IC.AST.NewArray;
-import IC.AST.NewClass;
-import IC.AST.PrimitiveType;
-import IC.AST.Program;
-import IC.AST.Return;
-import IC.AST.StatementsBlock;
-import IC.AST.StaticCall;
-import IC.AST.StaticMethod;
-import IC.AST.This;
-import IC.AST.Type;
-import IC.AST.VariableLocation;
-import IC.AST.VirtualCall;
-import IC.AST.VirtualMethod;
-import IC.AST.Visitor;
-import IC.AST.While;
+import java.io.*;
+import IC.AST.*;
 
 public class EmitVisitor implements Visitor
 {
-
+	private PrintWriter writer;
+	
+	public LIRProgram lirProgram;
+	
+	public EmitVisitor(PrintWriter printWriter, LIRProgram program)
+  {
+		writer = printWriter;
+		lirProgram = program;
+  }
+	
 	@Override
 	public Object visit(Program program)
 	{
@@ -68,7 +46,17 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(StaticMethod method)
 	{
-		// TODO Auto-generated method stub
+    writer.println("# main in " + lirProgram.currentClass.getName());
+	  writer.println("_ic_main:");
+	  
+	  for (Statement statement : method.getStatements())
+	  {
+	  	statement.accept(this);
+	  }
+	  
+	  writer.println("Library __exit(0),R0");
+	  writer.println("Return 9999");
+		
 		return null;
 	}
 
@@ -110,8 +98,7 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(CallStatement callStatement)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return callStatement.getCall().accept(this);
 	}
 
 	@Override
@@ -159,7 +146,17 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(LocalVariable localVariable)
 	{
-		// TODO Auto-generated method stub
+		writer.println("#" + localVariable.toString());
+		
+		if (localVariable.getInitValue() == null)
+		{
+			writer.println("Move " + localVariable.getName() + ", 0");
+		}
+		else
+		{
+			localVariable.getInitValue().accept(this);
+			writer.println("Move R" + lirProgram.expressionRegister + ", " + localVariable.getName());
+		}
 		return null;
 	}
 
@@ -180,7 +177,15 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(StaticCall call)
 	{
-		// TODO Auto-generated method stub
+		if (call.getClassName().equalsIgnoreCase("Library"))
+		{
+			writer.println("Library __" + call.getName() + "(R" + lirProgram.expressionRegister + "), Rdummy");
+		}
+		else
+		{
+			
+		}
+		
 		return null;
 	}
 
@@ -250,7 +255,25 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(Literal literal)
 	{
-		// TODO Auto-generated method stub
+		LiteralTypes literalType = literal.getType();
+		if (literalType == LiteralTypes.INTEGER)
+		{
+			writer.println("Move " + literal.getValue() + ", R" + lirProgram.expressionRegister);
+		}
+		else if (literalType == LiteralTypes.TRUE)
+		{
+			writer.println("Move 1, R" + lirProgram.expressionRegister);
+		}
+		else if ((literalType == LiteralTypes.FALSE) || (literal.getType() == LiteralTypes.NULL))
+		{
+			writer.println("Move 0, R" + lirProgram.expressionRegister);
+		}
+		else if (literalType == LiteralTypes.STRING)
+		{
+			// todo: locate string name, add it to the head of the program
+			return "str:" + literal.getValue().toString();
+		}
+
 		return null;
 	}
 

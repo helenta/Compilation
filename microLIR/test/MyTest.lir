@@ -1,0 +1,8 @@
+# main in Test
+_ic_main:
+#INT i = 1
+Move 1, R2
+Move R2, i
+Library __printi(R2), Rdummy
+Library __exit(0),R0
+Return 9999

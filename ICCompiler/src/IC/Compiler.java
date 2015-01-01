@@ -1,12 +1,16 @@
 package IC;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import java_cup.runtime.Symbol;
+import jflex.Emitter;
 import IC.AST.*;
+import IC.LIR.EmitVisitor;
+import IC.LIR.LIRProgram;
 import IC.Parser.*;
 import IC.SemanticChecks.*;
 import IC.SymbolTables.SymbolTable;
@@ -63,7 +67,7 @@ public class Compiler
 	}
 
 	private static void ProcessArgument(String arg, String icFileName,
-	    Program program, List<ICClass> libaryClass)
+	    																Program program, List<ICClass> libaryClass)
 	{
 		try
 		{
@@ -80,13 +84,16 @@ public class Compiler
 			TypeCheck checker = new TypeCheck(table);
 			checker.visit(program);
 
-			ScopeCheck mainChecker = new ScopeCheck(new MainClassScopeChecker());
+			MainClassScopeChecker mainClassScopeChecker = new MainClassScopeChecker();
+			ScopeCheck mainChecker = new ScopeCheck(mainClassScopeChecker);
 			boolean success = (boolean) mainChecker.visit(table.root);
 			if (!success)
 			{
 				throw new SemanticError(
 				    "semantic error at some line: wrong main method");
 			}
+			
+			Method mainMethod = mainClassScopeChecker.GetMainMethod();
 
 			if (arg.equals("-print-ast"))
 			{
@@ -113,6 +120,17 @@ public class Compiler
 					System.out.println("    " + (++i) + ": " + value);
 				}
 			}
+			
+			// Emit to LIR file
+			PrintWriter writer = new PrintWriter("MyLIR.txt", "UTF-8");
+			
+			LIRProgram lirProgram = new LIRProgram();
+			lirProgram.currentClass = new ICClass(1, "Test", new ArrayList<Field>(), new ArrayList<Method>());
+			
+			EmitVisitor emitVisitor = new EmitVisitor(writer, lirProgram);
+			
+			emitVisitor.visit((StaticMethod)mainMethod);
+			writer.close();
 		}
 		catch (NullPointerException ex)
 		{

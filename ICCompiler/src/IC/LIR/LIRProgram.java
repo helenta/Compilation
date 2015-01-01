@@ -4,8 +4,19 @@ import java.util.*;
 
 import IC.AST.*;
 
-final class LIRProgram
+public final class LIRProgram
 {
-	private HashMap<String, String> Literals;
-	private HashMap<String, Method> Methods;
+	public HashMap<String, String> literals;
+	public HashMap<String, Method> methods;
+	public HashMap<ICClass, String> dispatchTable;
+	
+	public final int ReturnRegister = 0;
+	public ICClass currentClass = null;
+	public int currRegister = 1;
+	public int expressionRegister = 2;
+	
+	private static void EmitNewObject(ICClass icClass)
+	{
+		// todo:
+	}
 }

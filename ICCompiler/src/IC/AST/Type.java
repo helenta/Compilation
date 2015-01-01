@@ -16,12 +16,6 @@ public class Type extends ASTNode
 
 	private String	name;
 
-	/**
-	 * Constructs a new type node. Used by subclasses.
-	 * 
-	 * @param line
-	 *          Line number of type declaration.
-	 */
 	protected Type(int line)
 	{
 		super(line);
@@ -72,4 +66,13 @@ public class Type extends ASTNode
 	{
 		return false;
 	}
+	
+	public String toString()
+	{	
+		if (dimension == 0)
+			return name ;
+		else
+			return name + "[]x" + dimension;
+	}
+
 }

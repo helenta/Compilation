@@ -9,7 +9,6 @@ import java.util.*;
  */
 public abstract class Method extends ASTNode
 {
-
 	protected Type	          type;
 
 	protected String	        name;
@@ -18,18 +17,6 @@ public abstract class Method extends ASTNode
 
 	protected List<Statement>	statements;
 
-	/**
-	 * Constructs a new method node. Used by subclasses.
-	 * 
-	 * @param type
-	 *          Data type returned by method.
-	 * @param name
-	 *          Name of method.
-	 * @param formals
-	 *          List of method parameters.
-	 * @param statements
-	 *          List of method's statements.
-	 */
 	protected Method(Type type, String name, List<Formal> formals,
 	    List<Statement> statements)
 	{
@@ -60,4 +47,18 @@ public abstract class Method extends ASTNode
 		return statements;
 	}
 
+	public String toString()
+	{
+		StringBuffer formalsBuffer = new StringBuffer();
+		for (int i = 0; i < formals.size(); i++)
+		{
+			Formal formal = formals.get(i);
+			formalsBuffer.append(formal.toString());
+			
+			if (i < formals.size() - 1)
+				formalsBuffer.append(",");
+		}
+		
+		return type.toString() + " " + name + "(" + formalsBuffer.toString() + ")";
+	}
 }

@@ -9,21 +9,9 @@ import java.util.List;
  */
 public abstract class Call extends Expression
 {
-
 	private String	         name;
-
 	private List<Expression>	arguments;
 
-	/**
-	 * Constructs a new method call node. Used by subclasses.
-	 * 
-	 * @param line
-	 *          Line number of call.
-	 * @param name
-	 *          Name of method.
-	 * @param arguments
-	 *          List of all method arguments.
-	 */
 	protected Call(int line, String name, List<Expression> arguments)
 	{
 		super(line);
@@ -41,4 +29,19 @@ public abstract class Call extends Expression
 		return arguments;
 	}
 
+	public String toString()
+	{
+		StringBuffer args = new StringBuffer();
+		for (int i = 0; i < arguments.size(); i++)
+		{
+			Expression exp = arguments.get(i);
+			args.append(exp.toString());
+			
+			if (i < arguments.size() - 1)
+				args.append(", ");
+		}
+		
+		return name + "(" + args.toString() + ")";
+	}
+	
 }

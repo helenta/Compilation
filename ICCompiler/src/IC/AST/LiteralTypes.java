@@ -8,8 +8,8 @@ package IC.AST;
  */
 public enum LiteralTypes
 {
-
-	INTEGER(DataTypes.INT.getDefaultValue(), "Integer literal"), STRING(
+	INTEGER(DataTypes.INT.getDefaultValue(), "Integer literal"), 
+	STRING(
 	    DataTypes.STRING.getDefaultValue(), "String literal")
 	{
 		private void replaceEscapeSequences(StringBuffer string)
@@ -44,7 +44,9 @@ public enum LiteralTypes
 			return formattedString.toString();
 		}
 	},
-	TRUE(true, "Boolean literal"), FALSE(false, "Boolean literal"), NULL(null,
+	TRUE(true, "Boolean literal"), 
+  FALSE(false, "Boolean literal"),
+  NULL(null,
 	    "Null literal");
 
 	private Object	value;
@@ -56,34 +58,17 @@ public enum LiteralTypes
 		this.value = value;
 		this.description = description;
 	}
-
-	/**
-	 * Returns the intrinsic value of the literal.
-	 * 
-	 * @return The value.
-	 */
+	
 	public Object getValue()
 	{
 		return value;
 	}
 
-	/**
-	 * Returns a formatted string representation of a literal value.
-	 * 
-	 * @param value
-	 *          The value.
-	 * @return The string.
-	 */
 	public String toFormattedString(Object value)
 	{
 		return String.valueOf(value);
 	}
 
-	/**
-	 * Returns a description of the literal type.
-	 * 
-	 * @return The description.
-	 */
 	public String getDescription()
 	{
 		return description;

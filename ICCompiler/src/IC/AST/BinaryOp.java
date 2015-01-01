@@ -14,16 +14,6 @@ public abstract class BinaryOp extends Expression
 
 	private Expression	operand2;
 
-	/**
-	 * Constructs a new binary operation node. Used by subclasses.
-	 * 
-	 * @param operand1
-	 *          The first operand.
-	 * @param operator
-	 *          The operator.
-	 * @param operand2
-	 *          The second operand.
-	 */
 	protected BinaryOp(Expression operand1, BinaryOps operator,
 	    Expression operand2)
 	{
@@ -48,4 +38,8 @@ public abstract class BinaryOp extends Expression
 		return operand2;
 	}
 
+	public String toString()
+	{
+		return operand1.toString() + " " + operator.getOperatorString() + " " + operand2.toString();
+	}
 }

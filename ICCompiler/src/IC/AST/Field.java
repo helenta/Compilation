@@ -7,7 +7,6 @@ package IC.AST;
  */
 public class Field extends ASTNode
 {
-
 	private Type	 type;
 
 	private String	name;
@@ -17,14 +16,6 @@ public class Field extends ASTNode
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new field node.
-	 * 
-	 * @param type
-	 *          Data type of field.
-	 * @param name
-	 *          Name of field.
-	 */
 	public Field(Type type, String name)
 	{
 		super(type.getLine());
@@ -42,4 +33,8 @@ public class Field extends ASTNode
 		return name;
 	}
 
+	public String toString()
+	{
+		return type.toString() + " " + name;
+	}
 }

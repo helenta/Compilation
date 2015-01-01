@@ -15,25 +15,11 @@ public class Return extends Statement
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new return statement node, with no return value.
-	 * 
-	 * @param line
-	 *          Line number of return statement.
-	 */
 	public Return(int line)
 	{
 		super(line);
 	}
 
-	/**
-	 * Constructs a new return statement node.
-	 * 
-	 * @param line
-	 *          Line number of return statement.
-	 * @param value
-	 *          Return value.
-	 */
 	public Return(int line, Expression value)
 	{
 		this(line);
@@ -48,6 +34,11 @@ public class Return extends Statement
 	public Expression getValue()
 	{
 		return value;
+	}
+	
+	public String toString()
+	{	
+		return "return";
 	}
 
 }

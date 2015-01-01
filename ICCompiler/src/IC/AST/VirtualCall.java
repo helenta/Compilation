@@ -17,33 +17,11 @@ public class VirtualCall extends Call
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new virtual method call node.
-	 * 
-	 * @param line
-	 *          Line number of call.
-	 * @param name
-	 *          Name of method.
-	 * @param arguments
-	 *          List of all method arguments.
-	 */
 	public VirtualCall(int line, String name, List<Expression> arguments)
 	{
 		super(line, name, arguments);
 	}
 
-	/**
-	 * Constructs a new virtual method call node, for an external location.
-	 * 
-	 * @param line
-	 *          Line number of call.
-	 * @param location
-	 *          Location of method.
-	 * @param name
-	 *          Name of method.
-	 * @param arguments
-	 *          List of all method arguments.
-	 */
 	public VirtualCall(int line, Expression location, String name,
 	    List<Expression> arguments)
 	{
@@ -60,5 +38,5 @@ public class VirtualCall extends Call
 	{
 		return location;
 	}
-
+	
 }

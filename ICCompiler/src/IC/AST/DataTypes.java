@@ -7,7 +7,6 @@ package IC.AST;
  */
 public enum DataTypes
 {
-
 	INT(0, "int"), BOOLEAN(false, "boolean"), STRING(null, "string"), VOID(null,
 	    "void");
 
@@ -21,21 +20,11 @@ public enum DataTypes
 		this.description = description;
 	}
 
-	/**
-	 * Returns the default value of the data type.
-	 * 
-	 * @return The value.
-	 */
 	public Object getDefaultValue()
 	{
 		return value;
 	}
 
-	/**
-	 * Returns a description of the data type.
-	 * 
-	 * @return The description.
-	 */
 	public String getDescription()
 	{
 		return description;

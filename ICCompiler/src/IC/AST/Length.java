@@ -7,7 +7,6 @@ package IC.AST;
  */
 public class Length extends Expression
 {
-
 	private Expression	array;
 
 	public Object accept(Visitor visitor)
@@ -15,12 +14,6 @@ public class Length extends Expression
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new array length expression node.
-	 * 
-	 * @param array
-	 *          Expression representing an array.
-	 */
 	public Length(Expression array)
 	{
 		super(array.getLine());
@@ -32,4 +25,8 @@ public class Length extends Expression
 		return array;
 	}
 
+	public String toString()
+	{
+		return array.toString() + ".length";
+	}
 }

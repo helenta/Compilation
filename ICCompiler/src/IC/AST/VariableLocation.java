@@ -7,7 +7,6 @@ package IC.AST;
  */
 public class VariableLocation extends Location
 {
-
 	private Expression	location	= null;
 
 	private String	   name;
@@ -17,30 +16,12 @@ public class VariableLocation extends Location
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new variable reference node.
-	 * 
-	 * @param line
-	 *          Line number of reference.
-	 * @param name
-	 *          Name of variable.
-	 */
 	public VariableLocation(int line, String name)
 	{
 		super(line);
 		this.name = name;
 	}
 
-	/**
-	 * Constructs a new variable reference node, for an external location.
-	 * 
-	 * @param line
-	 *          Line number of reference.
-	 * @param location
-	 *          Location of variable.
-	 * @param name
-	 *          Name of variable.
-	 */
 	public VariableLocation(int line, Expression location, String name)
 	{
 		super(line);
@@ -61,6 +42,11 @@ public class VariableLocation extends Location
 	public String getName()
 	{
 		return name;
+	}
+
+	public String toString()
+	{	
+		return name + "." + location.toString();
 	}
 
 }

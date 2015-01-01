@@ -7,7 +7,6 @@ package IC.AST;
  */
 public class NewArray extends New
 {
-
 	private Type	     type;
 
 	private Expression	size;
@@ -17,14 +16,6 @@ public class NewArray extends New
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new array creation expression node.
-	 * 
-	 * @param type
-	 *          Data type of new array.
-	 * @param size
-	 *          Size of new array.
-	 */
 	public NewArray(Type type, Expression size)
 	{
 		super(type.getLine());
@@ -40,6 +31,11 @@ public class NewArray extends New
 	public Expression getSize()
 	{
 		return size;
+	}
+	
+	public String toString()
+	{	
+		return "new " + type.toString() + "[" + size.toString() + "]";
 	}
 
 }

@@ -7,7 +7,6 @@ package IC.AST;
  */
 public class ArrayLocation extends Location
 {
-
 	private Expression	array;
 
 	private Expression	index;
@@ -17,14 +16,6 @@ public class ArrayLocation extends Location
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new array reference node.
-	 * 
-	 * @param array
-	 *          Expression representing an array.
-	 * @param index
-	 *          Expression representing a numeric index.
-	 */
 	public ArrayLocation(Expression array, Expression index)
 	{
 		super(array.getLine());
@@ -40,5 +31,10 @@ public class ArrayLocation extends Location
 	public Expression getIndex()
 	{
 		return index;
+	}
+	
+	public String toString()
+	{
+		return array.toString() + "[" + index.toString() + "]";
 	}
 }

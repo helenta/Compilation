@@ -7,7 +7,6 @@ package IC.AST;
  */
 public class Assignment extends Statement
 {
-
 	private Location	 variable;
 
 	private Expression	assignment;
@@ -17,14 +16,6 @@ public class Assignment extends Statement
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new assignment statement node.
-	 * 
-	 * @param variable
-	 *          Variable to assign a value to.
-	 * @param assignment
-	 *          Value to assign.
-	 */
 	public Assignment(Location variable, Expression assignment)
 	{
 		super(variable.getLine());
@@ -42,4 +33,10 @@ public class Assignment extends Statement
 		return assignment;
 	}
 
+	public String toString()
+	{
+		return variable.toString() + 
+				   ((assignment != null) ? " = " + assignment.toString() 
+				  		                   : "");
+	}
 }

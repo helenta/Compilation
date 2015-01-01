@@ -1,6 +1,7 @@
 package IC.SemanticChecks;
 
-import IC.AST.DataTypes;
+import IC.AST.*;
+import IC.AST.Method;
 import IC.AST.PrimitiveType;
 import IC.SymbolTables.MethodScope;
 import IC.SymbolTables.Scope;
@@ -9,6 +10,7 @@ public class MainClassScopeChecker implements IScopeCheck
 {
 	int	    mainMethodTimes	= 0;
 	boolean	errorMainMethod	= false;
+	Method  mainMethod      = null;
 
 	public void Check(Scope scope)
 	{
@@ -22,6 +24,7 @@ public class MainClassScopeChecker implements IScopeCheck
 		if (methodScope.getName().equals("main"))
 		{
 			mainMethodTimes++;
+			mainMethod = methodScope.method;
 
 			if (!(methodScope.getReturnType() instanceof PrimitiveType)
 			    || (((PrimitiveType) methodScope.getReturnType()).getType() != DataTypes.VOID))
@@ -39,4 +42,8 @@ public class MainClassScopeChecker implements IScopeCheck
 		return !errorMainMethod && (mainMethodTimes == 1);
 	}
 
+	public Method GetMainMethod()
+	{
+		return mainMethod;
+	}
 }

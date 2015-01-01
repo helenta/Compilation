@@ -19,30 +19,12 @@ public class If extends Statement
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs an If statement node.
-	 * 
-	 * @param condition
-	 *          Condition of the If statement.
-	 * @param operation
-	 *          Operation to perform if condition is true.
-	 * @param elseOperation
-	 *          Operation to perform if condition is false.
-	 */
 	public If(Expression condition, Statement operation, Statement elseOperation)
 	{
 		this(condition, operation);
 		this.elseOperation = elseOperation;
 	}
 
-	/**
-	 * Constructs an If statement node, without an Else operation.
-	 * 
-	 * @param condition
-	 *          Condition of the If statement.
-	 * @param operation
-	 *          Operation to perform if condition is true.
-	 */
 	public If(Expression condition, Statement operation)
 	{
 		super(condition.getLine());
@@ -70,4 +52,8 @@ public class If extends Statement
 		return elseOperation;
 	}
 
+	public String toString()
+	{
+		return "if";
+	}
 }

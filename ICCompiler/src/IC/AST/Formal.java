@@ -7,7 +7,6 @@ package IC.AST;
  */
 public class Formal extends ASTNode
 {
-
 	private Type	 type;
 
 	private String	name;
@@ -17,14 +16,6 @@ public class Formal extends ASTNode
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new parameter node.
-	 * 
-	 * @param type
-	 *          Data type of parameter.
-	 * @param name
-	 *          Name of parameter.
-	 */
 	public Formal(Type type, String name)
 	{
 		super(type.getLine());
@@ -42,4 +33,8 @@ public class Formal extends ASTNode
 		return name;
 	}
 
+	public String toString()
+	{
+		return type.toString() + " " + name;
+	}
 }

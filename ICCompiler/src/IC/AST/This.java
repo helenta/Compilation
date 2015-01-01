@@ -13,15 +13,14 @@ public class This extends Expression
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a 'this' expression node.
-	 * 
-	 * @param line
-	 *          Line number of 'this' expression.
-	 */
 	public This(int line)
 	{
 		super(line);
+	}
+
+	public String toString()
+	{	
+		return "this";
 	}
 
 }

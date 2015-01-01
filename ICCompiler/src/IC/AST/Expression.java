@@ -7,13 +7,6 @@ package IC.AST;
  */
 public abstract class Expression extends ASTNode
 {
-
-	/**
-	 * Constructs a new expression node. Used by subclasses.
-	 * 
-	 * @param line
-	 *          Line number of expression.
-	 */
 	protected Expression(int line)
 	{
 		super(line);

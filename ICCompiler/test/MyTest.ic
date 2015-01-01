@@ -1,0 +1,11 @@
+
+class Sieve 
+{
+
+  static void main(string[] args) 
+  {
+    int i = 1;
+    Library.printi(i);
+  }
+
+}

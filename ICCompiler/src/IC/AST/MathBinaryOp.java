@@ -7,22 +7,11 @@ package IC.AST;
  */
 public class MathBinaryOp extends BinaryOp
 {
-
 	public Object accept(Visitor visitor)
 	{
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new mathematical binary operation node.
-	 * 
-	 * @param operand1
-	 *          The first operand.
-	 * @param operator
-	 *          The operator.
-	 * @param operand2
-	 *          The second operand.
-	 */
 	public MathBinaryOp(Expression operand1, BinaryOps operator,
 	    Expression operand2)
 	{

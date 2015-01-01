@@ -7,19 +7,10 @@ package IC.AST;
  */
 public abstract class UnaryOp extends Expression
 {
-
 	private UnaryOps	 operator;
 
 	private Expression	operand;
 
-	/**
-	 * Constructs a new unary operation node. Used by subclasses.
-	 * 
-	 * @param operator
-	 *          The operator.
-	 * @param operand
-	 *          The operand.
-	 */
 	protected UnaryOp(UnaryOps operator, Expression operand)
 	{
 		super(operand.getLine());
@@ -37,4 +28,8 @@ public abstract class UnaryOp extends Expression
 		return operand;
 	}
 
+	public String toString()
+	{
+		return operator.toString() + " " + operand.toString();
+	}
 }

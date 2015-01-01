@@ -7,7 +7,6 @@ package IC.AST;
  */
 public class LocalVariable extends Statement
 {
-
 	private Type	     type;
 
 	private String	   name;
@@ -19,14 +18,6 @@ public class LocalVariable extends Statement
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new local variable declaration statement node.
-	 * 
-	 * @param type
-	 *          Data type of local variable.
-	 * @param name
-	 *          Name of local variable.
-	 */
 	public LocalVariable(Type type, String name)
 	{
 		super(type.getLine());
@@ -34,17 +25,6 @@ public class LocalVariable extends Statement
 		this.name = name;
 	}
 
-	/**
-	 * Constructs a new local variable declaration statement node, with an initial
-	 * value.
-	 * 
-	 * @param type
-	 *          Data type of local variable.
-	 * @param name
-	 *          Name of local variable.
-	 * @param initValue
-	 *          Initial value of local variable.
-	 */
 	public LocalVariable(Type type, String name, Expression initValue)
 	{
 		this(type, name);
@@ -69,6 +49,14 @@ public class LocalVariable extends Statement
 	public Expression getInitValue()
 	{
 		return initValue;
+	}
+	
+	public String toString()
+	{
+		if (initValue != null)
+			return type.toString() + " " + name + " = " + initValue.toString();
+		else
+			return type.toString() + " " + name;
 	}
 
 }

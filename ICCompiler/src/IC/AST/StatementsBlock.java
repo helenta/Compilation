@@ -9,7 +9,6 @@ import java.util.List;
  */
 public class StatementsBlock extends Statement
 {
-
 	private List<Statement>	statements;
 
 	public Object accept(Visitor visitor)
@@ -17,14 +16,6 @@ public class StatementsBlock extends Statement
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new statements block node.
-	 * 
-	 * @param line
-	 *          Line number where block begins.
-	 * @param statements
-	 *          List of all statements in block.
-	 */
 	public StatementsBlock(int line, List<Statement> statements)
 	{
 		super(line);
@@ -35,5 +26,4 @@ public class StatementsBlock extends Statement
 	{
 		return statements;
 	}
-
 }

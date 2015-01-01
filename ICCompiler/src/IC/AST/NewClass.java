@@ -7,7 +7,6 @@ package IC.AST;
  */
 public class NewClass extends New
 {
-
 	private String	name;
 
 	public Object accept(Visitor visitor)
@@ -15,14 +14,6 @@ public class NewClass extends New
 		return visitor.visit(this);
 	}
 
-	/**
-	 * Constructs a new class instance creation expression node.
-	 * 
-	 * @param line
-	 *          Line number of expression.
-	 * @param name
-	 *          Name of class.
-	 */
 	public NewClass(int line, String name)
 	{
 		super(line);
@@ -32,6 +23,11 @@ public class NewClass extends New
 	public String getName()
 	{
 		return name;
+	}
+	
+	public String toString()
+	{	
+		return "new " + name + "()";
 	}
 
 }
