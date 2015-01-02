@@ -2,32 +2,91 @@ package IC.LIR;
 
 import java.io.*;
 import java.util.List;
+import java.util.Map;
 
 import IC.AST.*;
+import IC.SymbolTables.MethodScope;
 
 public class EmitVisitor implements Visitor
 {
+	private File file;
 	private PrintWriter writer;
 	
 	public LIRProgram lirProgram;
 	
-	public EmitVisitor(PrintWriter printWriter, LIRProgram program)
+	public EmitVisitor(File file, LIRProgram program) throws FileNotFoundException
   {
-		writer = printWriter;
+		this.file = file;
+		
 		lirProgram = program;
   }
 	
 	@Override
 	public Object visit(Program program)
 	{
-		// TODO Auto-generated method stub
+		try
+		{
+			writer = new PrintWriter(file, "UTF-8");
+		}
+		catch (Throwable th)
+		{
+			System.err.println(th.getMessage());
+			return null;
+		}
+		
+		for (int i = 0; i < 1; i++)
+			writer.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		
+		for (ICClass icClass : program.getClasses())
+		{
+			icClass.accept(this);
+		}
+		
+		writer.close();
+		writer = null;
+		
+		RandomAccessFile f = null;
+		try
+		{
+			f = new RandomAccessFile(file, "rw");
+			f.seek(0);
+			
+			f.writeBytes("# program\n");
+			for (Map.Entry<String, String> entry : lirProgram.literals.entrySet())
+			{
+				f.writeBytes(entry.getValue() + " : " + entry.getKey() + "\n");
+			}
+			f.writeBytes("\n");
+			
+			f.close();
+		}
+		catch (Throwable th)
+		{
+			System.err.println(th.getMessage());
+			return null;
+		}
+			
 		return null;
 	}
 
 	@Override
 	public Object visit(ICClass icClass)
 	{
-		// TODO Auto-generated method stub
+		lirProgram.currentClass = icClass;
+		
+		writer.println();
+		writer.println("# class " + icClass.getName());
+		writer.println();
+		
+		for (Method method : icClass.getMethods())
+		{
+			if (method instanceof StaticMethod)
+			{
+				method.accept(this);
+			}
+		}
+		
+		//todo: non static methods + fields
 		return null;
 	}
 
@@ -48,18 +107,24 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(StaticMethod method)
 	{
-		writer.println("str: \"\"");
 		writer.println();
-    writer.println("# main in " + lirProgram.currentClass.getName());
-	  writer.println("_ic_main:");
-	  
-	  for (Statement statement : method.getStatements())
+		writer.println();
+		writer.println("#static method: " + method.getName() + ", " + lirProgram.currentClass.getName());
+		
+		String labelName = lirProgram.GetMethodLabel(method);
+		writer.println(labelName + ":");
+		
+		for (Statement statement : method.getStatements())
 	  {
 	  	statement.accept(this);
 	  }
+		
+		if (method.IsMain())
+			writer.println("Library __exit(0),R0");
+		writer.println("Return " + lirProgram.ReturnRegister);
 	  
-	  writer.println("Library __exit(0),R0");
-	  writer.println("Return R" + lirProgram.ReturnRegister);
+	  writer.println();
+		writer.println();
 		
 		return null;
 	}
@@ -288,14 +353,15 @@ public class EmitVisitor implements Visitor
 	public Object visit(StaticCall call)
 	{
 		writer.println("# Call " + call.toString());
+		
+		List<Expression> callArguments = call.getArguments();
+		StringBuffer argsBuffer = new StringBuffer();
+		int[] argumentsRegs = lirProgram.GetArgumentsRegisters(callArguments.size());
+		
 		if (call.getClassName().equalsIgnoreCase("Library"))
 		{
 			// todo: check if there are some methods
 			// set arguments
-			List<Expression> callArguments = call.getArguments();
-			StringBuffer argsBuffer = new StringBuffer();
-			int[] argumentsRegs = lirProgram.GetArgumentsRegisters(callArguments.size());
-			
 			for (int i = 0; i < callArguments.size(); i++)
 			{
 				writer.println("# evaluate arg " + i);
@@ -315,7 +381,32 @@ public class EmitVisitor implements Visitor
 		}
 		else
 		{
-			//writer.println("StaticCal " + call.get + call.getName() + "(R" + lirProgram.expressionRegister + "), Rdummy");
+			// StaticCall _func1(x=R1,y=R2),R8
+			// set arguments
+			
+			Method method = lirProgram.GetMethodFromCall(call);
+			List<Formal> formals = method.getFormals();
+			
+			String methodLabel = lirProgram.GetMethodLabel(method);
+			
+			for (int i = 0; i < callArguments.size(); i++)
+			{
+				writer.println("# evaluate arg " + i);
+				
+				Expression exp = callArguments.get(i);
+				int reg = argumentsRegs[i];
+				exp.accept(this);
+				
+				writer.println("Move R" + lirProgram.expressionRegister + ", " + "R" + reg);
+				
+				Formal formal = formals.get(i);
+				
+				argsBuffer.append(formal.getName() + " = R" + reg);
+				if (i < callArguments.size() - 1)
+					argsBuffer.append(", ");
+			}
+			
+			writer.println("StaticCall " + methodLabel + "(" + argsBuffer.toString() + "), R" + lirProgram.expressionRegister);
 		}
 		
 		return null;
@@ -324,7 +415,37 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(VirtualCall call)
 	{
-		// TODO Auto-generated method stub
+		List<Expression> callArguments = call.getArguments();
+		StringBuffer argsBuffer = new StringBuffer();
+		int[] argumentsRegs = lirProgram.GetArgumentsRegisters(callArguments.size());
+		Method method = lirProgram.GetMethodFromCall(call);
+		List<Formal> formals = method.getFormals();
+		String methodLabel = lirProgram.GetMethodLabel(method);
+		
+		if (method instanceof StaticMethod)
+		{
+			for (int i = 0; i < callArguments.size(); i++)
+			{
+				writer.println("# evaluate arg " + i);
+				
+				Expression exp = callArguments.get(i);
+				int reg = argumentsRegs[i];
+				exp.accept(this);
+				
+				writer.println("Move R" + lirProgram.expressionRegister + ", " + "R" + reg);
+				
+				Formal formal = formals.get(i);
+				
+				argsBuffer.append(formal.getName() + " = R" + reg);
+				if (i < callArguments.size() - 1)
+					argsBuffer.append(", ");
+			}
+			
+			writer.println("StaticCall " + methodLabel + "(" + argsBuffer.toString() + "), R" + lirProgram.expressionRegister);
+		}
+		
+		//todo: do for virtaul method
+		
 		return null;
 	}
 

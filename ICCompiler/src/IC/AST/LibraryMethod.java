@@ -24,4 +24,9 @@ public class LibraryMethod extends Method
 	{
 		return "Library." + name;
 	}
+	
+	public boolean IsMain()
+	{
+		return false;
+	}
 }

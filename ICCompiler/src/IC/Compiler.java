@@ -122,15 +122,13 @@ public class Compiler
 			}
 			
 			// Emit to LIR file
-			PrintWriter writer = new PrintWriter("MyLIR.txt", "UTF-8");
+			File file = new File("MyLIR.txt");
 			
-			LIRProgram lirProgram = new LIRProgram();
-			lirProgram.currentClass = new ICClass(1, "Test", new ArrayList<Field>(), new ArrayList<Method>());
+			LIRProgram lirProgram = new LIRProgram(table);
 			
-			EmitVisitor emitVisitor = new EmitVisitor(writer, lirProgram);
+			EmitVisitor emitVisitor = new EmitVisitor(file, lirProgram);
 			
-			emitVisitor.visit((StaticMethod)mainMethod);
-			writer.close();
+			emitVisitor.visit(program);
 		}
 		catch (NullPointerException ex)
 		{

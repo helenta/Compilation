@@ -21,4 +21,9 @@ public class VirtualMethod extends Method
 		super(type, name, formals, statements);
 	}
 
+  public boolean IsMain()
+  {
+	  return false;
+  }
+
 }

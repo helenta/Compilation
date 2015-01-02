@@ -25,7 +25,7 @@ public abstract class Method extends ASTNode
 		this.name = name;
 		if (formals != null)
 		{
-			Collections.reverse(formals);
+			//Collections.reverse(formals);
 		}
 		this.formals = formals;
 		this.statements = statements;
@@ -65,4 +65,6 @@ public abstract class Method extends ASTNode
 		
 		return type.toString() + " " + name + "(" + formalsBuffer.toString() + ")";
 	}
+	
+	public abstract boolean IsMain();
 }

@@ -34,6 +34,18 @@ public abstract class Scope
 	{
 		return parent;
 	}
+	
+	public ClassScope GetParentClassScope()
+	{
+		if (this instanceof ClassScope)
+		{
+			return (ClassScope)this;
+		}
+		else
+		{
+			return this.parent.GetParentClassScope();
+		}
+	}
 
 	public void setParent(Scope parent)
 	{

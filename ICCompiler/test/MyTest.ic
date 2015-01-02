@@ -1,7 +1,6 @@
 
 class Sieve 
 {
-
   static void main(string[] args) 
   {
     int i = 1;
@@ -15,31 +14,21 @@ class Sieve
     	{
     		break;
     	}
-    	else
-    	{
-    		j = j;
-    	}
-    	
-    	if (j % 80 == 0)
-    	{
-    		continue;
-    	}
-    	
-    	j = j + 30;
-    	
-    	int[] h = new int[4];
-    	int k = h[2];
-    	int l = h.length;
-    	
-    	if (l < 4)
-    	{
-    		break;
-    	}
-    	
     	d = true;
     	
+    	testFunc(1, "Tets String", 4, true);
     }
     Library.printi(j);
+  }
+  
+  static void testFunc(int t, string h, int y, boolean g)
+  {
+  	Library.printi(t);
+  	Library.println("");
+  	Library.println(h);
+  	Library.printi(y);
+  	Library.println("");
+  	Library.printb(g);
   }
 
 }

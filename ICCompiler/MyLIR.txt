@@ -1,6 +1,24 @@
-str: ""
+# program
+str1 : ""
+str0 : "Tets String"
 
-# main in Test
+
+
+
+
+
+
+
+
+
+
+
+
+# class Sieve
+
+
+
+#static method: main, Sieve
 _ic_main:
 #INT i = 1
 Move 1, R2
@@ -18,15 +36,15 @@ Move R2, j
 Move 0, R2
 Move R2, d
 #while
-_Label_while_body_11:
+_Label_while_body_10:
 #LNEG d
 Move d, R2
 Move R2, R3
 Move 1, R2
 Xor R3, R2
 Compare 1, R2
-JumpFalse _Label_while_end_11
-#Statement block line 12
+JumpFalse _Label_while_end_10
+#Statement block line 11
 #j = j - 100
 Move j, R2
 Move R2, R3
@@ -45,101 +63,35 @@ Move R2, R3
 Move 0, R2
 Move 0, R4
 Compare R3, R2
-JumpFalse _Label_less_equal_14
+JumpFalse _Label_less_equal_13
 Move 1, R4
-_Label_less_equal_14:
+_Label_less_equal_13:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_else_14
-#Statement block line 15
+JumpFalse _Label_end_if_13
+#Statement block line 14
 #break
-Jump _Label_while_end_11
-JumpFalse _Label_end_if_14
-#else: if
-_Label_else_14:
-#Statement block line 19
-#j = j
-Move j, R2
-Move R2, j
-JumpFalse _Label_end_if_14
-_Label_end_if_14:
-#if
-#j % 80 == 0
-Move j, R2
-Move R2, R5
-Move 80, R2
-Mod R2, R5
-Move R5, R2
-Move R2, R3
-Move 0, R2
-Move 0, R4
-Compare R3, R2
-JumpFalse _Label_less_equal_23
-Move 1, R4
-_Label_less_equal_23:
-Move R4, R2
-Compare 1, R2
-JumpFalse _Label_end_if_23
-#Statement block line 24
-#continue
-Jump _Label_while_body_11
-JumpFalse _Label_end_if_23
-_Label_end_if_23:
-#j = j + 30
-Move j, R2
-Move R2, R3
-Move 30, R2
-Add R3, R2
-Move R2, j
-#INT[]x1 h = new INT[]x1[4]
-Move 4, R2
-Mul 4, R2
-Library __allocateArray(R2), R3
-Move R3, R2
-Move R2, h
-#INT k = h[2]
-Move h, R2
-Move R2, R3
-Move 2, R2
-MoveArray R3[R2], R4
-Move R4, R2
-Move R2, k
-#INT l = h.length
-Move h, R2
-Move R2, R3
-ArrayLength R3, R2
-Move R2, l
-#if
-#l < 4
-Move l, R2
-Move R2, R3
-Move 4, R2
-Move 0, R4
-
-Library __printi(R3), Rdummy
-Library __println(str), Rdummy
-
-
-Library __printi(R2), Rdummy
-Library __println(str), Rdummy
-
-Compare R3, R2
-JumpLE _Label_less_34
-Move 1, R4
-_Label_less_34:
-Move R4, R2
-Compare 1, R2
-JumpFalse _Label_end_if_34
-#Statement block line 35
-#break
-Jump _Label_while_end_11
-JumpFalse _Label_end_if_34
-_Label_end_if_34:
+Jump _Label_while_end_10
+JumpFalse _Label_end_if_13
+_Label_end_if_13:
 #d = true
 Move 1, R2
 Move R2, d
-Jump _Label_while_body_11
-_Label_while_end_11:
+# evaluate arg 0
+Move 1, R2
+Move R2, R4000
+# evaluate arg 1
+Move str0, R2
+Move R2, R4001
+# evaluate arg 2
+Move 4, R2
+Move R2, R4002
+# evaluate arg 3
+Move 1, R2
+Move R2, R4003
+StaticCall _Sieve_testFunc(t = R4000, h = R4001, y = R4002, g = R4003), R2
+Jump _Label_while_body_10
+_Label_while_end_10:
 # Call printi(j)
 # evaluate arg 0
 Move j, R2
@@ -147,3 +99,42 @@ Move R2, R4000
 Library __printi(R4000), Rdummy
 Library __exit(0),R0
 Return 9999
+
+
+
+
+#static method: testFunc, Sieve
+_Sieve_testFunc:
+# Call printi(t)
+# evaluate arg 0
+Move t, R2
+Move R2, R4000
+Library __printi(R4000), Rdummy
+# Call println("")
+# evaluate arg 0
+Move str1, R2
+Move R2, R4000
+Library __println(R4000), Rdummy
+# Call println(h)
+# evaluate arg 0
+Move h, R2
+Move R2, R4000
+Library __println(R4000), Rdummy
+# Call printi(y)
+# evaluate arg 0
+Move y, R2
+Move R2, R4000
+Library __printi(R4000), Rdummy
+# Call println("")
+# evaluate arg 0
+Move str1, R2
+Move R2, R4000
+Library __println(R4000), Rdummy
+# Call printb(g)
+# evaluate arg 0
+Move g, R2
+Move R2, R4000
+Library __printb(R4000), Rdummy
+Return 9999
+
+

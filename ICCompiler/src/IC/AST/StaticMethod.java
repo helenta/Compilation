@@ -24,5 +24,10 @@ public class StaticMethod extends Method
 	{	
 		return "static " + super.toString();
 	}
+	
+	public boolean IsMain()
+  {
+	  return name.equalsIgnoreCase("main");
+  }
 
 }
