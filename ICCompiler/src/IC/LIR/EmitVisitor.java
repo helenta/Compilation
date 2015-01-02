@@ -130,13 +130,28 @@ public class EmitVisitor implements Visitor
 		writer.println("#" + ifStatement.toString());
 		
 		String endIfLable = lirProgram.GetLabelName(ifStatement, "end_if");
+		String elseLabel = ifStatement.getElseOperation() != null ?
+											 lirProgram.GetLabelName(ifStatement, "else") : null;
 		
 		ifStatement.getCondition().accept(this);
-		// todo: else condition
 		writer.println("Compare 1, R" + lirProgram.expressionRegister);
-		writer.println("JumpFalse " + endIfLable);
+		
+		if (elseLabel != null)
+			writer.println("JumpFalse " + elseLabel);
+		else
+			writer.println("JumpFalse " + endIfLable);
 		
 		ifStatement.getOperation().accept(this);
+		writer.println("JumpFalse " + endIfLable);
+		
+		if (elseLabel != null)
+		{
+			writer.println("#else: " + ifStatement.toString());
+			
+			writer.println(elseLabel + ":");
+			ifStatement.getElseOperation().accept(this);
+			writer.println("JumpFalse " + endIfLable);
+		}
 
 		writer.println(endIfLable + ":");
 		 

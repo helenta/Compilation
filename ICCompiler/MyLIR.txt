@@ -51,10 +51,18 @@ Move 1, R4
 _Label_less_equal_14:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_end_if_14
+JumpFalse _Label_else_14
 #Statement block line 15
 #break
 Jump _Label_while_end_11
+JumpFalse _Label_end_if_14
+#else: if
+_Label_else_14:
+#Statement block line 19
+#j = j
+Move j, R2
+Move R2, j
+JumpFalse _Label_end_if_14
 _Label_end_if_14:
 #if
 Move j, R2
@@ -66,16 +74,17 @@ Move R2, R3
 Move 0, R2
 Move 0, R4
 Compare R3, R2
-JumpFalse _Label_less_equal_19
+JumpFalse _Label_less_equal_23
 Move 1, R4
-_Label_less_equal_19:
+_Label_less_equal_23:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_end_if_19
-#Statement block line 20
+JumpFalse _Label_end_if_23
+#Statement block line 24
 #continue
 Jump _Label_while_body_11
-_Label_end_if_19:
+JumpFalse _Label_end_if_23
+_Label_end_if_23:
 #j = j + 30
 Move j, R2
 Move R2, R3
