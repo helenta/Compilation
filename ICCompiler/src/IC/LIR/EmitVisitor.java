@@ -59,7 +59,7 @@ public class EmitVisitor implements Visitor
 	  }
 	  
 	  writer.println("Library __exit(0),R0");
-	  writer.println("Return 9999");
+	  writer.println("Return R" + lirProgram.ReturnRegister);
 		
 		return null;
 	}

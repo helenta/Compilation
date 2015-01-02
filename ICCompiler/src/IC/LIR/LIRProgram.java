@@ -45,7 +45,7 @@ public final class LIRProgram
 	
 	public void UnLockRegister(int count)
 	{
-		lockedRegister -=count;
+		lockedRegister -= count;
 	}
 	
 	public int[] GetArgumentsRegisters(int count)
