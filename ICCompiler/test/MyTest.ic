@@ -27,6 +27,9 @@ class Sieve
     	
     	j = j + 30;
     	
+    	int[] h = new int[4];
+    	int k = h[6];
+    	
     }
     Library.printi(j);
   }

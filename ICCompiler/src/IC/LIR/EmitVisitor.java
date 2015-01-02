@@ -274,7 +274,7 @@ public class EmitVisitor implements Visitor
 		writer.println("Move R" + lirProgram.expressionRegister + ", R" + reg1);
 		
 		location.getIndex().accept(this);
-		writer.println("MoveArray R" + reg1 + "[" + lirProgram.expressionRegister + "]" + ", R" + reg2);
+		writer.println("MoveArray R" + reg1 + "[R" + lirProgram.expressionRegister + "]" + ", R" + reg2);
 		writer.println("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
 		
 		lirProgram.UnLockRegister(2);
@@ -343,7 +343,15 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(NewArray newArray)
 	{
-		// TODO Auto-generated method stub
+		int reg1 = lirProgram.GetNextRegister();
+		
+		newArray.getSize().accept(this);
+		writer.println("Mul 4, R" + lirProgram.expressionRegister);
+		writer.println("Library __allocateArray(R" + lirProgram.expressionRegister + "), R" + reg1);
+		writer.println("Move R" + reg1 + ", R" + lirProgram.expressionRegister);
+		
+		lirProgram.UnLockRegister(1);
+		
 		return null;
 	}
 

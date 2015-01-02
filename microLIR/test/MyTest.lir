@@ -91,6 +91,19 @@ Move R2, R3
 Move 30, R2
 Add R3, R2
 Move R2, j
+#INT[]x1 h = new INT[]x1[4]
+Move 4, R2
+Mul 4, R2
+Library __allocateArray(R2), R3
+Move R3, R2
+Move R2, h
+#INT k = h[6]
+Move h, R2
+Move R2, R3
+Move 6, R2
+MoveArray R3[R2], R4
+Move R4, R2
+Move R2, k
 Jump _Label_while_body_11
 _Label_while_end_11:
 # Call printi(j)
