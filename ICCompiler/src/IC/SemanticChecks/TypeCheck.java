@@ -680,7 +680,7 @@ public class TypeCheck implements Visitor
 	public Object visit(MathUnaryOp unaryOp)
 	{
 		Type op = (Type) unaryOp.getOperand().accept(this);
-		if (!op.getName().equals("INT"))
+		if (!op.IsInteger())
 			throw new SemanticError("semantic error at line " + unaryOp.getLine()
 			    + ": " + "math operation can not be used on expression of type "
 			    + op.getName());
@@ -691,7 +691,7 @@ public class TypeCheck implements Visitor
 	public Object visit(LogicalUnaryOp unaryOp)
 	{
 		Type op = (Type) unaryOp.getOperand().accept(this);
-		if (!op.getName().equals("BOOLEAN"))
+		if (!op.IsBoolean())
 			throw new SemanticError("semantic error at line " + unaryOp.getLine()
 			    + ": " + "math operation can not be used on expression of type "
 			    + op.getName());

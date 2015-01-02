@@ -7,8 +7,8 @@ class Sieve
     int i = 1;
     int j = i + 5;
     j = 500;
-    boolean d = true;
-    while(j > 100)
+    boolean d = false;
+    while(!d)
     {
     	j = j - 100;
     	if (j % 3 == 0)
@@ -28,7 +28,15 @@ class Sieve
     	j = j + 30;
     	
     	int[] h = new int[4];
-    	int k = h[6];
+    	int k = h[2];
+    	int l = h.length;
+    	
+    	if (l < 4)
+    	{
+    		break;
+    	}
+    	
+    	d = true;
     	
     }
     Library.printi(j);

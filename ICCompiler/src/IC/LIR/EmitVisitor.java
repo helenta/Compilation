@@ -48,6 +48,8 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(StaticMethod method)
 	{
+		writer.println("str: \"\"");
+		writer.println();
     writer.println("# main in " + lirProgram.currentClass.getName());
 	  writer.println("_ic_main:");
 	  
@@ -358,7 +360,14 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(Length length)
 	{
-		// TODO Auto-generated method stub
+		int reg1 = lirProgram.GetNextRegister();
+		
+		length.getArray().accept(this);
+		writer.println("Move R" + lirProgram.expressionRegister + ", R" + reg1);
+		writer.println("ArrayLength R" + reg1 + ", R" + lirProgram.expressionRegister);
+		
+		lirProgram.UnLockRegister(1);
+		
 		return null;
 	}
 
@@ -410,6 +419,8 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(LogicalBinaryOp binaryOp)
 	{
+		writer.println("#" + binaryOp.toString());
+		
 		int reg1 = lirProgram.GetNextRegister();
 		int reg2 = lirProgram.GetNextRegister();
 		
@@ -432,6 +443,8 @@ public class EmitVisitor implements Visitor
 				
 			case LT: // expressionRegister1 < expressionRegister
 				writer.println("Move 0, R" + reg2);
+				DeugRegValue(reg1);
+				DeugRegValue(lirProgram.expressionRegister);
 				writer.println("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "less");
 				writer.println("JumpLE " + labelName);
@@ -503,14 +516,44 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(MathUnaryOp unaryOp)
 	{
-		// TODO Auto-generated method stub
+		if (unaryOp.getOperator() != UnaryOps.UMINUS)
+		{
+			writer.println("Wrong unary operator ERORR!!!!!!!!!!!!!!!!!!!!!1");
+		}
+		
+		writer.println("#" + unaryOp.toString());
+		
+		unaryOp.getOperand().accept(this);
+		
+		int reg1 = lirProgram.GetNextRegister();
+		writer.println("Move R" + lirProgram.expressionRegister + ", R" + reg1);
+		writer.println("Move 0, R" + lirProgram.expressionRegister);
+		writer.println("Sub R" + reg1 + ", R" + lirProgram.expressionRegister);
+		
+		lirProgram.UnLockRegister(1);
+		
 		return null;
 	}
 
 	@Override
 	public Object visit(LogicalUnaryOp unaryOp)
 	{
-		// TODO Auto-generated method stub
+		if (unaryOp.getOperator() != UnaryOps.LNEG)
+		{
+			writer.println("Wrong unary operator ERORR!!!!!!!!!!!!!!!!!!!!!1");
+		}
+		
+		writer.println("#" + unaryOp.toString());
+		
+		unaryOp.getOperand().accept(this);
+		
+		int reg1 = lirProgram.GetNextRegister();
+		writer.println("Move R" + lirProgram.expressionRegister + ", R" + reg1);
+		writer.println("Move 1, R" + lirProgram.expressionRegister);
+		writer.println("Xor R" + reg1 + ", R" + lirProgram.expressionRegister);
+		
+		lirProgram.UnLockRegister(1);
+		
 		return null;
 	}
 
@@ -546,4 +589,11 @@ public class EmitVisitor implements Visitor
 		return null;
 	}
 
+	private void DeugRegValue(int reg)
+	{
+		writer.println(); // todo: remove
+		writer.println("Library __printi(R" + reg + "), Rdummy");
+		writer.println("Library __println(str), Rdummy");
+		writer.println();
+	}
 }
