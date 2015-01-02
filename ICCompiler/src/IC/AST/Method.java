@@ -23,6 +23,10 @@ public abstract class Method extends ASTNode
 		super(type.getLine());
 		this.type = type;
 		this.name = name;
+		if (formals != null)
+		{
+			Collections.reverse(formals);
+		}
 		this.formals = formals;
 		this.statements = statements;
 	}

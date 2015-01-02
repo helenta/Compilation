@@ -354,8 +354,11 @@ public class SymbolTableVisitor implements Visitor
 
 	public Object visit(Return returnStatement)
 	{
-		returnStatement.getValue().scope = returnStatement.scope;
-		returnStatement.getValue().accept(this);
+		if (returnStatement.getValue() != null)
+		{
+			returnStatement.getValue().scope = returnStatement.scope;
+			returnStatement.getValue().accept(this);
+		}
 
 		return returnStatement.scope;
 	}
@@ -398,8 +401,11 @@ public class SymbolTableVisitor implements Visitor
 
 	public Object visit(VirtualCall call)
 	{
-		call.getLocation().scope = call.scope;
-		call.getLocation().accept(this);
+		if (call.getLocation() != null)
+		{
+		  call.getLocation().scope = call.scope;
+		  call.getLocation().accept(this);
+		}
 
 		if (call.getArguments() != null)
 		{
