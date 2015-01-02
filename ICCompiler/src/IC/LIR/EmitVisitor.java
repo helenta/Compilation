@@ -267,7 +267,18 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(ArrayLocation location)
 	{
-		// TODO Auto-generated method stub
+		int reg1 = lirProgram.GetNextRegister();
+		int reg2 = lirProgram.GetNextRegister();
+		
+		location.getArray().accept(this);
+		writer.println("Move R" + lirProgram.expressionRegister + ", R" + reg1);
+		
+		location.getIndex().accept(this);
+		writer.println("MoveArray R" + reg1 + "[" + lirProgram.expressionRegister + "]" + ", R" + reg2);
+		writer.println("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
+		
+		lirProgram.UnLockRegister(2);
+		
 		return null;
 	}
 
@@ -346,40 +357,44 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(MathBinaryOp binaryOp)
 	{
+		int reg1 = lirProgram.GetNextRegister();
+		
 		binaryOp.getFirstOperand().accept(this);
-		writer.println("Move R" + lirProgram.expressionRegister + ", R" + lirProgram.expressionRegister1);
+		writer.println("Move R" + lirProgram.expressionRegister + ", R" + reg1);
 		
 		binaryOp.getSecondOperand().accept(this);
 		
 		switch (binaryOp.getOperator())
 		{
 			case PLUS:
-				writer.println("Add R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Add R" + reg1 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			case MINUS:
-				writer.println("Sub R" + lirProgram.expressionRegister + ", R" + lirProgram.expressionRegister1);
-				writer.println("Move R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Sub R" + lirProgram.expressionRegister + ", R" + reg1);
+				writer.println("Move R" + reg1 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			case MULTIPLY:
-				writer.println("Mul R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Mul R" + reg1 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			case DIVIDE:
-				writer.println("Div R" + lirProgram.expressionRegister + ", R" + lirProgram.expressionRegister1);
-				writer.println("Move R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Div R" + lirProgram.expressionRegister + ", R" + reg1);
+				writer.println("Move R" + reg1 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			case MOD:
-				writer.println("Mod R" + lirProgram.expressionRegister + ", R" + lirProgram.expressionRegister1);
-				writer.println("Move R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Mod R" + lirProgram.expressionRegister + ", R" + reg1);
+				writer.println("Move R" + reg1 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			default:
 				writer.println("Error!!!!!!!!!!!!!!!!!!!!!!!!!");
 				break;
 		}
+		
+		lirProgram.UnLockRegister(1);
 		
 		return null;
 	}
@@ -387,8 +402,11 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(LogicalBinaryOp binaryOp)
 	{
+		int reg1 = lirProgram.GetNextRegister();
+		int reg2 = lirProgram.GetNextRegister();
+		
 		binaryOp.getFirstOperand().accept(this);
-		writer.println("Move R" + lirProgram.expressionRegister + ", R" + lirProgram.expressionRegister1);
+		writer.println("Move R" + lirProgram.expressionRegister + ", R" + reg1);
 		
 		binaryOp.getSecondOperand().accept(this);
 		
@@ -396,72 +414,72 @@ public class EmitVisitor implements Visitor
 		switch (binaryOp.getOperator())
 		{
 			case LAND:
-				writer.println("And R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("And R" + reg1 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			case LOR:
-				writer.println("Or R" + lirProgram.expressionRegister + ", R" + lirProgram.expressionRegister1);
-				writer.println("Move R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Or R" + lirProgram.expressionRegister + ", R" + reg1);
+				writer.println("Move R" + reg1 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			case LT: // expressionRegister1 < expressionRegister
-				writer.println("Move 0, R" + lirProgram.expressionRegister2);
-				writer.println("Compare R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move 0, R" + reg2);
+				writer.println("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "less");
 				writer.println("JumpLE " + labelName);
-				writer.println("Move 1, R" + lirProgram.expressionRegister2);
+				writer.println("Move 1, R" + reg2);
 				writer.println(labelName + ":");
-				writer.println("Move R" + lirProgram.expressionRegister2 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			case LTE: // expressionRegister1 <= expressionRegister
-				writer.println("Move 0, R" + lirProgram.expressionRegister2);
-				writer.println("Compare R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move 0, R" + reg2);
+				writer.println("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "less_equal");
 				writer.println("JumpL " + labelName);
-				writer.println("Move 1, R" + lirProgram.expressionRegister2);
+				writer.println("Move 1, R" + reg2);
 				writer.println(labelName + ":");
-				writer.println("Move R" + lirProgram.expressionRegister2 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			case GT: // expressionRegister1 > expressionRegister
-				writer.println("Move 0, R" + lirProgram.expressionRegister2);
-				writer.println("Compare R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move 0, R" + reg2);
+				writer.println("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "less_equal");
 				writer.println("JumpGE " + labelName);
-				writer.println("Move 1, R" + lirProgram.expressionRegister2);
+				writer.println("Move 1, R" + reg2);
 				writer.println(labelName + ":");
-				writer.println("Move R" + lirProgram.expressionRegister2 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			case GTE: // expressionRegister1 >= expressionRegister
-				writer.println("Move 0, R" + lirProgram.expressionRegister2);
-				writer.println("Compare R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move 0, R" + reg2);
+				writer.println("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "less_equal");
 				writer.println("JumpG " + labelName);
-				writer.println("Move 1, R" + lirProgram.expressionRegister2);
+				writer.println("Move 1, R" + reg2);
 				writer.println(labelName + ":");
-				writer.println("Move R" + lirProgram.expressionRegister2 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			case EQUAL: // expressionRegister1 == expressionRegister
-				writer.println("Move 0, R" + lirProgram.expressionRegister2);
-				writer.println("Compare R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move 0, R" + reg2);
+				writer.println("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "less_equal");
 				writer.println("JumpFalse " + labelName);
-				writer.println("Move 1, R" + lirProgram.expressionRegister2);
+				writer.println("Move 1, R" + reg2);
 				writer.println(labelName + ":");
-				writer.println("Move R" + lirProgram.expressionRegister2 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			case NEQUAL: // expressionRegister1 != expressionRegister
-				writer.println("Move 0, R" + lirProgram.expressionRegister2);
-				writer.println("Compare R" + lirProgram.expressionRegister1 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move 0, R" + reg2);
+				writer.println("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "less_equal");
 				writer.println("JumpTrue " + labelName);
-				writer.println("Move 1, R" + lirProgram.expressionRegister2);
+				writer.println("Move 1, R" + reg2);
 				writer.println(labelName + ":");
-				writer.println("Move R" + lirProgram.expressionRegister2 + ", R" + lirProgram.expressionRegister);
+				writer.println("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
 				break;
 				
 			default:
@@ -469,6 +487,7 @@ public class EmitVisitor implements Visitor
 				break;
 		}
 		
+		lirProgram.UnLockRegister(2);
 		
 		return null;
 	}
@@ -505,8 +524,8 @@ public class EmitVisitor implements Visitor
 		}
 		else if (literalType == LiteralTypes.STRING)
 		{
-			// todo: locate string name, add it to the head of the program
-			return "str:" + literal.getValue().toString();
+			String literalName = lirProgram.AddLiteral(literal.getValue().toString());
+			writer.println("Move " + literalName + ", R" + lirProgram.expressionRegister);
 		}
 
 		return null;

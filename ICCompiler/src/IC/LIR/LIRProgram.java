@@ -6,25 +6,54 @@ import IC.AST.*;
 
 public final class LIRProgram
 {
-	private HashMap<String, String> literals;
+	private HashMap<String, String> literals = new HashMap<String, String>();
+	private int literalCount;
+	
 	private HashMap<String, Method> methods;
 	private HashMap<ICClass, String> dispatchTable;
 	
-	public final int ReturnRegister = 0;
+	private int lockedRegister = 2;
+	
+	public final int ReturnRegister = 9999;
 	public ICClass currentClass = null;
-	public int currRegister = 1;
 	public int expressionRegister = 2;
-	public int expressionRegister1 = 3;
-	public int expressionRegister2 = 4;
 	public String breakLabel = null;
 	public String continueLabel = null;
+	
+	public String AddLiteral(String literal)
+	{
+		String literalName = null;
+		if (literals.containsKey(literal))
+		{
+			literalName = literals.get(literal);
+		}
+		else
+		{
+			literalName = "str" + literalCount;
+			literalCount++;
+			literals.put(literal, literalName);
+		}
+		
+		return literalName;
+	}
+	
+	public int GetNextRegister()
+	{
+		lockedRegister++;
+		return lockedRegister;
+	}
+	
+	public void UnLockRegister(int count)
+	{
+		lockedRegister -=count;
+	}
 	
 	public int[] GetArgumentsRegisters(int count)
 	{
 		int[] argsReg = new int[count];
 		for(int i = 0; i < count; i++)
 		{
-			argsReg[i] = expressionRegister2 + 1 + i;
+			argsReg[i] = 4000 + i;
 		}
 		
 		return argsReg;

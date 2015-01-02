@@ -38,10 +38,10 @@ Move R3, R2
 Move R2, j
 #if
 Move j, R2
-Move R2, R3
+Move R2, R5
 Move 3, R2
-Mod R2, R3
-Move R3, R2
+Mod R2, R5
+Move R5, R2
 Move R2, R3
 Move 0, R2
 Move 0, R4
@@ -66,10 +66,10 @@ JumpFalse _Label_end_if_14
 _Label_end_if_14:
 #if
 Move j, R2
-Move R2, R3
+Move R2, R5
 Move 80, R2
-Mod R2, R3
-Move R3, R2
+Mod R2, R5
+Move R5, R2
 Move R2, R3
 Move 0, R2
 Move 0, R4
@@ -96,7 +96,7 @@ _Label_while_end_11:
 # Call printi(j)
 # evaluate arg 0
 Move j, R2
-Move R2, R5
-Library __printi(R5), Rdummy
+Move R2, R4000
+Library __printi(R4000), Rdummy
 Library __exit(0),R0
 Return 9999
