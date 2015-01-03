@@ -24,6 +24,7 @@ public final class LIRProgram
 	
 	public final int ReturnRegister = 9999;
 	public int expressionRegister = 2;
+	public final int thisRegister = 9998;
 	
 	public String breakLabel = null;
 	public String continueLabel = null;
@@ -111,6 +112,11 @@ public final class LIRProgram
 	{
 		ClassScope classScope = (ClassScope)programTable.getSymbol(scope, className);
 		return classScope != null ? classScope.icClass : null;
+	}
+	
+	public ICClass GetClassByName(String className)
+	{
+		return programTable.GetClassByName(className);
 	}
 	
 	public boolean IsLocalVarible(VariableLocation location)

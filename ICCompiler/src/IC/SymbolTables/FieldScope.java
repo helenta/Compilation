@@ -5,7 +5,6 @@ import IC.SemanticChecks.ScopeVisitor;
 
 public class FieldScope extends PrimitiveScope
 {
-
 	public FieldScope(Scope parent, String name, Type type, int line)
 	{
 		super(parent, name, type, line);

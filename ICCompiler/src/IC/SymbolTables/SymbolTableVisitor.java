@@ -35,6 +35,8 @@ public class SymbolTableVisitor implements Visitor
 				icClass.scope = parent;
 				parent.addDerived(classScope, icClass.getLine());
 			}
+			
+			symbolTable.AddType(icClass.getName(), icClass);
 		}
 
 		return symbolTable;
@@ -365,10 +367,11 @@ public class SymbolTableVisitor implements Visitor
 
 	public Object visit(VariableLocation location)
 	{
-		if (location.getLocation() != null)
+		Expression locationExpression = location.getLocation();
+		if (locationExpression != null)
 		{
-			location.getLocation().scope = location.scope;
-			location.getLocation().accept(this);
+			locationExpression.scope = location.scope;
+			locationExpression.accept(this);
 		}
 
 		return location.scope;

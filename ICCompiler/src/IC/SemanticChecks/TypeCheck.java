@@ -5,6 +5,7 @@ import java.util.List;
 import IC.AST.*;
 import IC.SymbolTables.ClassScope;
 import IC.SymbolTables.FieldScope;
+import IC.SymbolTables.GlobalScope;
 import IC.SymbolTables.MethodScope;
 import IC.SymbolTables.PrimitiveScope;
 import IC.SymbolTables.Scope;
@@ -252,20 +253,45 @@ public class TypeCheck implements Visitor
 
 	public Object visit(VariableLocation location)
 	{
-		Scope varScope = table.getSymbol(location.scope, location.getName());
+		Scope varScope = null;
+		
+		Expression innerExpression = location.getLocation();
+		if (innerExpression != null)
+		{
+			innerExpression.accept(this);
+			
+			varScope = table.GetClassScopeByName(innerExpression.semType.getName());
+		}
+		else
+		{
+			varScope = table.getSymbol(location.scope, location.getName());
+		}
+		
 		if (varScope == null)
 			throw new SemanticError("semantic error at line " + location.getLine()
-			    + ": " + location.getName() + "is not in symbol table");
+			    + ": " + location.getName() + " is not in symbol table");
 
 		if (!location.isExternal() && insideStatic
 		    && varScope instanceof FieldScope)
 			throw new SemanticError("semantic error at line " + location.getLine()
 			    + ": " + "field cannot be used inside static method");
 
-		location.semType = ((PrimitiveScope) varScope).getType();
-
-		if (location.getLocation() != null)
-			location.getLocation().accept(this);
+		if (varScope instanceof PrimitiveScope)
+		{
+			location.semType = ((PrimitiveScope) varScope).getType();
+		}
+		else
+		{
+			ICClass icClass = ((ClassScope)varScope).icClass;
+			Field field = icClass.GetFieldByName(location.getName());
+			if (field == null)
+			{
+				throw new SemanticError("semantic error at line " + location.getLine()
+				    + ": " + location.getName() + " is not in symbol table");
+			}
+			
+			location.semType = field.getType();
+		}
 
 		return location.semType;
 	}

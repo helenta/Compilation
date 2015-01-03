@@ -69,6 +69,21 @@ public class ICClass extends ASTNode
 		else
 			return -1;
 	}
+	
+	public Field GetFieldByName(String fieldName)
+	{
+		Field field = null;
+		for (Field f : fields)
+		{
+			if (f.getName().equals(fieldName))
+			{
+				field = f;
+				break;
+			}
+		}
+		
+		return field;
+	}
 
 	public String getName()
 	{

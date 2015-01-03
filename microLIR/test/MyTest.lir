@@ -20,6 +20,29 @@ Return R9999
 
 #static method: main, Sieve
 _ic_main:
+#Sieve sieve = new Sieve()
+#new Sieve()
+Library __allocateObject(16), R3
+Move R3, R2
+Move R2, sieve
+#xC.sieve = 4
+Move 4, R2
+Move R2, R3
+Move sieve, R2
+MoveField R3, R2.1
+#a.sieve = new A()
+#new A()
+Library __allocateObject(8), R6
+Move R6, R2
+Move R2, R3
+Move sieve, R2
+MoveField R3, R2.3
+#y.a.sieve = 17
+Move 17, R2
+Move R2, R3
+Move sieve, R2
+MoveField R2.3, R2
+MoveField R3, R2.1
 #INT i = 1
 Move 1, R2
 Move R2, i
@@ -31,27 +54,29 @@ Add R3, R2
 Move R2, j
 #j = 500
 Move 500, R2
-Move R2, j
+Move R2, R3
+Move R3, j
 #BOOLEAN d = false
 Move 0, R2
 Move R2, d
 #while
-_Label_while_body_22:
+_Label_while_body_27:
 #LNEG d
 Move d, R2
 Move R2, R3
 Move 1, R2
 Xor R3, R2
 Compare 1, R2
-JumpFalse _Label_while_end_22
-#Statement block line 23
+JumpFalse _Label_while_end_27
+#Statement block line 28
 #j = j - 100
 Move j, R2
-Move R2, R3
+Move R2, R6
 Move 100, R2
-Sub R2, R3
-Move R3, R2
-Move R2, j
+Sub R2, R6
+Move R6, R2
+Move R2, R3
+Move R3, j
 #if
 #j % 3 == 0
 Move j, R2
@@ -63,20 +88,21 @@ Move R2, R3
 Move 0, R2
 Move 0, R4
 Compare R3, R2
-JumpFalse _Label_less_equal_25
+JumpFalse _Label_less_equal_30
 Move 1, R4
-_Label_less_equal_25:
+_Label_less_equal_30:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_end_if_25
-#Statement block line 26
+JumpFalse _Label_end_if_30
+#Statement block line 31
 #break
-Jump _Label_while_end_22
-JumpFalse _Label_end_if_25
-_Label_end_if_25:
+Jump _Label_while_end_27
+JumpFalse _Label_end_if_30
+_Label_end_if_30:
 #d = true
 Move 1, R2
-Move R2, d
+Move R2, R3
+Move R3, d
 # evaluate arg 0
 Move 1, R2
 Move R2, R4000
@@ -90,24 +116,13 @@ Move R2, R4002
 Move 1, R2
 Move R2, R4003
 StaticCall _Sieve_testFunc(t = R4000, h = R4001, y = R4002, g = R4003), R2
-Jump _Label_while_body_22
-_Label_while_end_22:
-# Call printi(add(j + j, 4 + momo()))
+Jump _Label_while_body_27
+_Label_while_end_27:
+# Call printi(y.a.sieve)
 # evaluate arg 0
-# evaluate arg 0
-Move j, R2
-Move R2, R3
-Move j, R2
-Add R3, R2
-Move R2, R4000
-# evaluate arg 1
-Move 4, R2
-Move R2, R3
-# Call momo()
-StaticCall _A_momo(), R2
-Add R3, R2
-Move R2, R4001
-StaticCall _Sieve_add(x1 = R4000, x2 = R4001), R2
+Move sieve, R2
+MoveField R2.3, R2
+MoveField R2.1, R2
 Move R2, R4000
 Library __printi(R4000), Rdummy
 Library __exit(0),R0

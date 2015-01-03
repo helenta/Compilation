@@ -163,40 +163,56 @@ public class EmitVisitor implements Visitor
 		
 		int reg1 = lirProgram.GetNextRegister();
 		int reg2 = lirProgram.GetNextRegister();
+		int reg3 = lirProgram.GetNextRegister();
 		
 		assignment.getAssignment().accept(this);
 		AppendLine("Move R" + lirProgram.expressionRegister + ", R" + reg1);
 		
 		Location location = assignment.getVariable();
+		
 		if (location instanceof VariableLocation)
 		{
-			VariableLocation varLocation = (VariableLocation)location;
-			boolean isLocalVarible = lirProgram.IsLocalVarible(varLocation);
-			Expression locationExpression = varLocation.getLocation();
-			if (isLocalVarible && (locationExpression == null))
+			VariableLocation variableLocation = (VariableLocation)location;
+			if (variableLocation.getLocation() == null)
 			{
-				AppendLine("Move R" + reg1 + ", " + varLocation.getName());
-			}
-			else if (isLocalVarible && (locationExpression != null))
-			{
-				if (locationExpression instanceof VariableLocation)
+				boolean isLocal = lirProgram.IsLocalVarible(variableLocation);
+				if (isLocal)
 				{
-					
-				}
-				else if (locationExpression instanceof ArrayLocation)
-				{
-					
+					AppendLine("Move R" + reg1 + ", " + variableLocation.getName());
 				}
 				else
 				{
-					AppendLine("location Error!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!;");
+					ICClass icClass = lirProgram.GetVaribleLocationClass(variableLocation);
+					int fieldIndex = icClass.GetFieldIndex(variableLocation.getName());
+					
+					AppendLine("MoveField R" + reg1 + ", R" + lirProgram.thisRegister + "." + fieldIndex);
 				}
 			}
-			// todo: else field location
+			else
+			{
+				variableLocation.getLocation().accept(this);
+				
+				Type expressionType = variableLocation.getLocation().semType;
+				ICClass icClass = lirProgram.GetClassByName(expressionType.getName());
+				int fieldIndex = icClass.GetFieldIndex(variableLocation.getName());
+				
+				AppendLine("MoveField R" + reg1 + ", R" + lirProgram.expressionRegister + "." + fieldIndex);
+			}
 		}
-		// todo: else array location
+		else
+		{
+			ArrayLocation arrayLocation = (ArrayLocation)location;
+			
+			arrayLocation.getArray().accept(this);
+			AppendLine("Move R" + lirProgram.expressionRegister + ", R" + reg2);
+			
+			arrayLocation.getIndex().accept(this);
+			AppendLine("Move R" + lirProgram.expressionRegister + ", R" + reg3);
+			
+			AppendLine("MoveArray R" + reg1 + ", R" + reg2 + "[R" + reg3 + "]");
+		}
 		
-		lirProgram.UnLockRegister(2);
+		lirProgram.UnLockRegister(3);
 		
 		return null;
 	}
@@ -356,11 +372,20 @@ public class EmitVisitor implements Visitor
 			{
 				ICClass icClass = lirProgram.GetVaribleLocationClass(location);
 				int index = icClass.GetFieldIndex(location.getName());
+				
+				// todo: lirProgram.currentObjectRegister in a virtual method need to be set as this object 
+				AppendLine("MoveField R" + lirProgram.thisRegister + "." + index + ", R" + lirProgram.expressionRegister);
 			}
 		}
 		else
 		{
-			// todo:
+			location.getLocation().accept(this);
+			
+			ICClass icClass = lirProgram.GetClassByName(location.getLocation().semType.getName());
+			int index = icClass.GetFieldIndex(location.getName());
+			
+		  // todo: lirProgram.currentObjectRegister in a virtual method need to be set as this object 
+			AppendLine("MoveField R" + lirProgram.expressionRegister + "." + index + ", R" + lirProgram.expressionRegister);	
 		}
 		
 		return null;

@@ -9,7 +9,7 @@ public class VariableLocation extends Location
 {
 	private Expression	location	= null;
 
-	private String	   name;
+	private String	    name;
 
 	public Object accept(Visitor visitor)
 	{
