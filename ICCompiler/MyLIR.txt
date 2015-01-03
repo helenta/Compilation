@@ -1,6 +1,6 @@
 # program
 str1 : ""
-str0 : "Tets String"
+str0 : "Test String"
 
 
 # class Sieve
@@ -81,14 +81,22 @@ Move R2, R4003
 StaticCall _Sieve_testFunc(t = R4000, h = R4001, y = R4002, g = R4003), R2
 Jump _Label_while_body_10
 _Label_while_end_10:
-# Call printi(j)
+# Call printi(add(j + j, 4))
+# evaluate arg 0
 # evaluate arg 0
 Move j, R2
+Move R2, R3
+Move j, R2
+Add R3, R2
+Move R2, R4000
+# evaluate arg 1
+Move 4, R2
+Move R2, R4001
+StaticCall _Sieve_add(x1 = R4000, x2 = R4001), R2
 Move R2, R4000
 Library __printi(R4000), Rdummy
 Library __exit(0),R0
 Return 9999
-
 
 
 
@@ -126,4 +134,14 @@ Move R2, R4000
 Library __printb(R4000), Rdummy
 Return 9999
 
+
+
+#static method: add, Sieve
+_Sieve_add:
+Move x1, R2
+Move R2, R3
+Move x2, R2
+Add R3, R2
+Move R2, R9999
+Return R9999
 

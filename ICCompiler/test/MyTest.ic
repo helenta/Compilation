@@ -16,9 +16,10 @@ class Sieve
     	}
     	d = true;
     	
-    	testFunc(1, "Tets String", 4, true);
+    	testFunc(1, "Test String", 4, true);
     }
-    Library.printi(j);
+    
+    Library.printi(add(j+j, 4));
   }
   
   static void testFunc(int t, string h, int y, boolean g)
@@ -29,6 +30,11 @@ class Sieve
   	Library.printi(y);
   	Library.println("");
   	Library.printb(g);
+  }
+  
+  static int add(int x1, int x2)
+  {
+  	return x1 + x2;
   }
 
 }

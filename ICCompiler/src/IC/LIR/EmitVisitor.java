@@ -110,17 +110,20 @@ public class EmitVisitor implements Visitor
 		String labelName = lirProgram.GetMethodLabel(method);
 		AppendLine(labelName + ":");
 		
+		boolean exsistRetunStatement = false;
 		for (Statement statement : method.getStatements())
 	  {
+			exsistRetunStatement = statement instanceof Return;
 	  	statement.accept(this);
 	  }
 		
 		if (method.IsMain())
 			AppendLine("Library __exit(0),R0");
-		AppendLine("Return " + lirProgram.ReturnRegister);
-	  
+		
+		if (!exsistRetunStatement)
+			AppendLine("Return " + lirProgram.ReturnRegister);
+		
 	  AppendLine();
-		AppendLine();
 		
 		return null;
 	}
@@ -183,7 +186,10 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(Return returnStatement)
 	{
-		// TODO Auto-generated method stub
+		returnStatement.getValue().accept(this);
+		AppendLine("Move R" + lirProgram.expressionRegister + ", R" + lirProgram.ReturnRegister);
+		AppendLine("Return R" + lirProgram.ReturnRegister);
+		
 		return null;
 	}
 
@@ -702,7 +708,7 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(ExpressionBlock expressionBlock)
 	{
-		// TODO Auto-generated method stub
+		expressionBlock.getExpression().accept(this);
 		return null;
 	}
 
