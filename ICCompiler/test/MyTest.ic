@@ -1,8 +1,21 @@
+class A
+{
+	static int momo()
+	{
+		return 5;
+	}
+}
 
 class Sieve 
 {
+  int xC;
+  int yC;
+  
   static void main(string[] args) 
   {
+  	Sieve sieve = new Sieve();
+  	sieve.xC = 4;
+  
     int i = 1;
     int j = i + 5;
     j = 500;
@@ -19,7 +32,7 @@ class Sieve
     	testFunc(1, "Test String", 4, true);
     }
     
-    Library.printi(add(j+j, 4));
+    Library.printi(sieve.xC+add(j+j, 4+A.momo()));
   }
   
   static void testFunc(int t, string h, int y, boolean g)

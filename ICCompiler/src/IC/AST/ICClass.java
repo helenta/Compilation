@@ -1,5 +1,6 @@
 package IC.AST;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -9,14 +10,17 @@ import java.util.List;
  */
 public class ICClass extends ASTNode
 {
-
 	private String	     name;
 
 	private String	     superClassName	= null;
 
 	private List<Field>	 fields;
 
-	private List<Method>	methods;
+	private List<Method> methods;
+	
+	public  Method       ctorMethod;
+	
+	private HashMap<String, Integer> fiedsIndex;
 
 	public Object accept(Visitor visitor)
 	{
@@ -29,6 +33,26 @@ public class ICClass extends ASTNode
 		this.name = name;
 		this.fields = fields;
 		this.methods = methods;
+		
+		ctorMethod = null;
+		for (Method method : methods)
+		{
+			if (method.getName().endsWith(name)   &&
+					method.getName().startsWith(name) && 
+					name.length() == method.getName().length())
+			{
+				ctorMethod = method;
+				break;
+			}
+		}
+		
+		fiedsIndex = new HashMap<String, Integer>();
+		int index = 1;
+		for (Field field : fields)
+		{
+			fiedsIndex.put(field.getName(), index);
+			index++;
+		}
 	}
 
 	public ICClass(int line, String name, String superClassName,
@@ -36,6 +60,14 @@ public class ICClass extends ASTNode
 	{
 		this(line, name, fields, methods);
 		this.superClassName = superClassName;
+	}
+	
+	public int GetFieldIndex(String fieldName)
+	{
+		if (fiedsIndex.containsKey(fieldName))
+			return fiedsIndex.get(fieldName);
+		else
+			return -1;
 	}
 
 	public String getName()

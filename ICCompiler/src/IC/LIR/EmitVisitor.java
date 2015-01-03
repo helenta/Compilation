@@ -160,19 +160,43 @@ public class EmitVisitor implements Visitor
 	public Object visit(Assignment assignment)
 	{
 		AppendLine("#" + assignment.toString());
+		
+		int reg1 = lirProgram.GetNextRegister();
+		int reg2 = lirProgram.GetNextRegister();
+		
 		assignment.getAssignment().accept(this);
+		AppendLine("Move R" + lirProgram.expressionRegister + ", R" + reg1);
 		
 		Location location = assignment.getVariable();
 		if (location instanceof VariableLocation)
 		{
 			VariableLocation varLocation = (VariableLocation)location;
-			if (varLocation.getLocation() == null)
+			boolean isLocalVarible = lirProgram.IsLocalVarible(varLocation);
+			Expression locationExpression = varLocation.getLocation();
+			if (isLocalVarible && (locationExpression == null))
 			{
-				AppendLine("Move R" + lirProgram.expressionRegister + ", " + varLocation.getName());
+				AppendLine("Move R" + reg1 + ", " + varLocation.getName());
+			}
+			else if (isLocalVarible && (locationExpression != null))
+			{
+				if (locationExpression instanceof VariableLocation)
+				{
+					
+				}
+				else if (locationExpression instanceof ArrayLocation)
+				{
+					
+				}
+				else
+				{
+					AppendLine("location Error!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!;");
+				}
 			}
 			// todo: else field location
 		}
 		// todo: else array location
+		
+		lirProgram.UnLockRegister(2);
 		
 		return null;
 	}
@@ -321,9 +345,18 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(VariableLocation location)
 	{
+		boolean isLocalVariable = lirProgram.IsLocalVarible(location);
 		if (location.getLocation() == null)
 		{
-			AppendLine("Move " + location.getName() + ", R" + lirProgram.expressionRegister);
+			if (isLocalVariable)
+			{
+				AppendLine("Move " + location.getName() + ", R" + lirProgram.expressionRegister);
+			}
+			else
+			{
+				ICClass icClass = lirProgram.GetVaribleLocationClass(location);
+				int index = icClass.GetFieldIndex(location.getName());
+			}
 		}
 		else
 		{
@@ -461,7 +494,24 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(NewClass newClass)
 	{
-		// TODO Auto-generated method stub
+		AppendLine("#new " + newClass.getName() + "()");
+		
+		int reg1 = lirProgram.GetNextRegister();
+		
+		ICClass icClass = lirProgram.GetClassByName(newClass.scope, newClass.getName());
+		
+		int fieldsCount = icClass.getFields().size();
+		AppendLine("Library __allocateObject(" + (fieldsCount+1)*4 + "), R" + reg1);
+	  // todo: add methods
+		if (icClass.ctorMethod != null)
+		{
+			icClass.ctorMethod.accept(this);
+		}
+		
+		AppendLine("Move R" + reg1 + ", R" + lirProgram.expressionRegister);
+		
+		lirProgram.UnLockRegister(1);
+		
 		return null;
 	}
 

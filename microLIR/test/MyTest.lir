@@ -3,6 +3,17 @@ str1 : ""
 str0 : "Test String"
 
 
+# class A
+
+
+
+#static method: momo, A
+_A_momo:
+Move 5, R2
+Move R2, R9999
+Return R9999
+
+
 # class Sieve
 
 
@@ -25,15 +36,15 @@ Move R2, j
 Move 0, R2
 Move R2, d
 #while
-_Label_while_body_10:
+_Label_while_body_22:
 #LNEG d
 Move d, R2
 Move R2, R3
 Move 1, R2
 Xor R3, R2
 Compare 1, R2
-JumpFalse _Label_while_end_10
-#Statement block line 11
+JumpFalse _Label_while_end_22
+#Statement block line 23
 #j = j - 100
 Move j, R2
 Move R2, R3
@@ -52,17 +63,17 @@ Move R2, R3
 Move 0, R2
 Move 0, R4
 Compare R3, R2
-JumpFalse _Label_less_equal_13
+JumpFalse _Label_less_equal_25
 Move 1, R4
-_Label_less_equal_13:
+_Label_less_equal_25:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_end_if_13
-#Statement block line 14
+JumpFalse _Label_end_if_25
+#Statement block line 26
 #break
-Jump _Label_while_end_10
-JumpFalse _Label_end_if_13
-_Label_end_if_13:
+Jump _Label_while_end_22
+JumpFalse _Label_end_if_25
+_Label_end_if_25:
 #d = true
 Move 1, R2
 Move R2, d
@@ -79,9 +90,9 @@ Move R2, R4002
 Move 1, R2
 Move R2, R4003
 StaticCall _Sieve_testFunc(t = R4000, h = R4001, y = R4002, g = R4003), R2
-Jump _Label_while_body_10
-_Label_while_end_10:
-# Call printi(add(j + j, 4))
+Jump _Label_while_body_22
+_Label_while_end_22:
+# Call printi(add(j + j, 4 + momo()))
 # evaluate arg 0
 # evaluate arg 0
 Move j, R2
@@ -91,6 +102,10 @@ Add R3, R2
 Move R2, R4000
 # evaluate arg 1
 Move 4, R2
+Move R2, R3
+# Call momo()
+StaticCall _A_momo(), R2
+Add R3, R2
 Move R2, R4001
 StaticCall _Sieve_add(x1 = R4000, x2 = R4001), R2
 Move R2, R4000
