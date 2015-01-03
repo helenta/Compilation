@@ -32,17 +32,50 @@ Move sieve, R2
 MoveField R3, R2.1
 #a.sieve = new A()
 #new A()
-Library __allocateObject(8), R6
+Library __allocateObject(16), R6
 Move R6, R2
 Move R2, R3
 Move sieve, R2
 MoveField R3, R2.3
-#y.a.sieve = 17
-Move 17, R2
+#y.a.sieve = 1
+Move 1, R2
 Move R2, R3
 Move sieve, R2
 MoveField R2.3, R2
 MoveField R3, R2.1
+#b.a.sieve = true
+Move 1, R2
+Move R2, R3
+Move sieve, R2
+MoveField R2.3, R2
+MoveField R3, R2.2
+#boo.a.sieve = new BOOLEAN[]x1[2]
+Move 2, R2
+Mul 4, R2
+Library __allocateArray(R2), R6
+Move R6, R2
+Move R2, R3
+Move sieve, R2
+MoveField R2.3, R2
+MoveField R3, R2.3
+#boo.a.sieve[y.a.sieve - 1] = b.a.sieve
+Move sieve, R2
+MoveField R2.3, R2
+MoveField R2.2, R2
+Move R2, R3
+Move sieve, R2
+MoveField R2.3, R2
+MoveField R2.3, R2
+Move R2, R4
+Move sieve, R2
+MoveField R2.3, R2
+MoveField R2.1, R2
+Move R2, R6
+Move 1, R2
+Sub R2, R6
+Move R6, R2
+Move R2, R5
+MoveArray R3, R4[R5]
 #INT i = 1
 Move 1, R2
 Move R2, i
@@ -60,15 +93,15 @@ Move R3, j
 Move 0, R2
 Move R2, d
 #while
-_Label_while_body_27:
+_Label_while_body_32:
 #LNEG d
 Move d, R2
 Move R2, R3
 Move 1, R2
 Xor R3, R2
 Compare 1, R2
-JumpFalse _Label_while_end_27
-#Statement block line 28
+JumpFalse _Label_while_end_32
+#Statement block line 33
 #j = j - 100
 Move j, R2
 Move R2, R6
@@ -88,17 +121,17 @@ Move R2, R3
 Move 0, R2
 Move 0, R4
 Compare R3, R2
-JumpFalse _Label_less_equal_30
+JumpFalse _Label_less_equal_35
 Move 1, R4
-_Label_less_equal_30:
+_Label_less_equal_35:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_end_if_30
-#Statement block line 31
+JumpFalse _Label_end_if_35
+#Statement block line 36
 #break
-Jump _Label_while_end_27
-JumpFalse _Label_end_if_30
-_Label_end_if_30:
+Jump _Label_while_end_32
+JumpFalse _Label_end_if_35
+_Label_end_if_35:
 #d = true
 Move 1, R2
 Move R2, R3
@@ -116,15 +149,25 @@ Move R2, R4002
 Move 1, R2
 Move R2, R4003
 StaticCall _Sieve_testFunc(t = R4000, h = R4001, y = R4002, g = R4003), R2
-Jump _Label_while_body_27
-_Label_while_end_27:
-# Call printi(y.a.sieve)
+Jump _Label_while_body_32
+_Label_while_end_32:
+# Call printb(boo.a.sieve[y.a.sieve - 1])
 # evaluate arg 0
 Move sieve, R2
 MoveField R2.3, R2
+MoveField R2.3, R2
+Move R2, R3
+Move sieve, R2
+MoveField R2.3, R2
 MoveField R2.1, R2
+Move R2, R5
+Move 1, R2
+Sub R2, R5
+Move R5, R2
+MoveArray R3[R2], R4
+Move R4, R2
 Move R2, R4000
-Library __printi(R4000), Rdummy
+Library __printb(R4000), Rdummy
 Library __exit(0),R0
 Return 9999
 
@@ -162,6 +205,16 @@ Library __println(R4000), Rdummy
 Move g, R2
 Move R2, R4000
 Library __printb(R4000), Rdummy
+# Call println("")
+# evaluate arg 0
+Move str1, R2
+Move R2, R4000
+Library __println(R4000), Rdummy
+# Call println("")
+# evaluate arg 0
+Move str1, R2
+Move R2, R4000
+Library __println(R4000), Rdummy
 Return 9999
 
 

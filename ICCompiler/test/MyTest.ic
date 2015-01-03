@@ -1,6 +1,8 @@
 class A
 {
     int y;
+    boolean b;
+    boolean[] boo;
 	static int momo()
 	{
 		return 5;
@@ -18,7 +20,10 @@ class Sieve
   	Sieve sieve = new Sieve();
   	sieve.xC = 4;
   	sieve.a = new A();
-  	sieve.a.y = 17;
+  	sieve.a.y = 1;
+  	sieve.a.b = true;
+  	sieve.a.boo = new boolean[2];
+  	sieve.a.boo[sieve.a.y-1] = sieve.a.b;
   
     int i = 1;
     int j = i + 5;
@@ -36,7 +41,7 @@ class Sieve
     	testFunc(1, "Test String", 4, true);
     }
     
-    Library.printi(sieve.a.y);
+    Library.printb(sieve.a.boo[sieve.a.y-1]);
   }
   
   static void testFunc(int t, string h, int y, boolean g)
@@ -47,6 +52,8 @@ class Sieve
   	Library.printi(y);
   	Library.println("");
   	Library.printb(g);
+  	Library.println("");
+  	Library.println("");
   }
   
   static int add(int x1, int x2)

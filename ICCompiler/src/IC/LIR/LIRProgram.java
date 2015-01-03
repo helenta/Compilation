@@ -14,7 +14,8 @@ public final class LIRProgram
 	private int literalCount;
 	
 	private HashMap<Method, String> methods = new HashMap<Method, String>();
-	private HashMap<ICClass, String> dispatchTable;
+	private HashMap<ICClass, String> classTodispatchTables = new HashMap<ICClass, String>();
+	private HashMap<String, List<String>> dispatchTables = new HashMap<String, List<String>>();
 	
 	private SymbolTable programTable;
 	
@@ -32,6 +33,29 @@ public final class LIRProgram
 	public LIRProgram(SymbolTable symbolTable)
 	{
 		programTable = symbolTable;
+	}
+	
+	public String AddDispatchTable(ICClass icClass)
+	{
+		String tableName = "_DV_" + icClass.getName();
+		classTodispatchTables.put(icClass, tableName);
+		
+		ArrayList<String> virtualMethodLabels = new ArrayList<String>();
+		dispatchTables.put(tableName, virtualMethodLabels);
+		
+		return tableName;
+	}
+	
+	public String AddVirtualMethodToDispatchTable(VirtualMethod virtualMethod)
+	{
+		ClassScope classScope = (ClassScope)virtualMethod.scope;
+		String tableName = classTodispatchTables.get(classScope.icClass);
+		
+		List<String> virtualMethodLabels = dispatchTables.get(tableName);
+		String methodLabelName = GetMethodLabel(virtualMethod);
+		virtualMethodLabels.add(methodLabelName);
+		
+		return methodLabelName;
 	}
 	
 	public String AddLiteral(String literal)

@@ -1,6 +1,7 @@
 package IC.AST;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public class LibraryMethod extends Method
 	public LibraryMethod(Type type, String name, List<Formal> formals)
 	{
 		super(type, name, formals, new ArrayList<Statement>());
+		Collections.reverse(this.formals);
 	}
 	
 	public String toString()
