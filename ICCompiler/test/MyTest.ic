@@ -7,6 +7,16 @@ class A
 	{
 		return 5;
 	}
+	
+	void g()
+	{
+	}
+	
+	int t()
+	{
+		y = 7;
+		return y;
+	}
 }
 
 class Sieve 
@@ -41,7 +51,7 @@ class Sieve
     	testFunc(1, "Test String", 4, true);
     }
     
-    Library.printb(sieve.a.boo[sieve.a.y-1]);
+    Library.printi(sieve.a.t());
   }
   
   static void testFunc(int t, string h, int y, boolean g)

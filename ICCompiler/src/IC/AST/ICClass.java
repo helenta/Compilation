@@ -1,5 +1,6 @@
 package IC.AST;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class ICClass extends ASTNode
 	private List<Field>	 fields;
 
 	private List<Method> methods;
+	public List<VirtualMethod> virtualMethods;
 	
 	public  Method       ctorMethod;
 	
@@ -35,6 +37,7 @@ public class ICClass extends ASTNode
 		this.methods = methods;
 		
 		ctorMethod = null;
+		virtualMethods = new ArrayList<VirtualMethod>();
 		for (Method method : methods)
 		{
 			if (method.getName().endsWith(name)   &&
@@ -42,7 +45,11 @@ public class ICClass extends ASTNode
 					name.length() == method.getName().length())
 			{
 				ctorMethod = method;
-				break;
+			}
+			
+			if (method instanceof VirtualMethod)
+			{
+				virtualMethods.add((VirtualMethod)method);
 			}
 		}
 		

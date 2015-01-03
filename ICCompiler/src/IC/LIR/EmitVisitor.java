@@ -46,10 +46,35 @@ public class EmitVisitor implements Visitor
 			PrintWriter f = new PrintWriter(file, "UTF-8");
 			
 			f.println("# program");
+			f.println();
+			
+			f.println("############literals#############");
 			for (Map.Entry<String, String> entry : lirProgram.literals.entrySet())
 			{
 				f.println(entry.getValue() + " : " + entry.getKey());
 			}
+			f.println("#################################");
+			f.println();
+			
+			f.println("############dispatch table#######");
+			for (Map.Entry<String, List<String>> entry : lirProgram.dispatchTables.entrySet())
+			{
+				//_DV_Foo: [_Foo_shine,_Foo_rise]
+				if (entry.getValue().size() > 0)
+				{
+					f.print(entry.getKey() + ": [");
+					for (int i = 0; i < entry.getValue().size(); i++)
+					{
+						String labelName = entry.getValue().get(i);
+						f.print(labelName);
+						
+						if (i < entry.getValue().size() - 1)
+							f.print(", ");
+					}
+					f.println("]");
+				}
+			}
+			f.println("#################################");
 			f.println();
 			
 			f.print(writer.toString());
@@ -74,15 +99,18 @@ public class EmitVisitor implements Visitor
 		AppendLine("# class " + icClass.getName());
 		AppendLine();
 		
+		lirProgram.AddDispatchTable(icClass);
 		for (Method method : icClass.getMethods())
 		{
-			if (method instanceof StaticMethod)
+			if (method instanceof VirtualMethod)
 			{
-				method.accept(this);
-			} 
+				VirtualMethod virtualMethod = (VirtualMethod)method;
+				lirProgram.AddVirtualMethodToDispatchTable(virtualMethod);
+			}
+			
+			method.accept(this);
 		}
 		
-		//todo: non static methods + fields
 		return null;
 	}
 
@@ -96,16 +124,13 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(VirtualMethod method)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return AcceptMetod(method, "virtual");
 	}
-
-	@Override
-	public Object visit(StaticMethod method)
+	
+	private Object AcceptMetod(Method method, String st)
 	{
 		AppendLine();
-		AppendLine();
-		AppendLine("#static method: " + method.getName() + ", " + lirProgram.currentClass.getName());
+		AppendLine("#" + st + " method: " + method.getName() + ", " + lirProgram.currentClass.getName());
 		
 		String labelName = lirProgram.GetMethodLabel(method);
 		AppendLine(labelName + ":");
@@ -126,6 +151,12 @@ public class EmitVisitor implements Visitor
 	  AppendLine();
 		
 		return null;
+	}
+
+	@Override
+	public Object visit(StaticMethod method)
+	{
+		return AcceptMetod(method, "static");
 	}
 
 	@Override
@@ -501,8 +532,38 @@ public class EmitVisitor implements Visitor
 			
 			AppendLine("StaticCall " + methodLabel + "(" + argsBuffer.toString() + "), R" + lirProgram.expressionRegister);
 		}
-		
-		//todo: do for virtaul method
+		else
+		{	
+			int reg1 = lirProgram.GetNextRegister();
+			call.getLocation().accept(this);
+			AppendLine("Move R" + lirProgram.expressionRegister + ", " + "R" + reg1);
+			
+			ICClass icClass = lirProgram.GetClassByName(call.getLocation().semType.getName());
+			int methodIndex = icClass.virtualMethods.indexOf((VirtualMethod)method);
+			
+			for (int i = 0; i < callArguments.size(); i++)
+			{
+				AppendLine("# evaluate arg " + i);
+				
+				Expression exp = callArguments.get(i);
+				int reg = argumentsRegs[i];
+				exp.accept(this);
+				
+				AppendLine("Move R" + lirProgram.expressionRegister + ", " + "R" + reg);
+				
+				Formal formal = formals.get(i);
+				
+				argsBuffer.append(formal.getName() + " = R" + reg);
+				if (i < callArguments.size() - 1)
+					argsBuffer.append(", ");
+			}
+			
+			//VirtualCall R1.0(x=R2),Rdummy
+			AppendLine("Move R" + reg1 + ", " + "R" + lirProgram.thisRegister);
+			AppendLine("VirtualCall R" + reg1 + "." + methodIndex + "(" + argsBuffer.toString() + "), R" + lirProgram.expressionRegister);
+			
+		  lirProgram.UnLockRegister(1);
+		}
 		
 		return null;
 	}
@@ -522,10 +583,14 @@ public class EmitVisitor implements Visitor
 		int reg1 = lirProgram.GetNextRegister();
 		
 		ICClass icClass = lirProgram.GetClassByName(newClass.scope, newClass.getName());
+		String dispatchTable = lirProgram.GetDispatchTableName(icClass);
 		
 		int fieldsCount = icClass.getFields().size();
 		AppendLine("Library __allocateObject(" + (fieldsCount+1)*4 + "), R" + reg1);
-	  // todo: add methods
+		
+		if (icClass.virtualMethods.size() > 0)
+			AppendLine("MoveField " + dispatchTable + ", R" + reg1 + ".0");
+
 		if (icClass.ctorMethod != null)
 		{
 			icClass.ctorMethod.accept(this);

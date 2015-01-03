@@ -1,10 +1,16 @@
 # program
+
+############literals#############
 str1 : ""
 str0 : "Test String"
+#################################
+
+############dispatch table#######
+_DV_A: [_A_g, _A_t]
+#################################
 
 
 # class A
-
 
 
 #static method: momo, A
@@ -14,8 +20,23 @@ Move R2, R9999
 Return R9999
 
 
-# class Sieve
+#virtual method: g, A
+_A_g:
+Return 9999
 
+
+#virtual method: t, A
+_A_t:
+#y = 7
+Move 7, R2
+Move R2, R3
+MoveField R3, R9998.1
+MoveField R9998.1, R2
+Move R2, R9999
+Return R9999
+
+
+# class Sieve
 
 
 #static method: main, Sieve
@@ -33,6 +54,7 @@ MoveField R3, R2.1
 #a.sieve = new A()
 #new A()
 Library __allocateObject(16), R6
+MoveField _DV_A, R6.0
 Move R6, R2
 Move R2, R3
 Move sieve, R2
@@ -93,15 +115,15 @@ Move R3, j
 Move 0, R2
 Move R2, d
 #while
-_Label_while_body_32:
+_Label_while_body_42:
 #LNEG d
 Move d, R2
 Move R2, R3
 Move 1, R2
 Xor R3, R2
 Compare 1, R2
-JumpFalse _Label_while_end_32
-#Statement block line 33
+JumpFalse _Label_while_end_42
+#Statement block line 43
 #j = j - 100
 Move j, R2
 Move R2, R6
@@ -121,17 +143,17 @@ Move R2, R3
 Move 0, R2
 Move 0, R4
 Compare R3, R2
-JumpFalse _Label_less_equal_35
+JumpFalse _Label_less_equal_45
 Move 1, R4
-_Label_less_equal_35:
+_Label_less_equal_45:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_end_if_35
-#Statement block line 36
+JumpFalse _Label_end_if_45
+#Statement block line 46
 #break
-Jump _Label_while_end_32
-JumpFalse _Label_end_if_35
-_Label_end_if_35:
+Jump _Label_while_end_42
+JumpFalse _Label_end_if_45
+_Label_end_if_45:
 #d = true
 Move 1, R2
 Move R2, R3
@@ -149,28 +171,19 @@ Move R2, R4002
 Move 1, R2
 Move R2, R4003
 StaticCall _Sieve_testFunc(t = R4000, h = R4001, y = R4002, g = R4003), R2
-Jump _Label_while_body_32
-_Label_while_end_32:
-# Call printb(boo.a.sieve[y.a.sieve - 1])
+Jump _Label_while_body_42
+_Label_while_end_42:
+# Call printi(t())
 # evaluate arg 0
 Move sieve, R2
 MoveField R2.3, R2
-MoveField R2.3, R2
 Move R2, R3
-Move sieve, R2
-MoveField R2.3, R2
-MoveField R2.1, R2
-Move R2, R5
-Move 1, R2
-Sub R2, R5
-Move R5, R2
-MoveArray R3[R2], R4
-Move R4, R2
+Move R3, R9998
+VirtualCall R3.1(), R2
 Move R2, R4000
-Library __printb(R4000), Rdummy
+Library __printi(R4000), Rdummy
 Library __exit(0),R0
 Return 9999
-
 
 
 #static method: testFunc, Sieve
@@ -216,7 +229,6 @@ Move str1, R2
 Move R2, R4000
 Library __println(R4000), Rdummy
 Return 9999
-
 
 
 #static method: add, Sieve

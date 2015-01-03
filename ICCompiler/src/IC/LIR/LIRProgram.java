@@ -15,7 +15,7 @@ public final class LIRProgram
 	
 	private HashMap<Method, String> methods = new HashMap<Method, String>();
 	private HashMap<ICClass, String> classTodispatchTables = new HashMap<ICClass, String>();
-	private HashMap<String, List<String>> dispatchTables = new HashMap<String, List<String>>();
+	public HashMap<String, List<String>> dispatchTables = new HashMap<String, List<String>>();
 	
 	private SymbolTable programTable;
 	
@@ -37,7 +37,7 @@ public final class LIRProgram
 	
 	public String AddDispatchTable(ICClass icClass)
 	{
-		String tableName = "_DV_" + icClass.getName();
+		String tableName = GetDispatchTableName(icClass);
 		classTodispatchTables.put(icClass, tableName);
 		
 		ArrayList<String> virtualMethodLabels = new ArrayList<String>();
@@ -46,9 +46,14 @@ public final class LIRProgram
 		return tableName;
 	}
 	
+	public String GetDispatchTableName(ICClass icClass)
+	{
+		return "_DV_" + icClass.getName();
+	}
+	
 	public String AddVirtualMethodToDispatchTable(VirtualMethod virtualMethod)
 	{
-		ClassScope classScope = (ClassScope)virtualMethod.scope;
+		ClassScope classScope = (ClassScope)virtualMethod.scope.getParent();
 		String tableName = classTodispatchTables.get(classScope.icClass);
 		
 		List<String> virtualMethodLabels = dispatchTables.get(tableName);
