@@ -79,7 +79,7 @@ public class EmitVisitor implements Visitor
 			if (method instanceof StaticMethod)
 			{
 				method.accept(this);
-			}
+			} 
 		}
 		
 		//todo: non static methods + fields
@@ -373,7 +373,6 @@ public class EmitVisitor implements Visitor
 				ICClass icClass = lirProgram.GetVaribleLocationClass(location);
 				int index = icClass.GetFieldIndex(location.getName());
 				
-				// todo: lirProgram.currentObjectRegister in a virtual method need to be set as this object 
 				AppendLine("MoveField R" + lirProgram.thisRegister + "." + index + ", R" + lirProgram.expressionRegister);
 			}
 		}
@@ -383,8 +382,7 @@ public class EmitVisitor implements Visitor
 			
 			ICClass icClass = lirProgram.GetClassByName(location.getLocation().semType.getName());
 			int index = icClass.GetFieldIndex(location.getName());
-			
-		  // todo: lirProgram.currentObjectRegister in a virtual method need to be set as this object 
+
 			AppendLine("MoveField R" + lirProgram.expressionRegister + "." + index + ", R" + lirProgram.expressionRegister);	
 		}
 		
