@@ -1,245 +1,159 @@
 # program
 
 ############literals#############
-str1 : ""
-str0 : "Test String"
+str0 : "hello"
 #################################
 
 ############dispatch table#######
-_DV_A: [_A_g, _A_t]
+_DV_A: [_A_vfunc]
+_DV_D: [_A_vfunc]
+_DV_B: [_B_vfunc]
 #################################
 
 
 # class A
 
 
-#static method: momo, A
-_A_momo:
+#static method: sfunc, A
+_A_sfunc:
+#if
+Move b, R2
+Compare 1, R2
+JumpFalse _Label_else_7
+#Statement block line 7
+#Statement block line 8
+#INT k = 5
 Move 5, R2
+Move R2, k
+Move 1, R2
 Move R2, R9999
 Return R9999
-
-
-#virtual method: g, A
-_A_g:
-Move this, R9998
+JumpFalse _Label_end_if_7
+#else: if
+_Label_else_7:
+#Statement block line 13
+#A x = new A()
+#new A()
+Library __allocateObject(16), R3
+MoveField _DV_A, R3.0
+Move R3, R2
+Move R2, x
+#i.x = 9
+Move 9, R2
+Move R2, R3
+Move x, R2
+MoveField R3, R2.2
+#str.x = "hello"
+Move str0, R2
+Move R2, R3
+Move x, R2
+MoveField R3, R2.1
+Move 0, R2
+Move R2, R9999
+Return R9999
+JumpFalse _Label_end_if_7
+_Label_end_if_7:
 Return 9999
 
 
-#virtual method: t, A
-_A_t:
+#virtual method: vfunc, A
+_A_vfunc:
 Move this, R9998
-#y = 7
-Move 7, R2
-Move R2, R3
-MoveField R3, R9998.1
-MoveField R9998.1, R2
-Move R2, R9999
-Return R9999
-
-
-# class Sieve
-
-
-#static method: main, Sieve
-_ic_main:
-#Sieve sieve = new Sieve()
-#new Sieve()
-Library __allocateObject(16), R3
-Move R3, R2
-Move R2, sieve
-#xC.sieve = 4
-Move 4, R2
-Move R2, R3
-Move sieve, R2
-MoveField R3, R2.1
-#a.sieve = new A()
-#new A()
-Library __allocateObject(16), R6
-MoveField _DV_A, R6.0
-Move R6, R2
-Move R2, R3
-Move sieve, R2
-MoveField R3, R2.3
-#y.a.sieve = 1
-Move 1, R2
-Move R2, R3
-Move sieve, R2
-MoveField R2.3, R2
-MoveField R3, R2.1
-#b.a.sieve = true
-Move 1, R2
-Move R2, R3
-Move sieve, R2
-MoveField R2.3, R2
-MoveField R3, R2.2
-#boo.a.sieve = new BOOLEAN[]x1[2]
-Move 2, R2
+#INT[]x1 arr = new INT[]x1[max]
+Move max, R2
 Mul 4, R2
-Library __allocateArray(R2), R6
-Move R6, R2
+Library __allocateArray(R2), R3
+Move R3, R2
+Move R2, arr
+#INT i = 0
+Move 0, R2
+Move R2, i
+#while
+_Label_while_body_24:
+#i < max
+MoveField R9998.2, R2
 Move R2, R3
-Move sieve, R2
-MoveField R2.3, R2
-MoveField R3, R2.3
-#boo.a.sieve[y.a.sieve - 1] = b.a.sieve
-Move sieve, R2
-MoveField R2.3, R2
-MoveField R2.2, R2
+Move max, R2
+Move 0, R4
+
+Library __printi(R3), Rdummy
+Library __println(str), Rdummy
+
+
+Library __printi(R2), Rdummy
+Library __println(str), Rdummy
+
+Compare R3, R2
+JumpLE _Label_less_24
+Move 1, R4
+_Label_less_24:
+Move R4, R2
+Compare 1, R2
+JumpFalse _Label_while_end_24
+#Statement block line 24
+#arr[i] = val
+Move val, R2
 Move R2, R3
-Move sieve, R2
-MoveField R2.3, R2
-MoveField R2.3, R2
+Move arr, R2
 Move R2, R4
-Move sieve, R2
-MoveField R2.3, R2
-MoveField R2.1, R2
-Move R2, R6
-Move 1, R2
-Sub R2, R6
-Move R6, R2
+MoveField R9998.2, R2
 Move R2, R5
 MoveArray R3, R4[R5]
-#INT i = 1
-Move 1, R2
-Move R2, i
-#INT j = i + 5
-Move i, R2
-Move R2, R3
-Move 5, R2
-Add R3, R2
-Move R2, j
-#j = 500
-Move 500, R2
-Move R2, R3
-Move R3, j
-#BOOLEAN d = false
-Move 0, R2
-Move R2, d
-#while
-_Label_while_body_42:
-#LNEG d
-Move d, R2
-Move R2, R3
-Move 1, R2
-Xor R3, R2
-Compare 1, R2
-JumpFalse _Label_while_end_42
-#Statement block line 43
-#j = j - 100
-Move j, R2
-Move R2, R6
-Move 100, R2
-Sub R2, R6
+#fd = new B()
+#new B()
+Library __allocateObject(20), R6
+MoveField _DV_B, R6.0
 Move R6, R2
 Move R2, R3
-Move R3, j
+MoveField R3, R9998.3
+#i = i + 1
+MoveField R9998.2, R2
+Move R2, R6
+Move 1, R2
+Add R6, R2
+Move R2, R3
+MoveField R3, R9998.2
 #if
-#j % 3 == 0
-Move j, R2
-Move R2, R5
-Move 3, R2
-Mod R2, R5
-Move R5, R2
+#a == null
+Move a, R2
 Move R2, R3
 Move 0, R2
 Move 0, R4
 Compare R3, R2
-JumpFalse _Label_less_equal_45
+JumpFalse _Label_less_equal_28
 Move 1, R4
-_Label_less_equal_45:
+_Label_less_equal_28:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_end_if_45
-#Statement block line 46
+JumpFalse _Label_end_if_28
 #break
-Jump _Label_while_end_42
-JumpFalse _Label_end_if_45
-_Label_end_if_45:
-#d = true
-Move 1, R2
-Move R2, R3
-Move R3, d
-# evaluate arg 0
-Move 1, R2
-Move R2, R4000
-# evaluate arg 1
-Move str0, R2
-Move R2, R4001
-# evaluate arg 2
-Move 4, R2
-Move R2, R4002
-# evaluate arg 3
-Move 1, R2
-Move R2, R4003
-StaticCall _Sieve_testFunc(t = R4000, h = R4001, y = R4002, g = R4003), R2
-Jump _Label_while_body_42
-_Label_while_end_42:
-# Call printi(t())
-# evaluate arg 0
-Move sieve, R2
-MoveField R2.3, R2
-Move R2, R3
-# evaluate this 
-Move R3, R9998
-VirtualCall R3.1(this = R9998), R2
-Move R2, R4000
-Library __printi(R4000), Rdummy
+Jump _Label_while_end_24
+JumpFalse _Label_end_if_28
+_Label_end_if_28:
+Jump _Label_while_body_24
+_Label_while_end_24:
+Return 9999
+
+
+# class D
+
+
+# class B
+
+
+#virtual method: vfunc, B
+_B_vfunc:
+Move this, R9998
+Return 9999
+
+
+# class C
+
+
+#static method: main, C
+_ic_main:
+#A[]x2 a
+Move 0, a
 Library __exit(0),R0
 Return 9999
-
-
-#static method: testFunc, Sieve
-_Sieve_testFunc:
-# Call printi(t)
-# evaluate arg 0
-Move t, R2
-Move R2, R4000
-Library __printi(R4000), Rdummy
-# Call println("")
-# evaluate arg 0
-Move str1, R2
-Move R2, R4000
-Library __println(R4000), Rdummy
-# Call println(h)
-# evaluate arg 0
-Move h, R2
-Move R2, R4000
-Library __println(R4000), Rdummy
-# Call printi(y)
-# evaluate arg 0
-Move y, R2
-Move R2, R4000
-Library __printi(R4000), Rdummy
-# Call println("")
-# evaluate arg 0
-Move str1, R2
-Move R2, R4000
-Library __println(R4000), Rdummy
-# Call printb(g)
-# evaluate arg 0
-Move g, R2
-Move R2, R4000
-Library __printb(R4000), Rdummy
-# Call println("")
-# evaluate arg 0
-Move str1, R2
-Move R2, R4000
-Library __println(R4000), Rdummy
-# Call println("")
-# evaluate arg 0
-Move str1, R2
-Move R2, R4000
-Library __println(R4000), Rdummy
-Return 9999
-
-
-#static method: add, Sieve
-_Sieve_add:
-Move x1, R2
-Move R2, R3
-Move x2, R2
-Add R3, R2
-Move R2, R9999
-Return R9999
 

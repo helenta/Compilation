@@ -41,6 +41,6 @@ public class Literal extends Expression
 
 	public String toString()
 	{
-		return value.toString();
+		return value == null ? "null" : value.toString();
 	}
 }

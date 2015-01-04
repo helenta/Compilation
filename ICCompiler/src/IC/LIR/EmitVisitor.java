@@ -103,12 +103,6 @@ public class EmitVisitor implements Visitor
 		lirProgram.AddDispatchTable(icClass);
 		for (Method method : icClass.getMethods())
 		{
-			if (method instanceof VirtualMethod)
-			{
-				VirtualMethod virtualMethod = (VirtualMethod)method;
-				lirProgram.AddVirtualMethodToDispatchTable(virtualMethod);
-			}
-			
 			method.accept(this);
 		}
 		
@@ -383,7 +377,7 @@ public class EmitVisitor implements Visitor
 		
 		if (localVariable.getInitValue() == null)
 		{
-			AppendLine("Move " + localVariable.getName() + ", 0");
+			AppendLine("Move 0, " + localVariable.getName());
 		}
 		else
 		{
@@ -581,7 +575,7 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(This thisExpression)
 	{
-		// TODO Auto-generated method stub
+		AppendLine("Move R" + lirProgram.thisRegister + ", " + "R" + lirProgram.expressionRegister);
 		return null;
 	}
 
@@ -592,10 +586,10 @@ public class EmitVisitor implements Visitor
 		
 		int reg1 = lirProgram.GetNextRegister();
 		
-		ICClass icClass = lirProgram.GetClassByName(newClass.scope, newClass.getName());
+		ICClass icClass = lirProgram.GetClassByName(newClass.getName());
 		String dispatchTable = lirProgram.GetDispatchTableName(icClass);
 		
-		int fieldsCount = icClass.getFields().size();
+		int fieldsCount = lirProgram.GetAllFieldsFromDerivedSuperClasses(icClass).size();
 		AppendLine("Library __allocateObject(" + (fieldsCount+1)*4 + "), R" + reg1);
 		
 		if (icClass.virtualMethods.size() > 0)

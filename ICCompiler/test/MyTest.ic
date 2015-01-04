@@ -1,74 +1,93 @@
-class A
-{
-    int y;
-    boolean b;
-    boolean[] boo;
-	static int momo()
-	{
-		return 5;
-	}
-	
-	void g()
-	{
-	}
-	
-	int t()
-	{
-		y = 7;
-		return y;
-	}
-}
+/* Quicksort <n>: sorts an array of n integers initialized
+   with random values.
+   Output: the array contents before and after sorting.
+*/
 
-class Sieve 
-{
-  int xC;
-  int yC;
-  A a;
-  
-  static void main(string[] args) 
-  {
-  	Sieve sieve = new Sieve();
-  	sieve.xC = 4;
-  	sieve.a = new A();
-  	sieve.a.y = 1;
-  	sieve.a.b = true;
-  	sieve.a.boo = new boolean[2];
-  	sieve.a.boo[sieve.a.y-1] = sieve.a.b;
-  
-    int i = 1;
-    int j = i + 5;
-    j = 500;
-    boolean d = false;
-    while(!d)
-    {
-    	j = j - 100;
-    	if (j % 3 == 0)
-    	{
-    		break;
-    	}
-    	d = true;
-    	
-    	testFunc(1, "Test String", 4, true);
+//class Library{
+//    void println(string s) {}
+//    void print(string s) {}
+//    void printi(int i) {}
+//    int stoi(string s, int i) {}
+//   int random(int n) {}
+//    void exit(int n) {}
+//}
+
+class Quicksort {
+    int[] a;
+    //int b = 5;
+    
+    int partition(int low, int high) {
+    int c = 7;
+    int pivot = a[low];
+    int i = low;
+    int j = high;
+    int tmp;
+
+    while (true) {
+    	int b = 5;
+        while (a[i] < pivot) i = i+1;
+        while (a[j] > pivot) j = j-1;
+        if (i >= j) break;
+
+        tmp = a[i];
+        a[i] = a[j];
+        a[j] = tmp;
+        i = i+1;
+        j = j-1;
+    }
+    return j;
+
+    }
+
+    void quicksort(int low, int high) {
+        int c = 7;
+    if (low < high) {
+        int mid = partition(low, high);
+        quicksort(low, mid);
+        quicksort(mid+1, high);
+    }
+    }
+
+    void initArray() {
+    int i = 0;
+    while(i < a.length) {
+        a[i] =  Library.random(a.length*2);
+        i = i+1;
+    }
+    }
+
+    void printArray() {
+    int i = 0;
+
+    Library.print("Array elements: ");
+    while(i<a.length) {
+        Library.printi(a[i]);
+        Library.print (" ");
+        i = i+1;
+    }
+    Library.print("\n");
     }
     
-    Library.printi(sieve.a.t());
-  }
-  
-  static void testFunc(int t, string h, int y, boolean g)
-  {
-  	Library.printi(t);
-  	Library.println("");
-  	Library.println(h);
-  	Library.printi(y);
-  	Library.println("");
-  	Library.printb(g);
-  	Library.println("");
-  	Library.println("");
-  }
-  
-  static int add(int x1, int x2)
-  {
-  	return x1 + x2;
-  }
 
+    static void main(string[] args) {
+    int n;
+
+    if (args.length != 1) {
+        Library.println("Unspecified array length");
+        Library.exit(1);
+    }
+
+    n = Library.stoi(args[0],0);
+    if (n<=0) {
+        Library.println("Invalid array length");
+        Library.exit(1);
+    }
+    Quicksort s = new Quicksort();
+    s.a = new int[n];
+
+    s.initArray();
+    s.printArray();
+    s.quicksort(0, n-1);
+    s.printArray();
+    }
 }

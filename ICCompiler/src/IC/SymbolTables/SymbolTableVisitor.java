@@ -36,7 +36,7 @@ public class SymbolTableVisitor implements Visitor
 				parent.addDerived(classScope, icClass.getLine());
 			}
 			
-			symbolTable.AddType(icClass.getName(), icClass);
+			symbolTable.AddType(icClass);
 		}
 
 		return symbolTable;

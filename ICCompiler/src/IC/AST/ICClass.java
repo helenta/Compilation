@@ -18,7 +18,7 @@ public class ICClass extends ASTNode
 	private List<Field>	 fields;
 
 	private List<Method> methods;
-	public List<VirtualMethod> virtualMethods;
+	public  List<VirtualMethod> virtualMethods;
 	
 	public  Method       ctorMethod;
 	

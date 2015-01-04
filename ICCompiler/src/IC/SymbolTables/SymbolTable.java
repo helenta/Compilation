@@ -16,9 +16,14 @@ public class SymbolTable
 		this.typeToClass = new HashMap<String, ICClass>();
 	}
 	
-	public void AddType(String name, ICClass icClass)
+	public HashMap<String, ClassTree> ConstructClassTree()
 	{
-		typeToClass.put(name, icClass);
+		return ClassTree.ConstructRootClasses(typeToClass);
+	}
+	
+	public void AddType(ICClass icClass)
+	{
+		typeToClass.put(icClass.getName(), icClass);
 	}
 	
 	public ICClass GetClassByName(String name)

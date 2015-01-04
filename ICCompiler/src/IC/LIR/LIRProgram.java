@@ -30,9 +30,13 @@ public final class LIRProgram
 	public String breakLabel = null;
 	public String continueLabel = null;
 	
+	public HashMap<String, ClassTree> classTrees;
+	
 	public LIRProgram(SymbolTable symbolTable)
 	{
 		programTable = symbolTable;
+		
+		classTrees = symbolTable.ConstructClassTree();
 	}
 	
 	public String AddDispatchTable(ICClass icClass)
@@ -43,24 +47,30 @@ public final class LIRProgram
 		ArrayList<String> virtualMethodLabels = new ArrayList<String>();
 		dispatchTables.put(tableName, virtualMethodLabels);
 		
+		List<VirtualMethod> methods = GetAllMethodsFromDerivedSuperClasses(icClass);
+		for (VirtualMethod method : methods)
+		{
+			virtualMethodLabels.add(GetMethodLabel(method));
+		}
+		
 		return tableName;
+	}
+	
+	public List<VirtualMethod> GetAllMethodsFromDerivedSuperClasses(ICClass icClass)
+	{
+		ClassTree classTree = classTrees.get(icClass.getName());
+		return classTree.GetAllClassMethod();
+	}
+	
+	public List<Field> GetAllFieldsFromDerivedSuperClasses(ICClass icClass)
+	{
+		ClassTree classTree = classTrees.get(icClass.getName());
+		return classTree.GetAllClassFields();
 	}
 	
 	public String GetDispatchTableName(ICClass icClass)
 	{
 		return "_DV_" + icClass.getName();
-	}
-	
-	public String AddVirtualMethodToDispatchTable(VirtualMethod virtualMethod)
-	{
-		ClassScope classScope = (ClassScope)virtualMethod.scope.getParent();
-		String tableName = classTodispatchTables.get(classScope.icClass);
-		
-		List<String> virtualMethodLabels = dispatchTables.get(tableName);
-		String methodLabelName = GetMethodLabel(virtualMethod);
-		virtualMethodLabels.add(methodLabelName);
-		
-		return methodLabelName;
 	}
 	
 	public String AddLiteral(String literal)
@@ -135,12 +145,6 @@ public final class LIRProgram
 		MethodScope methodScope = (MethodScope) programTable.getSymbol(classScope, methodName);
 		
 		return methodScope.method;
-	}
-	
-	public ICClass GetClassByName(Scope scope, String className)
-	{
-		ClassScope classScope = (ClassScope)programTable.getSymbol(scope, className);
-		return classScope != null ? classScope.icClass : null;
 	}
 	
 	public ICClass GetClassByName(String className)
