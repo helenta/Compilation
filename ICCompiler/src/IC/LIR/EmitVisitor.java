@@ -865,9 +865,9 @@ public class EmitVisitor implements Visitor
 
 	private void DeugRegValue(int reg)
 	{
-		AppendLine(); // todo: remove
-		AppendLine("Library __printi(R" + reg + "), Rdummy");
-		AppendLine("Library __println(str), Rdummy");
-		AppendLine();
+		//AppendLine(); // todo: remove
+		//AppendLine("Library __printi(R" + reg + "), Rdummy");
+		//AppendLine("Library __println(str), Rdummy");
+		//AppendLine();
 	}
 }
