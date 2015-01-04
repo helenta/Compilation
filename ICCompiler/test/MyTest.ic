@@ -60,6 +60,9 @@ class Quicksort {
     int i = 0;
 
     Library.print("Array elements: ");
+    Library.printi(a.length);
+    Library.printi(i);
+    Library.printb(i<a.length);
     while(i<a.length) {
         Library.printi(a[i]);
         Library.print (" ");

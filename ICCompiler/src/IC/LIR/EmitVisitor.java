@@ -721,17 +721,17 @@ public class EmitVisitor implements Visitor
 				AppendLine("Move 0, R" + reg2);
 				AppendLine("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "less");
-				AppendLine("JumpGE " + labelName);
+				AppendLine("JumpLE " + labelName);
 				AppendLine("Move 1, R" + reg2);
 				AppendLine(labelName + ":");
 				AppendLine("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
 				break;
 				
-			case LTE: // expressionRegister1 <= expressionRegister
+			case GTE: // expressionRegister1 <= expressionRegister
 				AppendLine("Move 0, R" + reg2);
 				AppendLine("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "less_equal");
-				AppendLine("JumpG " + labelName);
+				AppendLine("JumpL " + labelName);
 				AppendLine("Move 1, R" + reg2);
 				AppendLine(labelName + ":");
 				AppendLine("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
@@ -741,17 +741,17 @@ public class EmitVisitor implements Visitor
 				AppendLine("Move 0, R" + reg2);
 				AppendLine("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "greater");
-				AppendLine("JumpLE " + labelName);
+				AppendLine("JumpGE " + labelName);
 				AppendLine("Move 1, R" + reg2);
 				AppendLine(labelName + ":");
 				AppendLine("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
 				break;
 				
-			case GTE: // expressionRegister1 >= expressionRegister
+			case LTE: // expressionRegister1 >= expressionRegister
 				AppendLine("Move 0, R" + reg2);
 				AppendLine("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "greater_equal");
-				AppendLine("JumpL " + labelName);
+				AppendLine("JumpG " + labelName);
 				AppendLine("Move 1, R" + reg2);
 				AppendLine(labelName + ":");
 				AppendLine("Move R" + reg2 + ", R" + lirProgram.expressionRegister);

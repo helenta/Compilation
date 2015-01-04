@@ -59,7 +59,7 @@ Move R2, R3
 Move pivot, R2
 Move 0, R4
 Compare R3, R2
-JumpGE _Label_less_28
+JumpLE _Label_less_28
 Move 1, R4
 _Label_less_28:
 Move R4, R2
@@ -86,7 +86,7 @@ Move R2, R3
 Move pivot, R2
 Move 0, R4
 Compare R3, R2
-JumpLE _Label_greater_29
+JumpGE _Label_greater_29
 Move 1, R4
 _Label_greater_29:
 Move R4, R2
@@ -109,9 +109,9 @@ Move R2, R3
 Move j, R2
 Move 0, R4
 Compare R3, R2
-JumpG _Label_less_equal_30
+JumpG _Label_greater_equal_30
 Move 1, R4
-_Label_less_equal_30:
+_Label_greater_equal_30:
 Move R4, R2
 Compare 1, R2
 JumpFalse _Label_end_if_30
@@ -182,7 +182,7 @@ Move R2, R3
 Move high, R2
 Move 0, R4
 Compare R3, R2
-JumpGE _Label_less_44
+JumpLE _Label_less_44
 Move 1, R4
 _Label_less_44:
 Move R4, R2
@@ -242,7 +242,7 @@ Move R2, R5
 ArrayLength R5, R2
 Move 0, R4
 Compare R3, R2
-JumpGE _Label_less_53
+JumpLE _Label_less_53
 Move 1, R4
 _Label_less_53:
 Move R4, R2
@@ -289,8 +289,20 @@ Move R2, i
 Move str0, R2
 Move R2, R4000
 Library __print(R4000), R2
-#while
-_Label_while_body_63:
+# Call printi(a.length)
+# evaluate arg 0
+MoveField R9998.1, R2
+Move R2, R3
+ArrayLength R3, R2
+Move R2, R4000
+Library __printi(R4000), R2
+# Call printi(i)
+# evaluate arg 0
+Move i, R2
+Move R2, R4000
+Library __printi(R4000), R2
+# Call printb(i < a.length)
+# evaluate arg 0
 #i < a.length
 Move i, R2
 Move R2, R3
@@ -299,13 +311,29 @@ Move R2, R5
 ArrayLength R5, R2
 Move 0, R4
 Compare R3, R2
-JumpGE _Label_less_63
+JumpLE _Label_less_65
 Move 1, R4
-_Label_less_63:
+_Label_less_65:
+Move R4, R2
+Move R2, R4000
+Library __printb(R4000), R2
+#while
+_Label_while_body_66:
+#i < a.length
+Move i, R2
+Move R2, R3
+MoveField R9998.1, R2
+Move R2, R5
+ArrayLength R5, R2
+Move 0, R4
+Compare R3, R2
+JumpLE _Label_less_66
+Move 1, R4
+_Label_less_66:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_while_end_63
-#Statement block line 63
+JumpFalse _Label_while_end_66
+#Statement block line 66
 # Call printi(a[i])
 # evaluate arg 0
 MoveField R9998.1, R2
@@ -327,8 +355,8 @@ Move 1, R2
 Add R6, R2
 Move R2, R3
 Move R3, i
-Jump _Label_while_body_63
-_Label_while_end_63:
+Jump _Label_while_body_66
+_Label_while_end_66:
 # Call print("\n")
 # evaluate arg 0
 Move str2, R2
@@ -364,13 +392,13 @@ Move R2, R3
 Move 1, R2
 Move 0, R4
 Compare R3, R2
-JumpTrue _Label_not_equal_78
+JumpTrue _Label_not_equal_81
 Move 1, R4
-_Label_not_equal_78:
+_Label_not_equal_81:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_end_if_78
-#Statement block line 78
+JumpFalse _Label_end_if_81
+#Statement block line 81
 # Call println("Unspecified array length")
 # evaluate arg 0
 Move str4, R2
@@ -381,8 +409,8 @@ Library __println(R4000), R2
 Move 1, R2
 Move R2, R4000
 Library __exit(R4000), R2
-JumpFalse _Label_end_if_78
-_Label_end_if_78:
+JumpFalse _Label_end_if_81
+_Label_end_if_81:
 #n = stoi(args[0])
 # Call stoi(args[0])
 # evaluate arg 0
@@ -402,13 +430,13 @@ Move R2, R3
 Move 0, R2
 Move 0, R4
 Compare R3, R2
-JumpL _Label_greater_equal_84
+JumpL _Label_less_equal_87
 Move 1, R4
-_Label_greater_equal_84:
+_Label_less_equal_87:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_end_if_84
-#Statement block line 84
+JumpFalse _Label_end_if_87
+#Statement block line 87
 # Call println("Invalid array length")
 # evaluate arg 0
 Move str5, R2
@@ -419,8 +447,8 @@ Library __println(R4000), R2
 Move 1, R2
 Move R2, R4000
 Library __exit(R4000), R2
-JumpFalse _Label_end_if_84
-_Label_end_if_84:
+JumpFalse _Label_end_if_87
+_Label_end_if_87:
 #Quicksort s = new Quicksort()
 #new Quicksort()
 Library __allocateObject(8), R3
