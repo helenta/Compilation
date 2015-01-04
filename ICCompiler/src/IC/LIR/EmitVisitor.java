@@ -1,6 +1,7 @@
 package IC.LIR;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -134,6 +135,9 @@ public class EmitVisitor implements Visitor
 		
 		String labelName = lirProgram.GetMethodLabel(method);
 		AppendLine(labelName + ":");
+		
+		if (method instanceof VirtualMethod)
+			AppendLine("Move this, R" + lirProgram.thisRegister);
 		
 		boolean exsistRetunStatement = false;
 		for (Statement statement : method.getStatements())
@@ -540,6 +544,12 @@ public class EmitVisitor implements Visitor
 			
 			ICClass icClass = lirProgram.GetClassByName(call.getLocation().semType.getName());
 			int methodIndex = icClass.virtualMethods.indexOf((VirtualMethod)method);
+			
+			// append this arguments
+			AppendLine("# evaluate this ");
+			argsBuffer.append("this = R" + lirProgram.thisRegister);
+			if (callArguments.size() > 0)
+				argsBuffer.append(", ");
 			
 			for (int i = 0; i < callArguments.size(); i++)
 			{

@@ -22,11 +22,13 @@ Return R9999
 
 #virtual method: g, A
 _A_g:
+Move this, R9998
 Return 9999
 
 
 #virtual method: t, A
 _A_t:
+Move this, R9998
 #y = 7
 Move 7, R2
 Move R2, R3
@@ -178,8 +180,9 @@ _Label_while_end_42:
 Move sieve, R2
 MoveField R2.3, R2
 Move R2, R3
+# evaluate this 
 Move R3, R9998
-VirtualCall R3.1(), R2
+VirtualCall R3.1(this = R9998), R2
 Move R2, R4000
 Library __printi(R4000), Rdummy
 Library __exit(0),R0
