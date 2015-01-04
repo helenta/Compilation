@@ -262,7 +262,8 @@ public class SymbolTableVisitor implements Visitor
 
 				LocalVariable localVarible = (LocalVariable) statement;
 				localVarible.getType().scope = blockScope;
-				localVarible.getInitValue().scope = blockScope;
+				if (localVarible.getInitValue() != null)
+					localVarible.getInitValue().scope = blockScope;
 			}
 			else
 				if (statement instanceof StatementsBlock)

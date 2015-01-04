@@ -92,9 +92,9 @@ public abstract class Scope
 				    + " shadows a parameter with the same name");
 			}
 
-			throw new SemanticError("semantic error at line " + scope.getLine()
-			    + ": " + "double definition of id " + scope.getName()
-			    + " in the same scope");
+			//throw new SemanticError("semantic error at line " + scope.getLine()
+			//    + ": " + "double definition of id " + scope.getName()
+			//    + " in the same scope");
 		}
 		symbols.put(scope.getName(), scope);
 		if (collection != null)
