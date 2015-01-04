@@ -8,7 +8,7 @@ class Library {
  static string readln(); /* reads one line from the input */
  static boolean eof();   /* checks end-of-file on standard input */
 
- static int stoi(string s, int n); /* returns the integer that s represents
+ static int stoi(string s); /* returns the integer that s represents
                                       or n if s is not an integer */
  static string itos(int i);   /* returns a string representation of i */
  static int[] stoa(string s); /* an array with the ascii codes of chars in s */

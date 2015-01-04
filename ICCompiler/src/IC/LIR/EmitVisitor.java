@@ -311,8 +311,8 @@ public class EmitVisitor implements Visitor
 		String labelWhileBody = lirProgram.GetLabelName(whileStatement, "while_body");
 		String labelWhileEnd = lirProgram.GetLabelName(whileStatement, "while_end");
 		
-		lirProgram.breakLabel = labelWhileEnd;
-		lirProgram.continueLabel = labelWhileBody;
+		lirProgram.breakLabelsStack.push(labelWhileEnd);
+		lirProgram.continueLabelsStack.push(labelWhileBody);
 		
 		AppendLine(labelWhileBody + ":");
 		whileStatement.getCondition().accept(this);
@@ -322,8 +322,8 @@ public class EmitVisitor implements Visitor
 		AppendLine("Jump " + labelWhileBody);
 		AppendLine(labelWhileEnd + ":");
 		
-		lirProgram.breakLabel = null;
-		lirProgram.continueLabel = null;
+		lirProgram.breakLabelsStack.pop();
+		lirProgram.continueLabelsStack.pop();
 		
 		return null;
 	}
@@ -331,14 +331,14 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(Break breakStatement)
 	{
-		if (lirProgram.breakLabel == null)
+		if (lirProgram.breakLabelsStack.isEmpty())
 		{
 			AppendLine("break Errorrr!!!!!!!!!!!!!!!!");
 			return null;
 		}
 		
 		AppendLine("#break");
-		AppendLine("Jump " + lirProgram.breakLabel);
+		AppendLine("Jump " + lirProgram.breakLabelsStack.peek());
 		
 		return null;
 	}
@@ -346,14 +346,14 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(Continue continueStatement)
 	{
-		if (lirProgram.continueLabel == null)
+		if (lirProgram.continueLabelsStack.isEmpty())
 		{
 			AppendLine("continue Errorrr!!!!!!!!!!!!!!!!");
 			return null;
 		}
 		
 		AppendLine("#continue");
-		AppendLine("Jump " + lirProgram.continueLabel);
+		AppendLine("Jump " + lirProgram.continueLabelsStack.peek());
 		
 		return null;
 	}
@@ -464,7 +464,7 @@ public class EmitVisitor implements Visitor
 					argsBuffer.append(", ");
 			}
 			
-			AppendLine("Library __" + call.getName() + "(" + argsBuffer.toString() + "), Rdummy");
+			AppendLine("Library __" + call.getName() + "(" + argsBuffer.toString() + "), R" + lirProgram.expressionRegister);
 		}
 		else
 		{
@@ -533,15 +533,27 @@ public class EmitVisitor implements Visitor
 		else
 		{	
 			int reg1 = lirProgram.GetNextRegister();
-			call.getLocation().accept(this);
-			AppendLine("Move R" + lirProgram.expressionRegister + ", " + "R" + reg1);
 			
-			ICClass icClass = lirProgram.GetClassByName(call.getLocation().semType.getName());
+			ICClass icClass = null;
+			if (call.getLocation() != null)
+			{
+				call.getLocation().accept(this);
+				AppendLine("Move R" + lirProgram.expressionRegister + ", " + "R" + reg1);
+				
+				icClass = lirProgram.GetClassByName(call.getLocation().semType.getName());
+			}
+			else
+			{
+				AppendLine("Move R" + lirProgram.thisRegister + ", " + "R" + reg1);
+				
+				icClass = lirProgram.currentClass;
+			}
+			
 			int methodIndex = icClass.virtualMethods.indexOf((VirtualMethod)method);
 			
 			// append this arguments
 			AppendLine("# evaluate this ");
-			argsBuffer.append("this = R" + lirProgram.thisRegister);
+			argsBuffer.append("this = R" + reg1);
 			if (callArguments.size() > 0)
 				argsBuffer.append(", ");
 			
@@ -563,7 +575,6 @@ public class EmitVisitor implements Visitor
 			}
 			
 			//VirtualCall R1.0(x=R2),Rdummy
-			AppendLine("Move R" + reg1 + ", " + "R" + lirProgram.thisRegister);
 			AppendLine("VirtualCall R" + reg1 + "." + methodIndex + "(" + argsBuffer.toString() + "), R" + lirProgram.expressionRegister);
 			
 		  lirProgram.UnLockRegister(1);
@@ -708,11 +719,9 @@ public class EmitVisitor implements Visitor
 				
 			case LT: // expressionRegister1 < expressionRegister
 				AppendLine("Move 0, R" + reg2);
-				DeugRegValue(reg1);
-				DeugRegValue(lirProgram.expressionRegister);
 				AppendLine("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "less");
-				AppendLine("JumpLE " + labelName);
+				AppendLine("JumpGE " + labelName);
 				AppendLine("Move 1, R" + reg2);
 				AppendLine(labelName + ":");
 				AppendLine("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
@@ -722,7 +731,7 @@ public class EmitVisitor implements Visitor
 				AppendLine("Move 0, R" + reg2);
 				AppendLine("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
 				labelName = lirProgram.GetLabelName(binaryOp, "less_equal");
-				AppendLine("JumpL " + labelName);
+				AppendLine("JumpG " + labelName);
 				AppendLine("Move 1, R" + reg2);
 				AppendLine(labelName + ":");
 				AppendLine("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
@@ -731,8 +740,8 @@ public class EmitVisitor implements Visitor
 			case GT: // expressionRegister1 > expressionRegister
 				AppendLine("Move 0, R" + reg2);
 				AppendLine("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
-				labelName = lirProgram.GetLabelName(binaryOp, "less_equal");
-				AppendLine("JumpGE " + labelName);
+				labelName = lirProgram.GetLabelName(binaryOp, "greater");
+				AppendLine("JumpLE " + labelName);
 				AppendLine("Move 1, R" + reg2);
 				AppendLine(labelName + ":");
 				AppendLine("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
@@ -741,8 +750,8 @@ public class EmitVisitor implements Visitor
 			case GTE: // expressionRegister1 >= expressionRegister
 				AppendLine("Move 0, R" + reg2);
 				AppendLine("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
-				labelName = lirProgram.GetLabelName(binaryOp, "less_equal");
-				AppendLine("JumpG " + labelName);
+				labelName = lirProgram.GetLabelName(binaryOp, "greater_equal");
+				AppendLine("JumpL " + labelName);
 				AppendLine("Move 1, R" + reg2);
 				AppendLine(labelName + ":");
 				AppendLine("Move R" + reg2 + ", R" + lirProgram.expressionRegister);
@@ -751,7 +760,7 @@ public class EmitVisitor implements Visitor
 			case EQUAL: // expressionRegister1 == expressionRegister
 				AppendLine("Move 0, R" + reg2);
 				AppendLine("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
-				labelName = lirProgram.GetLabelName(binaryOp, "less_equal");
+				labelName = lirProgram.GetLabelName(binaryOp, "equal");
 				AppendLine("JumpFalse " + labelName);
 				AppendLine("Move 1, R" + reg2);
 				AppendLine(labelName + ":");
@@ -761,7 +770,7 @@ public class EmitVisitor implements Visitor
 			case NEQUAL: // expressionRegister1 != expressionRegister
 				AppendLine("Move 0, R" + reg2);
 				AppendLine("Compare R" + reg1 + ", R" + lirProgram.expressionRegister);
-				labelName = lirProgram.GetLabelName(binaryOp, "less_equal");
+				labelName = lirProgram.GetLabelName(binaryOp, "not_equal");
 				AppendLine("JumpTrue " + labelName);
 				AppendLine("Move 1, R" + reg2);
 				AppendLine(labelName + ":");

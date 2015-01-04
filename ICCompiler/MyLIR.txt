@@ -1,159 +1,466 @@
 # program
 
 ############literals#############
-str0 : "hello"
+str5 : "Invalid array length"
+str3 : "10"
+str1 : " "
+str0 : "Array elements: "
+str4 : "Unspecified array length"
+str2 : "\n"
 #################################
 
 ############dispatch table#######
-_DV_A: [_A_vfunc]
-_DV_D: [_A_vfunc]
-_DV_B: [_B_vfunc]
+_DV_Quicksort: [_Quicksort_partition, _Quicksort_quicksort, _Quicksort_initArray, _Quicksort_printArray]
 #################################
 
 
-# class A
+# class Quicksort
 
 
-#static method: sfunc, A
-_A_sfunc:
-#if
-Move b, R2
-Compare 1, R2
-JumpFalse _Label_else_7
-#Statement block line 7
-#Statement block line 8
-#INT k = 5
-Move 5, R2
-Move R2, k
-Move 1, R2
-Move R2, R9999
-Return R9999
-JumpFalse _Label_end_if_7
-#else: if
-_Label_else_7:
-#Statement block line 13
-#A x = new A()
-#new A()
-Library __allocateObject(16), R3
-MoveField _DV_A, R3.0
-Move R3, R2
-Move R2, x
-#i.x = 9
-Move 9, R2
-Move R2, R3
-Move x, R2
-MoveField R3, R2.2
-#str.x = "hello"
-Move str0, R2
-Move R2, R3
-Move x, R2
-MoveField R3, R2.1
-Move 0, R2
-Move R2, R9999
-Return R9999
-JumpFalse _Label_end_if_7
-_Label_end_if_7:
-Return 9999
-
-
-#virtual method: vfunc, A
-_A_vfunc:
+#virtual method: partition, Quicksort
+_Quicksort_partition:
 Move this, R9998
-#INT[]x1 arr = new INT[]x1[max]
-Move max, R2
-Mul 4, R2
-Library __allocateArray(R2), R3
-Move R3, R2
-Move R2, arr
-#INT i = 0
-Move 0, R2
-Move R2, i
-#while
-_Label_while_body_24:
-#i < max
-MoveField R9998.2, R2
+#INT c = 7
+Move 7, R2
+Move R2, c
+#INT pivot = a[low]
+MoveField R9998.1, R2
 Move R2, R3
-Move max, R2
-Move 0, R4
-
-Library __printi(R3), Rdummy
-Library __println(str), Rdummy
-
-
-Library __printi(R2), Rdummy
-Library __println(str), Rdummy
-
-Compare R3, R2
-JumpLE _Label_less_24
-Move 1, R4
-_Label_less_24:
+Move low, R2
+MoveArray R3[R2], R4
 Move R4, R2
+Move R2, pivot
+#INT i = low
+Move low, R2
+Move R2, i
+#INT j = high
+Move high, R2
+Move R2, j
+#INT tmp
+Move 0, tmp
+#while
+_Label_while_body_26:
+Move 1, R2
 Compare 1, R2
-JumpFalse _Label_while_end_24
-#Statement block line 24
-#arr[i] = val
-Move val, R2
-Move R2, R3
-Move arr, R2
-Move R2, R4
-MoveField R9998.2, R2
+JumpFalse _Label_while_end_26
+#Statement block line 26
+#INT b = 5
+Move 5, R2
+Move R2, b
+#while
+_Label_while_body_28:
+#a[i] < pivot
+MoveField R9998.1, R2
 Move R2, R5
-MoveArray R3, R4[R5]
-#fd = new B()
-#new B()
-Library __allocateObject(20), R6
-MoveField _DV_B, R6.0
+Move i, R2
+MoveArray R5[R2], R6
 Move R6, R2
 Move R2, R3
-MoveField R3, R9998.3
+Move pivot, R2
+Move 0, R4
+Compare R3, R2
+JumpGE _Label_less_28
+Move 1, R4
+_Label_less_28:
+Move R4, R2
+Compare 1, R2
+JumpFalse _Label_while_end_28
 #i = i + 1
-MoveField R9998.2, R2
+Move i, R2
 Move R2, R6
 Move 1, R2
 Add R6, R2
 Move R2, R3
-MoveField R3, R9998.2
+Move R3, i
+Jump _Label_while_body_28
+_Label_while_end_28:
+#while
+_Label_while_body_29:
+#a[j] > pivot
+MoveField R9998.1, R2
+Move R2, R5
+Move j, R2
+MoveArray R5[R2], R6
+Move R6, R2
+Move R2, R3
+Move pivot, R2
+Move 0, R4
+Compare R3, R2
+JumpLE _Label_greater_29
+Move 1, R4
+_Label_greater_29:
+Move R4, R2
+Compare 1, R2
+JumpFalse _Label_while_end_29
+#j = j - 1
+Move j, R2
+Move R2, R6
+Move 1, R2
+Sub R2, R6
+Move R6, R2
+Move R2, R3
+Move R3, j
+Jump _Label_while_body_29
+_Label_while_end_29:
 #if
-#a == null
-Move a, R2
+#i <= j
+Move i, R2
+Move R2, R3
+Move j, R2
+Move 0, R4
+Compare R3, R2
+JumpG _Label_less_equal_30
+Move 1, R4
+_Label_less_equal_30:
+Move R4, R2
+Compare 1, R2
+JumpFalse _Label_end_if_30
+#break
+Jump _Label_while_end_26
+JumpFalse _Label_end_if_30
+_Label_end_if_30:
+#tmp = a[i]
+MoveField R9998.1, R2
+Move R2, R6
+Move i, R2
+MoveArray R6[R2], R7
+Move R7, R2
+Move R2, R3
+Move R3, tmp
+#a[i] = a[j]
+MoveField R9998.1, R2
+Move R2, R6
+Move j, R2
+MoveArray R6[R2], R7
+Move R7, R2
+Move R2, R3
+MoveField R9998.1, R2
+Move R2, R4
+Move i, R2
+Move R2, R5
+MoveArray R3, R4[R5]
+#a[j] = tmp
+Move tmp, R2
+Move R2, R3
+MoveField R9998.1, R2
+Move R2, R4
+Move j, R2
+Move R2, R5
+MoveArray R3, R4[R5]
+#i = i + 1
+Move i, R2
+Move R2, R6
+Move 1, R2
+Add R6, R2
+Move R2, R3
+Move R3, i
+#j = j - 1
+Move j, R2
+Move R2, R6
+Move 1, R2
+Sub R2, R6
+Move R6, R2
+Move R2, R3
+Move R3, j
+Jump _Label_while_body_26
+_Label_while_end_26:
+Move j, R2
+Move R2, R9999
+Return R9999
+
+
+#virtual method: quicksort, Quicksort
+_Quicksort_quicksort:
+Move this, R9998
+#INT c = 7
+Move 7, R2
+Move R2, c
+#if
+#low < high
+Move low, R2
+Move R2, R3
+Move high, R2
+Move 0, R4
+Compare R3, R2
+JumpGE _Label_less_44
+Move 1, R4
+_Label_less_44:
+Move R4, R2
+Compare 1, R2
+JumpFalse _Label_end_if_44
+#Statement block line 44
+#INT mid = partition(low, high)
+Move R9998, R3
+# evaluate this 
+# evaluate arg 0
+Move low, R2
+Move R2, R4000
+# evaluate arg 1
+Move high, R2
+Move R2, R4001
+VirtualCall R3.0(this = R3, low = R4000, high = R4001), R2
+Move R2, mid
+Move R9998, R3
+# evaluate this 
+# evaluate arg 0
+Move low, R2
+Move R2, R4000
+# evaluate arg 1
+Move mid, R2
+Move R2, R4001
+VirtualCall R3.1(this = R3, low = R4000, high = R4001), R2
+Move R9998, R3
+# evaluate this 
+# evaluate arg 0
+Move mid, R2
+Move R2, R4
+Move 1, R2
+Add R4, R2
+Move R2, R4000
+# evaluate arg 1
+Move high, R2
+Move R2, R4001
+VirtualCall R3.1(this = R3, low = R4000, high = R4001), R2
+JumpFalse _Label_end_if_44
+_Label_end_if_44:
+Return 9999
+
+
+#virtual method: initArray, Quicksort
+_Quicksort_initArray:
+Move this, R9998
+#INT i = 0
+Move 0, R2
+Move R2, i
+#while
+_Label_while_body_53:
+#i < a.length
+Move i, R2
+Move R2, R3
+MoveField R9998.1, R2
+Move R2, R5
+ArrayLength R5, R2
+Move 0, R4
+Compare R3, R2
+JumpGE _Label_less_53
+Move 1, R4
+_Label_less_53:
+Move R4, R2
+Compare 1, R2
+JumpFalse _Label_while_end_53
+#Statement block line 53
+#a[i] = random(a.length * 2)
+# Call random(a.length * 2)
+# evaluate arg 0
+MoveField R9998.1, R2
+Move R2, R7
+ArrayLength R7, R2
+Move R2, R6
+Move 2, R2
+Mul R6, R2
+Move R2, R4000
+Library __random(R4000), R2
+Move R2, R3
+MoveField R9998.1, R2
+Move R2, R4
+Move i, R2
+Move R2, R5
+MoveArray R3, R4[R5]
+#i = i + 1
+Move i, R2
+Move R2, R6
+Move 1, R2
+Add R6, R2
+Move R2, R3
+Move R3, i
+Jump _Label_while_body_53
+_Label_while_end_53:
+Return 9999
+
+
+#virtual method: printArray, Quicksort
+_Quicksort_printArray:
+Move this, R9998
+#INT i = 0
+Move 0, R2
+Move R2, i
+# Call print("Array elements: ")
+# evaluate arg 0
+Move str0, R2
+Move R2, R4000
+Library __print(R4000), R2
+#while
+_Label_while_body_63:
+#i < a.length
+Move i, R2
+Move R2, R3
+MoveField R9998.1, R2
+Move R2, R5
+ArrayLength R5, R2
+Move 0, R4
+Compare R3, R2
+JumpGE _Label_less_63
+Move 1, R4
+_Label_less_63:
+Move R4, R2
+Compare 1, R2
+JumpFalse _Label_while_end_63
+#Statement block line 63
+# Call printi(a[i])
+# evaluate arg 0
+MoveField R9998.1, R2
+Move R2, R3
+Move i, R2
+MoveArray R3[R2], R4
+Move R4, R2
+Move R2, R4000
+Library __printi(R4000), R2
+# Call print(" ")
+# evaluate arg 0
+Move str1, R2
+Move R2, R4000
+Library __print(R4000), R2
+#i = i + 1
+Move i, R2
+Move R2, R6
+Move 1, R2
+Add R6, R2
+Move R2, R3
+Move R3, i
+Jump _Label_while_body_63
+_Label_while_end_63:
+# Call print("\n")
+# evaluate arg 0
+Move str2, R2
+Move R2, R4000
+Library __print(R4000), R2
+Return 9999
+
+
+#static method: main, Quicksort
+_ic_main:
+#STRING[]x1 args = new STRING[]x1[1]
+Move 1, R2
+Mul 4, R2
+Library __allocateArray(R2), R3
+Move R3, R2
+Move R2, args
+#args[0] = "10"
+Move str3, R2
+Move R2, R3
+Move args, R2
+Move R2, R4
+Move 0, R2
+Move R2, R5
+MoveArray R3, R4[R5]
+#INT n
+Move 0, n
+#if
+#args.length != 1
+Move args, R2
+Move R2, R5
+ArrayLength R5, R2
+Move R2, R3
+Move 1, R2
+Move 0, R4
+Compare R3, R2
+JumpTrue _Label_not_equal_78
+Move 1, R4
+_Label_not_equal_78:
+Move R4, R2
+Compare 1, R2
+JumpFalse _Label_end_if_78
+#Statement block line 78
+# Call println("Unspecified array length")
+# evaluate arg 0
+Move str4, R2
+Move R2, R4000
+Library __println(R4000), R2
+# Call exit(1)
+# evaluate arg 0
+Move 1, R2
+Move R2, R4000
+Library __exit(R4000), R2
+JumpFalse _Label_end_if_78
+_Label_end_if_78:
+#n = stoi(args[0])
+# Call stoi(args[0])
+# evaluate arg 0
+Move args, R2
+Move R2, R6
+Move 0, R2
+MoveArray R6[R2], R7
+Move R7, R2
+Move R2, R4000
+Library __stoi(R4000), R2
+Move R2, R3
+Move R3, n
+#if
+#n >= 0
+Move n, R2
 Move R2, R3
 Move 0, R2
 Move 0, R4
 Compare R3, R2
-JumpFalse _Label_less_equal_28
+JumpL _Label_greater_equal_84
 Move 1, R4
-_Label_less_equal_28:
+_Label_greater_equal_84:
 Move R4, R2
 Compare 1, R2
-JumpFalse _Label_end_if_28
-#break
-Jump _Label_while_end_24
-JumpFalse _Label_end_if_28
-_Label_end_if_28:
-Jump _Label_while_body_24
-_Label_while_end_24:
-Return 9999
-
-
-# class D
-
-
-# class B
-
-
-#virtual method: vfunc, B
-_B_vfunc:
-Move this, R9998
-Return 9999
-
-
-# class C
-
-
-#static method: main, C
-_ic_main:
-#A[]x2 a
-Move 0, a
+JumpFalse _Label_end_if_84
+#Statement block line 84
+# Call println("Invalid array length")
+# evaluate arg 0
+Move str5, R2
+Move R2, R4000
+Library __println(R4000), R2
+# Call exit(1)
+# evaluate arg 0
+Move 1, R2
+Move R2, R4000
+Library __exit(R4000), R2
+JumpFalse _Label_end_if_84
+_Label_end_if_84:
+#Quicksort s = new Quicksort()
+#new Quicksort()
+Library __allocateObject(8), R3
+MoveField _DV_Quicksort, R3.0
+Move R3, R2
+Move R2, s
+#a.s = new INT[]x1[n]
+Move n, R2
+Mul 4, R2
+Library __allocateArray(R2), R6
+Move R6, R2
+Move R2, R3
+Move s, R2
+MoveField R3, R2.1
+Move s, R2
+Move R2, R3
+# evaluate this 
+VirtualCall R3.2(this = R3), R2
+Move s, R2
+Move R2, R3
+# evaluate this 
+VirtualCall R3.3(this = R3), R2
+Move s, R2
+Move R2, R3
+# evaluate this 
+# evaluate arg 0
+Move 0, R2
+Move R2, R4000
+# evaluate arg 1
+Move n, R2
+Move R2, R4
+Move 1, R2
+Sub R2, R4
+Move R4, R2
+Move R2, R4001
+VirtualCall R3.1(this = R3, low = R4000, high = R4001), R2
+Move s, R2
+Move R2, R3
+# evaluate this 
+VirtualCall R3.3(this = R3), R2
 Library __exit(0),R0
 Return 9999
 

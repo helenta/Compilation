@@ -27,8 +27,8 @@ public final class LIRProgram
 	public int expressionRegister = 2;
 	public final int thisRegister = 9998;
 	
-	public String breakLabel = null;
-	public String continueLabel = null;
+	public Stack<String> breakLabelsStack = new Stack<String>();
+	public Stack<String> continueLabelsStack = new Stack<String>();
 	
 	public HashMap<String, ClassTree> classTrees;
 	
