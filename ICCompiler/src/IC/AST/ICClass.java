@@ -69,14 +69,6 @@ public class ICClass extends ASTNode
 		this.superClassName = superClassName;
 	}
 	
-	public int GetFieldIndex(String fieldName)
-	{
-		if (fiedsIndex.containsKey(fieldName))
-			return fiedsIndex.get(fieldName);
-		else
-			return -1;
-	}
-	
 	public Field GetFieldByName(String fieldName)
 	{
 		Field field = null;

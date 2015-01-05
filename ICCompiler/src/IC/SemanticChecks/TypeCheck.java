@@ -5,7 +5,6 @@ import java.util.List;
 import IC.AST.*;
 import IC.SymbolTables.ClassScope;
 import IC.SymbolTables.FieldScope;
-import IC.SymbolTables.GlobalScope;
 import IC.SymbolTables.MethodScope;
 import IC.SymbolTables.PrimitiveScope;
 import IC.SymbolTables.Scope;
@@ -150,6 +149,8 @@ public class TypeCheck implements Visitor
 				throw new SemanticError("semantic error at line "
 				    + returnStatement.getLine() + ": " + returnType.getName()
 				    + "is not the type of the return statment");
+			
+			returnStatement.semType = new PrimitiveType(returnStatement.getLine(), DataTypes.VOID);
 
 			return null;
 		}
@@ -726,6 +727,9 @@ public class TypeCheck implements Visitor
 
 	public Object visit(ExpressionBlock expressionBlock)
 	{
-		return expressionBlock.getExpression().accept(this);
+		Object value = expressionBlock.getExpression().accept(this);
+		expressionBlock.semType =  expressionBlock.getExpression().semType;
+		
+		return value;
 	}
 }

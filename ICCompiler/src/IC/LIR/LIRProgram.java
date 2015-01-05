@@ -68,6 +68,24 @@ public final class LIRProgram
 		return classTree.GetAllClassFields();
 	}
 	
+	public int GetFieldIndex(ICClass icClass, String fieldName)
+	{
+		List<Field> fields = GetAllFieldsFromDerivedSuperClasses(icClass);
+		
+		int result = -1;
+		
+		for (int i = 0; i < fields.size(); i++)
+		{
+			if (fields.get(i).getName().equals(fieldName))
+			{
+				result = i+1;
+				break;
+			}
+		}
+		
+		return result;
+	}
+	
 	public String GetDispatchTableName(ICClass icClass)
 	{
 		return "_DV_" + icClass.getName();

@@ -209,9 +209,9 @@ public class EmitVisitor implements Visitor
 				else
 				{
 					ICClass icClass = lirProgram.GetVaribleLocationClass(variableLocation);
-					int fieldIndex = icClass.GetFieldIndex(variableLocation.getName());
+					int fieldIndex = lirProgram.GetFieldIndex(icClass, variableLocation.getName());
 					
-					AppendLine("MoveField this, R" + reg2);
+					AppendLine("Move this, R" + reg2);
 					AppendLine("MoveField R" + reg1 + ", R" + reg2 + "." + fieldIndex);
 				}
 			}
@@ -221,7 +221,7 @@ public class EmitVisitor implements Visitor
 				
 				Type expressionType = variableLocation.getLocation().semType;
 				ICClass icClass = lirProgram.GetClassByName(expressionType.getName());
-				int fieldIndex = icClass.GetFieldIndex(variableLocation.getName());
+				int fieldIndex = lirProgram.GetFieldIndex(icClass, variableLocation.getName());
 				
 				AppendLine("MoveField R" + reg1 + ", R" + lirProgram.expressionRegister + "." + fieldIndex);
 			}
@@ -253,8 +253,16 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(Return returnStatement)
 	{
-		returnStatement.getValue().accept(this);
-		AppendLine("Move R" + lirProgram.expressionRegister + ", R" + lirProgram.ReturnRegister);
+		if (returnStatement.getValue() != null)
+		{
+			returnStatement.getValue().accept(this);
+			AppendLine("Move R" + lirProgram.expressionRegister + ", R" + lirProgram.ReturnRegister);
+		}
+		else
+		{
+			AppendLine("Move 0, R" + lirProgram.ReturnRegister);
+		}
+		
 		AppendLine("Return R" + lirProgram.ReturnRegister);
 		
 		return null;
@@ -400,7 +408,7 @@ public class EmitVisitor implements Visitor
 			else
 			{
 				ICClass icClass = lirProgram.GetVaribleLocationClass(location);
-				int index = icClass.GetFieldIndex(location.getName());
+				int index = lirProgram.GetFieldIndex(icClass, location.getName());
 				
 				AppendLine("Move this, R" + reg1);
 				AppendLine("MoveField R" + reg1 + "." + index + ", R" + lirProgram.expressionRegister);
@@ -411,7 +419,7 @@ public class EmitVisitor implements Visitor
 			location.getLocation().accept(this);
 			
 			ICClass icClass = lirProgram.GetClassByName(location.getLocation().semType.getName());
-			int index = icClass.GetFieldIndex(location.getName());
+			int index = lirProgram.GetFieldIndex(icClass, location.getName());
 
 			AppendLine("MoveField R" + lirProgram.expressionRegister + "." + index + ", R" + lirProgram.expressionRegister);	
 		}

@@ -7,7 +7,6 @@ package IC.AST;
  */
 public class Return extends Statement
 {
-
 	private Expression	value	= null;
 
 	public Object accept(Visitor visitor)
