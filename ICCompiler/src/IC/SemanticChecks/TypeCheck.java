@@ -10,7 +10,6 @@ import IC.SymbolTables.MethodScope;
 import IC.SymbolTables.PrimitiveScope;
 import IC.SymbolTables.Scope;
 import IC.SymbolTables.SymbolTable;
-import IC.*;
 
 public class TypeCheck implements Visitor
 {
