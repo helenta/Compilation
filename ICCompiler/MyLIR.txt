@@ -18,12 +18,12 @@ _DV_Quicksort: [_Quicksort_partition, _Quicksort_quicksort, _Quicksort_initArray
 
 #virtual method: partition, Quicksort
 _Quicksort_partition:
-Move this, R9998
 #INT c = 7
 Move 7, R2
 Move R2, c
 #INT pivot = a[low]
-MoveField R9998.1, R2
+Move this, R5
+MoveField R5.1, R2
 Move R2, R3
 Move low, R2
 MoveArray R3[R2], R4
@@ -49,7 +49,8 @@ Move R2, b
 #while
 _Label_while_body_28:
 #a[i] < pivot
-MoveField R9998.1, R2
+Move this, R7
+MoveField R7.1, R2
 Move R2, R5
 Move i, R2
 MoveArray R5[R2], R6
@@ -76,7 +77,8 @@ _Label_while_end_28:
 #while
 _Label_while_body_29:
 #a[j] > pivot
-MoveField R9998.1, R2
+Move this, R7
+MoveField R7.1, R2
 Move R2, R5
 Move j, R2
 MoveArray R5[R2], R6
@@ -119,7 +121,8 @@ Jump _Label_while_end_26
 JumpFalse _Label_end_if_30
 _Label_end_if_30:
 #tmp = a[i]
-MoveField R9998.1, R2
+Move this, R8
+MoveField R8.1, R2
 Move R2, R6
 Move i, R2
 MoveArray R6[R2], R7
@@ -127,13 +130,15 @@ Move R7, R2
 Move R2, R3
 Move R3, tmp
 #a[i] = a[j]
-MoveField R9998.1, R2
+Move this, R8
+MoveField R8.1, R2
 Move R2, R6
 Move j, R2
 MoveArray R6[R2], R7
 Move R7, R2
 Move R2, R3
-MoveField R9998.1, R2
+Move this, R6
+MoveField R6.1, R2
 Move R2, R4
 Move i, R2
 Move R2, R5
@@ -141,7 +146,8 @@ MoveArray R3, R4[R5]
 #a[j] = tmp
 Move tmp, R2
 Move R2, R3
-MoveField R9998.1, R2
+Move this, R6
+MoveField R6.1, R2
 Move R2, R4
 Move j, R2
 Move R2, R5
@@ -170,7 +176,6 @@ Return R9999
 
 #virtual method: quicksort, Quicksort
 _Quicksort_quicksort:
-Move this, R9998
 #INT c = 7
 Move 7, R2
 Move R2, c
@@ -189,7 +194,7 @@ Compare 1, R2
 JumpFalse _Label_end_if_44
 #Statement block line 44
 #INT mid = partition(low, high)
-Move R9998, R3
+Move this, R3
 # evaluate this 
 # evaluate arg 0
 Move low, R2
@@ -199,7 +204,7 @@ Move high, R2
 Move R2, R4001
 VirtualCall R3.0(this = R3, low = R4000, high = R4001), R2
 Move R2, mid
-Move R9998, R3
+Move this, R3
 # evaluate this 
 # evaluate arg 0
 Move low, R2
@@ -208,7 +213,7 @@ Move R2, R4000
 Move mid, R2
 Move R2, R4001
 VirtualCall R3.1(this = R3, low = R4000, high = R4001), R2
-Move R9998, R3
+Move this, R3
 # evaluate this 
 # evaluate arg 0
 Move mid, R2
@@ -227,7 +232,6 @@ Return 9999
 
 #virtual method: initArray, Quicksort
 _Quicksort_initArray:
-Move this, R9998
 #INT i = 0
 Move 0, R2
 Move R2, i
@@ -236,7 +240,8 @@ _Label_while_body_53:
 #i < a.length
 Move i, R2
 Move R2, R3
-MoveField R9998.1, R2
+Move this, R6
+MoveField R6.1, R2
 Move R2, R5
 ArrayLength R5, R2
 Move 0, R4
@@ -252,7 +257,8 @@ JumpFalse _Label_while_end_53
 # Call random()
 Library __random(), R2
 Move R2, R6
-MoveField R9998.1, R2
+Move this, R9
+MoveField R9.1, R2
 Move R2, R8
 ArrayLength R8, R2
 Move R2, R7
@@ -261,7 +267,8 @@ Mul R7, R2
 Mod R2, R6
 Move R6, R2
 Move R2, R3
-MoveField R9998.1, R2
+Move this, R6
+MoveField R6.1, R2
 Move R2, R4
 Move i, R2
 Move R2, R5
@@ -280,7 +287,6 @@ Return 9999
 
 #virtual method: printArray, Quicksort
 _Quicksort_printArray:
-Move this, R9998
 #INT i = 0
 Move 0, R2
 Move R2, i
@@ -294,7 +300,8 @@ _Label_while_body_63:
 #i < a.length
 Move i, R2
 Move R2, R3
-MoveField R9998.1, R2
+Move this, R6
+MoveField R6.1, R2
 Move R2, R5
 ArrayLength R5, R2
 Move 0, R4
@@ -308,7 +315,8 @@ JumpFalse _Label_while_end_63
 #Statement block line 63
 # Call printi(a[i])
 # evaluate arg 0
-MoveField R9998.1, R2
+Move this, R5
+MoveField R5.1, R2
 Move R2, R3
 Move i, R2
 MoveArray R3[R2], R4

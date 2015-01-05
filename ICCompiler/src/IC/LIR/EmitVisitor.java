@@ -130,9 +130,6 @@ public class EmitVisitor implements Visitor
 		String labelName = lirProgram.GetMethodLabel(method);
 		AppendLine(labelName + ":");
 		
-		if (method instanceof VirtualMethod)
-			AppendLine("Move this, R" + lirProgram.thisRegister);
-		
 		boolean exsistRetunStatement = false;
 		for (Statement statement : method.getStatements())
 	  {
@@ -214,7 +211,8 @@ public class EmitVisitor implements Visitor
 					ICClass icClass = lirProgram.GetVaribleLocationClass(variableLocation);
 					int fieldIndex = icClass.GetFieldIndex(variableLocation.getName());
 					
-					AppendLine("MoveField R" + reg1 + ", R" + lirProgram.thisRegister + "." + fieldIndex);
+					AppendLine("MoveField this, R" + reg2);
+					AppendLine("MoveField R" + reg1 + ", R" + reg2 + "." + fieldIndex);
 				}
 			}
 			else
@@ -390,6 +388,8 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(VariableLocation location)
 	{
+		int reg1 = lirProgram.GetNextRegister();
+		
 		boolean isLocalVariable = lirProgram.IsLocalVarible(location);
 		if (location.getLocation() == null)
 		{
@@ -402,7 +402,8 @@ public class EmitVisitor implements Visitor
 				ICClass icClass = lirProgram.GetVaribleLocationClass(location);
 				int index = icClass.GetFieldIndex(location.getName());
 				
-				AppendLine("MoveField R" + lirProgram.thisRegister + "." + index + ", R" + lirProgram.expressionRegister);
+				AppendLine("Move this, R" + reg1);
+				AppendLine("MoveField R" + reg1 + "." + index + ", R" + lirProgram.expressionRegister);
 			}
 		}
 		else
@@ -414,6 +415,8 @@ public class EmitVisitor implements Visitor
 
 			AppendLine("MoveField R" + lirProgram.expressionRegister + "." + index + ", R" + lirProgram.expressionRegister);	
 		}
+		
+		lirProgram.UnLockRegister(1);
 		
 		return null;
 	}
@@ -544,7 +547,7 @@ public class EmitVisitor implements Visitor
 			}
 			else
 			{
-				AppendLine("Move R" + lirProgram.thisRegister + ", " + "R" + reg1);
+				AppendLine("Move this, R" + reg1);
 				
 				icClass = lirProgram.currentClass;
 			}
@@ -586,7 +589,7 @@ public class EmitVisitor implements Visitor
 	@Override
 	public Object visit(This thisExpression)
 	{
-		AppendLine("Move R" + lirProgram.thisRegister + ", " + "R" + lirProgram.expressionRegister);
+		AppendLine("Move this, R" + lirProgram.expressionRegister);
 		return null;
 	}
 

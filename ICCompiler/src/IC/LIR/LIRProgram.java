@@ -25,7 +25,7 @@ public final class LIRProgram
 	
 	public final int ReturnRegister = 9999;
 	public int expressionRegister = 2;
-	public final int thisRegister = 9998;
+	//public final int thisRegister = 9998;
 	
 	public Stack<String> breakLabelsStack = new Stack<String>();
 	public Stack<String> continueLabelsStack = new Stack<String>();
