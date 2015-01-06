@@ -1,236 +1,150 @@
 # program
 
 ############literals#############
-str1 : ", C.foo() "
-str0 : "A "
-str2 : "C "
-str3 : ", c.c.foo() "
+str2 : "In Bar_rise"
+str1 : "In Foo_shine"
+str3 : "In Bar_twinkle"
+str0 : "In Foo_rise"
 #################################
 
 ############dispatch table#######
-_DV_A: [_A_foo, _A_bar]
-_DV_B: [_B_foo, _A_bar]
-_DV_C: [_C_foo, _C_bar]
+_DV_Foo: [_Foo_rise, _Foo_shine]
+_DV_Bar: [_Bar_rise, _Foo_shine, _Bar_twinkle]
 #################################
 
 
-# class A
+# class Foo
 
 
-#virtual method: foo, A
-_A_foo:
-Move this, R4
-MoveField R4.1, R2
-Move R2, R3
-Move this, R2
-MoveField R2.2, R2
-Add R3, R2
-Move R2, R9999
-Return R9999
-
-
-#static method: main, A
-_ic_main:
-#A g1
-Move 0, g1
-#A g2
-Move 0, g2
-#g1 = new A()
-#new A()
-Library __allocateObject(16), R6
-MoveField _DV_A, R6.0
-Move R6, R2
-Move R2, R3
-Move R3, g1
-#x.g1 = 1
-Move 1, R2
-Move R2, R3
-Move g1, R2
-MoveField R3, R2.1
-#y.g1 = 2
-Move 2, R2
-Move R2, R3
-Move g1, R2
-MoveField R3, R2.2
-#c.g1 = new B()
-#new B()
-Library __allocateObject(28), R6
-MoveField _DV_B, R6.0
-Move R6, R2
-Move R2, R3
-Move g1, R2
-MoveField R3, R2.3
-Move g1, R2
-Move R2, R3
-# evaluate this 
-VirtualCall R3.1(this = R3), R2
-#g2 = new C()
-#new C()
-Library __allocateObject(32), R6
-MoveField _DV_C, R6.0
-Move R6, R2
-Move R2, R3
-Move R3, g2
-#c.g2 = new C()
-#new C()
-Library __allocateObject(32), R6
-MoveField _DV_C, R6.0
-Move R6, R2
-Move R2, R3
-Move g2, R2
-MoveField R3, R2.3
-#c.c.g2 = new B()
-#new B()
-Library __allocateObject(28), R6
-MoveField _DV_B, R6.0
-Move R6, R2
-Move R2, R3
-Move g2, R2
-MoveField R2.3, R2
-MoveField R3, R2.3
-Move g2, R2
-Move R2, R3
-# evaluate this 
-VirtualCall R3.1(this = R3), R2
-Library __exit(0),R0
-Return 9999
-
-
-#virtual method: bar, A
-_A_bar:
-# Call println("A ")
+#virtual method: rise, Foo
+_Foo_rise:
+# Call println("In Foo_rise")
 # evaluate arg 0
 Move str0, R2
 Move R2, R4000
 Library __println(R4000), R2
-# Call printi(foo())
+# Call printi(x)
 # evaluate arg 0
 Move this, R3
-# evaluate this 
-VirtualCall R3.0(this = R3), R2
+MoveField R3.1, R2
 Move R2, R4000
 Library __printi(R4000), R2
-# Call println(", C.foo() ")
-# evaluate arg 0
-Move str1, R2
-Move R2, R4000
-Library __println(R4000), R2
-# Call printi(foo())
-# evaluate arg 0
-Move this, R4
-MoveField R4.3, R2
-Move R2, R3
-# evaluate this 
-VirtualCall R3.0(this = R3), R2
-Move R2, R4000
-Library __printi(R4000), R2
-Return 9999
-
-
-# class B
-
-
-#virtual method: foo, B
-_B_foo:
-#num = new INT[]x1[4]
-Move 4, R2
-Mul 4, R2
-Library __allocateArray(R2), R6
-Move R6, R2
-Move R2, R3
-Move this, R4
-MoveField R3, R4.6
-#num[2] = 7
-Move 7, R2
-Move R2, R3
-Move this, R6
-MoveField R6.6, R2
-Move R2, R4
 Move 2, R2
-Move R2, R5
-MoveArray R3, R4[R5]
-Move this, R7
-MoveField R7.1, R2
-Move R2, R6
-Move this, R7
-MoveField R7.2, R2
-Add R6, R2
-Move R2, R5
-Move this, R6
-MoveField R6.5, R2
-Add R5, R2
-Move R2, R4
-Move this, R5
-MoveField R5.4, R2
-Add R4, R2
-Move R2, R3
-Move this, R6
-MoveField R6.6, R2
-Move R2, R4
-Move 2, R2
-MoveArray R4[R2], R5
-Move R5, R2
-Add R3, R2
 Move R2, R9999
 Return R9999
 
 
-# class C
+#virtual method: shine, Foo
+_Foo_shine:
+# Call println("In Foo_shine")
+# evaluate arg 0
+Move str1, R2
+Move R2, R4000
+Library __println(R4000), R2
+# Call printi(x)
+# evaluate arg 0
+Move this, R3
+MoveField R3.1, R2
+Move R2, R4000
+Library __printi(R4000), R2
+Move 1, R2
+Move R2, R9999
+Return R9999
 
 
-#virtual method: foo, C
-_C_foo:
+#static method: main, Foo
+_ic_main:
+#Foo f = new Bar()
+#new Bar()
+Library __allocateObject(16), R3
+MoveField _DV_Bar, R3.0
+Move R3, R2
+Move R2, f
+Move f, R2
+Move R2, R3
+# evaluate this 
+# evaluate arg 0
+Move 1, R2
+Move R2, R4000
+VirtualCall R3.0(this = R3, x = R4000), R2
+Move f, R2
+Move R2, R3
+# evaluate this 
+# evaluate arg 0
+Move 2, R2
+Move R2, R4000
+VirtualCall R3.1(this = R3, x = R4000), R2
+#f = new Foo()
+#new Foo()
+Library __allocateObject(12), R6
+MoveField _DV_Foo, R6.0
+Move R6, R2
+Move R2, R3
+Move R3, f
+Move f, R2
+Move R2, R3
+# evaluate this 
+# evaluate arg 0
+Move 4, R2
+Move R2, R4000
+VirtualCall R3.0(this = R3, x = R4000), R2
+Move f, R2
+Move R2, R3
+# evaluate this 
+# evaluate arg 0
+Move 5, R2
+Move R2, R4000
+VirtualCall R3.1(this = R3, x = R4000), R2
+#Bar b = new Bar()
+#new Bar()
+Library __allocateObject(16), R3
+MoveField _DV_Bar, R3.0
+Move R3, R2
+Move R2, b
+Move b, R2
+Move R2, R3
+# evaluate this 
+# evaluate arg 0
+Move 3, R2
+Move R2, R4000
+VirtualCall R3.1(this = R3, x = R4000), R2
+Library __exit(0),R0
+Return 9999
+
+
+# class Bar
+
+
+#virtual method: rise, Bar
+_Bar_rise:
+# Call println("In Bar_rise")
+# evaluate arg 0
+Move str2, R2
+Move R2, R4000
+Library __println(R4000), R2
+# Call printi(x)
+# evaluate arg 0
+Move x, R2
+Move R2, R4000
+Library __printi(R4000), R2
 Move 3, R2
 Move R2, R9999
 Return R9999
 
 
-#virtual method: bar, C
-_C_bar:
-# Call println("C ")
-# evaluate arg 0
-Move str2, R2
-Move R2, R4000
-Library __println(R4000), R2
-# Call printi(foo())
-# evaluate arg 0
-Move this, R3
-# evaluate this 
-VirtualCall R3.0(this = R3), R2
-Move R2, R4000
-Library __printi(R4000), R2
-# Call println(", C.foo() ")
-# evaluate arg 0
-Move str1, R2
-Move R2, R4000
-Library __println(R4000), R2
-# Call printi(foo())
-# evaluate arg 0
-Move this, R4
-MoveField R4.3, R2
-Move R2, R3
-# evaluate this 
-VirtualCall R3.0(this = R3), R2
-Move R2, R4000
-Library __printi(R4000), R2
-# Call println(", c.c.foo() ")
+#virtual method: twinkle, Bar
+_Bar_twinkle:
+# Call println("In Bar_twinkle")
 # evaluate arg 0
 Move str3, R2
 Move R2, R4000
 Library __println(R4000), R2
-# Call printi(foo() + j)
+# Call printi(x)
 # evaluate arg 0
-Move this, R6
-MoveField R6.3, R2
-MoveField R2.3, R2
-Move R2, R4
-# evaluate this 
-VirtualCall R4.0(this = R4), R2
-Move R2, R3
-Move this, R4
-MoveField R4.7, R2
-Add R3, R2
+Move x, R2
 Move R2, R4000
 Library __printi(R4000), R2
-Return 9999
+Move 4, R2
+Move R2, R9999
+Return R9999
 
