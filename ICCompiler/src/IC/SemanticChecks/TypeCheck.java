@@ -283,7 +283,7 @@ public class TypeCheck implements Visitor
 		else
 		{
 			ICClass icClass = ((ClassScope)varScope).icClass;
-			Field field = icClass.GetFieldByName(location.getName());
+			Field field = icClass.GetFieldByName(table, location.getName());
 			if (field == null)
 			{
 				throw new SemanticError("semantic error at line " + location.getLine()

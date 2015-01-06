@@ -147,7 +147,8 @@ public final class LIRProgram
 			label = "_ic_main";
 			if (!method.IsMain())
 			{
-				label = "_" + currentClass.getName() + "_" + method.getName();
+				ICClass icClass = ((ClassScope)((MethodScope)method.scope).getParent()).icClass;
+				label = "_" + icClass.getName() + "_" + method.getName();
 			}
 			methods.put(method, label);
 		}

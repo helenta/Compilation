@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import IC.SymbolTables.ClassScope;
+import IC.SymbolTables.SymbolTable;
+
 /**
  * Class declaration AST node.
  * 
@@ -69,7 +72,7 @@ public class ICClass extends ASTNode
 		this.superClassName = superClassName;
 	}
 	
-	public Field GetFieldByName(String fieldName)
+	public Field GetFieldByName(SymbolTable tabel, String fieldName)
 	{
 		Field field = null;
 		for (Field f : fields)
@@ -79,6 +82,12 @@ public class ICClass extends ASTNode
 				field = f;
 				break;
 			}
+		}
+		
+		if (field == null && superClassName != null)
+		{
+			ClassScope classScope = tabel.GetClassScopeByName(superClassName);
+			return classScope.icClass.GetFieldByName(tabel, fieldName);
 		}
 		
 		return field;

@@ -1,96 +1,65 @@
-/* Quicksort <n>: sorts an array of n integers initialized
-   with random values.
-   Output: the array contents before and after sorting.
-*/
+class A{
+	int x, y;
+	int foo()
+	{
+		return x + this.y;
+	}
+	
+	static void main()
+	{
+		A g1;
+		A g2;
+		
+		g1 = new A();
+		g1.x = 1;
+		g1.y = 2;
+		g1.c = new B();
+		
+		g1.bar();
+		
+		g2 = new C();
+		g2.c = new C();
+		g2.c.c = new B();
+		g2.bar();
+	}
+	
+	void bar()
+	{
+		Library.println("A ");
+		Library.printi(foo());
+		Library.println(", C.foo() ");
+		Library.printi(c.foo());
+	}
+	
+	B c;
+}
 
-//class Library{
-//    void println(string s) {}
-//    void print(string s) {}
-//    void printi(int i) {}
-//    int stoi(string s, int i) {}
-//   int random(int n) {}
-//    void exit(int n) {}
-//}
+class B extends A{
+	int z;
+	int v;
+	int[] num;
+	int foo()
+	{
+		num = new int[4];
+		num[2] = 7;
+		return x+y+v+z+num[2];
+	}
+}
 
-class Quicksort {
-    int[] a;
-    //int b = 5;
-    
-    int partition(int low, int high) {
-    int c = 7;
-    int pivot = a[low];
-    int i = low;
-    int j = high;
-    int tmp;
-
-    while (true) {
-    	int b = 5;
-        while (a[i] < pivot) i = i+1;
-        while (a[j] > pivot) j = j-1;
-        if (i >= j) break;
-
-        tmp = a[i];
-        a[i] = a[j];
-        a[j] = tmp;
-        i = i+1;
-        j = j-1;
-    }
-    return j;
-
-    }
-
-    void quicksort(int low, int high) {
-        int c = 7;
-    if (low < high) {
-        int mid = partition(low, high);
-        quicksort(low, mid);
-        quicksort(mid+1, high);
-    }
-    }
-
-    void initArray() {
-    int i = 0;
-    while(i < a.length) {
-        a[i] =  Library.random() % (a.length*2);
-        i = i+1;
-    }
-    }
-
-    void printArray() {
-    int i = 0;
-
-    Library.print("Array elements: ");
-    while(i<a.length) {
-        Library.printi(a[i]);
-        Library.print (" ");
-        i = i+1;
-    }
-    Library.println(" ");
-    }
-    
-
-    static void main() {
-    string[] args = new string[1];
-    args[0] = "10";
-    
-    int n;
-
-    if (args.length != 1) {
-        Library.println("Unspecified array length");
-        Library.exit(1);
-    }
-
-    n = Library.stoi(args[0]);
-    if (n<=0) {
-        Library.println("Invalid array length");
-        Library.exit(1);
-    }
-    Quicksort s = new Quicksort();
-    s.a = new int[n];
-
-    s.initArray();
-    s.printArray();
-    s.quicksort(0, n-1);
-    s.printArray();
-    }
+class C extends B{
+	int j;
+	int foo()
+	{
+		return 3;
+	}
+	
+	void bar()
+	{
+		Library.println("C ");
+		Library.printi(foo());
+		Library.println(", C.foo() ");
+		Library.printi(c.foo());
+		Library.println(", c.c.foo() ");
+		Library.printi(c.c.foo()+j);
+	}
 }

@@ -125,7 +125,8 @@ public final class ClassTree
 		int result = -1;
 		for (int i = 0; i < methods.size(); i++)
 		{
-			if (methods.get(i).getName().equals(methodName))
+			String name = methods.get(i).getName();
+			if (name.equals(methodName))
 			{
 				result = i;
 				break;
