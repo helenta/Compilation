@@ -56,7 +56,7 @@ class Sieve {
 
   static void main() {
   string[] args = new string[1];
-  args[0] = "10";
+  args[0] = "20";
     (new Sieve()).test(args);
   }
 

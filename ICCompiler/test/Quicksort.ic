@@ -3,15 +3,6 @@
    Output: the array contents before and after sorting.
 */
 
-//class Library{
-//    void println(string s) {}
-//    void print(string s) {}
-//    void printi(int i) {}
-//    int stoi(string s, int i) {}
-//   int random(int n) {}
-//    void exit(int n) {}
-//}
-
 class Quicksort {
     int[] a;
 
