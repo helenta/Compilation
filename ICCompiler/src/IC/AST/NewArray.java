@@ -20,6 +20,7 @@ public class NewArray extends New
 	{
 		super(type.getLine());
 		this.type = type;
+		this.type.incrementDimension();
 		this.size = size;
 	}
 

@@ -232,7 +232,7 @@ public class TypeCheck implements Visitor
 
 	public Object visit(LocalVariable localVariable)
 	{
-		localVariable.getType().semType = localVariable.getType();
+		localVariable.semType = localVariable.getType();
 
 		if (localVariable.hasInitValue())
 		{
@@ -463,7 +463,6 @@ public class TypeCheck implements Visitor
 		if (newArray.getSize().semType.getName().equals("int"))
 		{
 			Type arrayType = newArray.getType();
-			arrayType.incrementDimension();
 			return newArray.semType = arrayType;
 		}
 		else
