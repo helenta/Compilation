@@ -6,12 +6,14 @@
    int rise(int x) {
      Library.println("In Foo_rise");
      Library.printi(x);
+     Library.println("");
      return 2;
    }
  
    int shine(int x) {
      Library.println("In Foo_shine");
      Library.printi(x);
+     Library.println("");
      return 1;
    }
    
@@ -33,12 +35,14 @@
    int rise(int x) {
      Library.println("In Bar_rise");
      Library.printi(x);
+	 Library.println("");
      return 3;
    }
  
    int twinkle(int x) {
      Library.println("In Bar_twinkle");
      Library.printi(x);
+     Library.println("");
      return 4;
    }
  }

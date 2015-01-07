@@ -1,364 +1,150 @@
 # program
 
 ############literals#############
-str5 : ""
-str6 : "Invalid array length"
-str3 : "20"
-str2 : " "
-str0 : "Primes less than "
-str1 : ": "
-str4 : "Unspecified number."
+str1 : "In Foo_shine"
+str0 : "In Foo_rise"
+str2 : "In Bar_rise"
+str3 : "In Bar_twinkle"
 #################################
 
 ############dispatch table#######
-_DV_Sieve: [_Sieve_initArray, _Sieve_sieveAll, _Sieve_sieve, _Sieve_printPrimes, _Sieve_test]
+_DV_Bar: [_Bar_rise, _Foo_shine, _Bar_twinkle]
+_DV_Foo: [_Foo_rise, _Foo_shine]
 #################################
 
 
-# class Sieve
+# class Foo
 
 
-#virtual method: initArray, Sieve
-_Sieve_initArray:
-#INT i = 0
-Move 0, R2
-Move R2, i
-#while
-_Label_while_body_20:
-#i < num.length
-Move i, R2
-Move R2, R3
-Move this, R6
-MoveField R6.1, R2
-Move R2, R5
-ArrayLength R5, R2
-Move 0, R4
-Compare R3, R2
-JumpLE _Label_less_20
-Move 1, R4
-_Label_less_20:
-Move R4, R2
-Compare 1, R2
-JumpFalse _Label_while_end_20
-#Statement block line 20
-#num[i] = i
-Move i, R2
-Move R2, R3
-Move this, R6
-MoveField R6.1, R2
-Move R2, R4
-Move i, R2
-Move R2, R5
-MoveArray R3, R4[R5]
-#i = i + 1
-Move i, R2
-Move R2, R6
-Move 1, R2
-Add R6, R2
-Move R2, R3
-Move R3, i
-Jump _Label_while_body_20
-_Label_while_end_20:
-Return 9999
-
-
-#virtual method: sieveAll, Sieve
-_Sieve_sieveAll:
-#INT i = 2
-Move 2, R2
-Move R2, i
-#while
-_Label_while_body_28:
-#i < num.length
-Move i, R2
-Move R2, R3
-Move this, R6
-MoveField R6.1, R2
-Move R2, R5
-ArrayLength R5, R2
-Move 0, R4
-Compare R3, R2
-JumpLE _Label_less_28
-Move 1, R4
-_Label_less_28:
-Move R4, R2
-Compare 1, R2
-JumpFalse _Label_while_end_28
-#Statement block line 28
-Move this, R3
-# evaluate this 
-# evaluate arg 0
-Move i, R2
-Move R2, R4000
-VirtualCall R3.2(this = R3, n = R4000), R2
-#i = i + 1
-Move i, R2
-Move R2, R6
-Move 1, R2
-Add R6, R2
-Move R2, R3
-Move R3, i
-Jump _Label_while_body_28
-_Label_while_end_28:
-Return 9999
-
-
-#virtual method: sieve, Sieve
-_Sieve_sieve:
-#INT i = 2 * n
-Move 2, R2
-Move R2, R3
-Move n, R2
-Mul R3, R2
-Move R2, i
-#while
-_Label_while_body_36:
-#i < num.this.length
-Move i, R2
-Move R2, R3
-Move this, R2
-MoveField R2.1, R2
-Move R2, R5
-ArrayLength R5, R2
-Move 0, R4
-Compare R3, R2
-JumpLE _Label_less_36
-Move 1, R4
-_Label_less_36:
-Move R4, R2
-Compare 1, R2
-JumpFalse _Label_while_end_36
-#Statement block line 36
-#num.this[i] = 0
-Move 0, R2
-Move R2, R3
-Move this, R2
-MoveField R2.1, R2
-Move R2, R4
-Move i, R2
-Move R2, R5
-MoveArray R3, R4[R5]
-#i = i + n
-Move i, R2
-Move R2, R6
-Move n, R2
-Add R6, R2
-Move R2, R3
-Move R3, i
-Jump _Label_while_body_36
-_Label_while_end_36:
-Return 9999
-
-
-#virtual method: printPrimes, Sieve
-_Sieve_printPrimes:
-#INT i = 2
-Move 2, R2
-Move R2, i
-# Call print("Primes less than ")
+#virtual method: rise, Foo
+_Foo_rise:
+# Call println("In Foo_rise")
 # evaluate arg 0
 Move str0, R2
 Move R2, R4000
-Library __print(R4000), R2
-# Call printi(num.length)
+Library __println(R4000), R2
+# Call printi(x)
 # evaluate arg 0
-Move this, R4
-MoveField R4.1, R2
-Move R2, R3
-ArrayLength R3, R2
+Move this, R3
+MoveField R3.1, R2
 Move R2, R4000
 Library __printi(R4000), R2
-# Call print(": ")
+Move 2, R2
+Move R2, R9999
+Return R9999
+
+
+#virtual method: shine, Foo
+_Foo_shine:
+# Call println("In Foo_shine")
 # evaluate arg 0
 Move str1, R2
 Move R2, R4000
-Library __print(R4000), R2
-#while
-_Label_while_body_47:
-#i < num.length
-Move i, R2
-Move R2, R3
-Move this, R6
-MoveField R6.1, R2
-Move R2, R5
-ArrayLength R5, R2
-Move 0, R4
-Compare R3, R2
-JumpLE _Label_less_47
-Move 1, R4
-_Label_less_47:
-Move R4, R2
-Compare 1, R2
-JumpFalse _Label_while_end_47
-#Statement block line 47
-#if
-#num[i] != 0
-Move this, R7
-MoveField R7.1, R2
-Move R2, R5
-Move i, R2
-MoveArray R5[R2], R6
-Move R6, R2
-Move R2, R3
-Move 0, R2
-Move 0, R4
-Compare R3, R2
-JumpTrue _Label_not_equal_48
-Move 1, R4
-_Label_not_equal_48:
-Move R4, R2
-Compare 1, R2
-JumpFalse _Label_end_if_48
-#Statement block line 48
-# Call printi(num[i])
+Library __println(R4000), R2
+# Call printi(x)
 # evaluate arg 0
-Move this, R5
-MoveField R5.1, R2
-Move R2, R3
-Move i, R2
-MoveArray R3[R2], R4
-Move R4, R2
+Move this, R3
+MoveField R3.1, R2
 Move R2, R4000
 Library __printi(R4000), R2
-# Call print(" ")
-# evaluate arg 0
-Move str2, R2
-Move R2, R4000
-Library __print(R4000), R2
-JumpFalse _Label_end_if_48
-_Label_end_if_48:
-#i = i + 1
-Move i, R2
-Move R2, R6
 Move 1, R2
-Add R6, R2
-Move R2, R3
-Move R3, i
-Jump _Label_while_body_47
-_Label_while_end_47:
-Return 9999
+Move R2, R9999
+Return R9999
 
 
-#static method: main, Sieve
+#static method: main, Foo
 _ic_main:
-#STRING[]x1 args = new STRING[]x1[1]
-Move 1, R2
-Mul 4, R2
-Library __allocateArray(R2), R3
+#Foo f = new Bar()
+#new Bar()
+Library __allocateObject(16), R3
+MoveField _DV_Bar, R3.0
 Move R3, R2
-Move R2, args
-#args[0] = "20"
-Move str3, R2
-Move R2, R3
-Move args, R2
-Move R2, R4
-Move 0, R2
-Move R2, R5
-MoveArray R3, R4[R5]
-#new Sieve()
-Library __allocateObject(8), R4
-MoveField _DV_Sieve, R4.0
-Move R4, R2
+Move R2, f
+Move f, R2
 Move R2, R3
 # evaluate this 
 # evaluate arg 0
-Move args, R2
+Move 1, R2
 Move R2, R4000
-VirtualCall R3.4(this = R3, args = R4000), R2
+VirtualCall R3.0(this = R3, x = R4000), R2
+Move f, R2
+Move R2, R3
+# evaluate this 
+# evaluate arg 0
+Move 2, R2
+Move R2, R4000
+VirtualCall R3.1(this = R3, x = R4000), R2
+#f = new Foo()
+#new Foo()
+Library __allocateObject(12), R6
+MoveField _DV_Foo, R6.0
+Move R6, R2
+Move R2, R3
+Move R3, f
+Move f, R2
+Move R2, R3
+# evaluate this 
+# evaluate arg 0
+Move 4, R2
+Move R2, R4000
+VirtualCall R3.0(this = R3, x = R4000), R2
+Move f, R2
+Move R2, R3
+# evaluate this 
+# evaluate arg 0
+Move 5, R2
+Move R2, R4000
+VirtualCall R3.1(this = R3, x = R4000), R2
+#Bar b = new Bar()
+#new Bar()
+Library __allocateObject(16), R3
+MoveField _DV_Bar, R3.0
+Move R3, R2
+Move R2, b
+Move b, R2
+Move R2, R3
+# evaluate this 
+# evaluate arg 0
+Move 3, R2
+Move R2, R4000
+VirtualCall R3.1(this = R3, x = R4000), R2
 Library __exit(0),R0
 Return 9999
 
 
-#virtual method: test, Sieve
-_Sieve_test:
-#INT n
-Move 0, n
-#if
-#args.length != 1
-Move args, R2
-Move R2, R5
-ArrayLength R5, R2
-Move R2, R3
-Move 1, R2
-Move 0, R4
-Compare R3, R2
-JumpTrue _Label_not_equal_66
-Move 1, R4
-_Label_not_equal_66:
-Move R4, R2
-Compare 1, R2
-JumpFalse _Label_end_if_66
-#Statement block line 66
-# Call println("Unspecified number.")
+# class Bar
+
+
+#virtual method: rise, Bar
+_Bar_rise:
+# Call println("In Bar_rise")
 # evaluate arg 0
-Move str4, R2
+Move str2, R2
 Move R2, R4000
 Library __println(R4000), R2
-Move 0, R9999
+# Call printi(x)
+# evaluate arg 0
+Move x, R2
+Move R2, R4000
+Library __printi(R4000), R2
+Move 3, R2
+Move R2, R9999
 Return R9999
-JumpFalse _Label_end_if_66
-_Label_end_if_66:
-# Call println("")
+
+
+#virtual method: twinkle, Bar
+_Bar_twinkle:
+# Call println("In Bar_twinkle")
 # evaluate arg 0
-Move str5, R2
+Move str3, R2
 Move R2, R4000
 Library __println(R4000), R2
-#n = stoi(args[0])
-# Call stoi(args[0])
+# Call printi(x)
 # evaluate arg 0
-Move args, R2
-Move R2, R6
-Move 0, R2
-MoveArray R6[R2], R7
-Move R7, R2
+Move x, R2
 Move R2, R4000
-Library __stoi(R4000), R2
-Move R2, R3
-Move R3, n
-#if
-#n >= 0
-Move n, R2
-Move R2, R3
-Move 0, R2
-Move 0, R4
-Compare R3, R2
-JumpL _Label_less_equal_73
-Move 1, R4
-_Label_less_equal_73:
-Move R4, R2
-Compare 1, R2
-JumpFalse _Label_end_if_73
-#Statement block line 73
-# Call println("Invalid array length")
-# evaluate arg 0
-Move str6, R2
-Move R2, R4000
-Library __println(R4000), R2
-Move 0, R9999
+Library __printi(R4000), R2
+Move 4, R2
+Move R2, R9999
 Return R9999
-JumpFalse _Label_end_if_73
-_Label_end_if_73:
-#num = new INT[]x1[n]
-Move n, R2
-Mul 4, R2
-Library __allocateArray(R2), R6
-Move R6, R2
-Move R2, R3
-Move this, R4
-MoveField R3, R4.1
-Move this, R3
-# evaluate this 
-VirtualCall R3.0(this = R3), R2
-Move this, R3
-# evaluate this 
-VirtualCall R3.1(this = R3), R2
-Move this, R3
-# evaluate this 
-VirtualCall R3.3(this = R3), R2
-# Call println("")
-# evaluate arg 0
-Move str5, R2
-Move R2, R4000
-Library __println(R4000), R2
-Return 9999
 

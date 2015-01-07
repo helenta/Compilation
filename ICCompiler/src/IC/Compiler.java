@@ -1,13 +1,14 @@
 package IC;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import java_cup.runtime.Symbol;
-import jflex.Emitter;
 import IC.AST.*;
 import IC.LIR.EmitVisitor;
 import IC.LIR.LIRProgram;
@@ -23,7 +24,7 @@ public class Compiler
 	public static void main(String[] args) throws Exception
 	{
 
-		if (args.length < 1 || args.length > 3)
+		if (args.length < 1)
 		{
 			System.out.println("Error arguments number");
 			return;
@@ -33,36 +34,40 @@ public class Compiler
 
 		icFileName = args[0];
 		Program program = (Program) CreateICTree(icFileName, false);
+		System.out.println("Parsed " + icFileName + " successfully!");
+
 		if (program == null)
 			return;
 
 		if (args.length == 1)
 			return;
 
-		String libaryFileName = null, printOption = null;
+		String libaryFileName = null;
+		String[] printOptions = null;
+
 		if (args[1].startsWith("-L"))
 		{
 			libaryFileName = args[1].substring(2, args[1].length());
 			if (args.length > 2)
-				printOption = args[2];
+				printOptions = Arrays.copyOfRange(args, 2, args.length);
+
 		}
 		else
 		{
-			printOption = args[1];
-			if (args.length > 2 && args[2].startsWith("-L"))
-				libaryFileName = args[2].substring(2, args[2].length());
+			printOptions = Arrays.copyOfRange(args, 1, args.length);;
+
 		}
 
 		List<ICClass> libaryClass = null;
-		if (libaryFileName != null)
+		if (libaryFileName != null){
 			libaryClass = (List<ICClass>) CreateICTree(libaryFileName, true);
-		System.out.println("Parsed " + libaryFileName + " successfully!");
-
-		if (printOption != null)
-		{
-			System.out.println("Parsed " + icFileName + " successfully!");
-			ProcessArgument(printOption, icFileName, program, libaryClass);
+			System.out.println("Parsed " + libaryFileName + " successfully!");
 		}
+		
+		for (String option: printOptions){
+			ProcessArgument(option, icFileName, program, libaryClass);
+		}
+	
 
 	}
 
@@ -93,7 +98,7 @@ public class Compiler
 				    "semantic error at some line: wrong main method");
 			}
 			
-			Method mainMethod = mainClassScopeChecker.GetMainMethod();
+			//Method mainMethod = mainClassScopeChecker.GetMainMethod();
 
 			if (arg.equals("-print-ast"))
 			{
@@ -122,13 +127,25 @@ public class Compiler
 			}
 			
 			// Emit to LIR file
-			File file = new File("MyLIR.txt");
-			
-			LIRProgram lirProgram = new LIRProgram(table);
-			
-			EmitVisitor emitVisitor = new EmitVisitor(file, lirProgram);
-			
-			emitVisitor.visit(program);
+			if (arg.equals("-print-lir")){
+				
+				Path p = Paths.get(icFileName);
+				String newFileName = p.getFileName().toString();
+				newFileName = newFileName.substring(0, newFileName.length() - 3) + ".lir";
+				
+				File file = new File(newFileName);
+				
+				LIRProgram lirProgram = new LIRProgram(table);
+				
+				EmitVisitor emitVisitor = new EmitVisitor(file, lirProgram);
+				
+				emitVisitor.visit(program);
+				
+				System.out.println(newFileName +" created successfully!");
+
+				
+			}
+
 		}
 		catch (NullPointerException ex)
 		{
