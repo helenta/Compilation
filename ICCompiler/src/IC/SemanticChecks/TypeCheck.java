@@ -238,7 +238,7 @@ public class TypeCheck implements Visitor
 		{
 			Type initialType = (Type) localVariable.getInitValue().accept(this);
 
-			if (!isSameType(initialType, localVariable.getType()))
+			if (!isSameType(initialType, localVariable.getType()) && !(localVariable.getInitValue() instanceof NewClass))
 			{
 				throw new SemanticError("semantic error at line "
 				    + localVariable.getLine() + ": "
